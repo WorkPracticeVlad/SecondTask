@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTree", "WebTree\WebTree.csproj", "{96BAB677-23C9-40F6-985A-6FAF1DB074D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tree", "Tree\Tree.csproj", "{AF98A4E7-E3EA-42DA-B2CA-9A75B8C222F2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{96BAB677-23C9-40F6-985A-6FAF1DB074D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96BAB677-23C9-40F6-985A-6FAF1DB074D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96BAB677-23C9-40F6-985A-6FAF1DB074D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96BAB677-23C9-40F6-985A-6FAF1DB074D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF98A4E7-E3EA-42DA-B2CA-9A75B8C222F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF98A4E7-E3EA-42DA-B2CA-9A75B8C222F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF98A4E7-E3EA-42DA-B2CA-9A75B8C222F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF98A4E7-E3EA-42DA-B2CA-9A75B8C222F2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
