@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -40,7 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="InteractionWithDb.cs" />
+    <Compile Include="IOperationWithDb.cs" />
+    <Compile Include="OperationWithDb.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="OrganizationUnit.cs" />
     <Compile Include="OrganizationUnitToProperty.cs" />

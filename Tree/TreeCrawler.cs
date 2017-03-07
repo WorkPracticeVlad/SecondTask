@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -65,7 +66,7 @@ namespace Tree
         }
         string AddOrganizationUnit(string path, string pathToDescription)
         {
-            string orgUnitId = path.Substring(path.LastIndexOf(backSlash));
+            string orgUnitId = path.Substring(path.LastIndexOf(backSlash)+1);
             if (!_orgUnits.ContainsKey(orgUnitId))
                 _orgUnits.Add(orgUnitId,
                 new OrganizationUnit
