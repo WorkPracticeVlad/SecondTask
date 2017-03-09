@@ -1,46 +1,78 @@
 ﻿@section scripts {
-    <script type="text/javascript">
-        var arrDescr = [];
-        var res = $.get("http://localhost:49997/api/values" @*@Url*@,function (data) {
-            for (var i = 0; i < data.OrgUnits.length; i++) {
-                arrDescr.push(data.OrgUnits[i].Description);
-            };
-            return data;
-        });
-        
-        var ViewModel = function() {
-            var self = this;
 
-            self.filter = ko.observable('');
-            self.items = ko.observableArray(arrDescr);//(["apples", "apple pie", "apple sauce", "pumpkin pie", "peaches"]);
-            self.filteredItems = ko.computed(function() {
-                var filter = self.filter();
-                if (!filter) { return self.items(); }
-                return self.items().filter(function(i) { return i.indexOf(filter) > -1; });
-            });
-        };
-        ko.applyBindings(new ViewModel());
-</script>
+<script src="~/Scripts/MyJS.js"></script>
 }
 <div class="jumbotron">
     <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET </p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    <p class="lead">Refresh data</p>
+    <p><a id="refresh" href="" class="btn btn-primary btn-lg">Refresh&raquo;</a></p>
+</div>
+<div>
+    <button data-bind="click: ShowUnits, visible: shouldShowUnitBtn" class="btn btn-primary btn-block">Units</button>
+    <button data-bind="click: ShowProps, visible: shouldShowPropBtn" class="btn btn-primary btn-block">Props</button>
+    <button data-bind="click: ShowValues, visible: shouldShowValueBtn" class="btn btn-primary btn-block">Values</button>
 </div>
 <div class="row">
-    <div class="col-md-4">
-        Search: <input data-bind="textInput: filter" />
-        <table>
-            <tbody data-bind="foreach: filteredItems">
-                <tr><td data-bind="text: $data"></td></tr>
+    <div data-bind="visible: shouldShowUnits" class="col-md-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="col-md-5">Identity</th>
+                    <th class="col-md-5">Description</th>
+                    <th class="col-md-2">IsVirtual</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: units">
+                <tr>
+                    <td class="col-md-5" data-bind="text: Identity"></td>
+                    <td class="col-md-5" data-bind="text: Description"></td>
+                    <td class="col-md-2" data-bind="text: IsVirtual"></td>
+                </tr>
+            </tbody>                     
+        </table>
+    </div>
+    <div data-bind="visible: shouldShowProps" class="col-md-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="col-md-4">Name</th>
+                    <th class="col-md-4">Type</th>
+                    <th class="col-md-4">Items</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: props">
+                <tr>
+                    <td class="col-md-4" data-bind="text: $data.Name"></td>
+                    <td class="col-md-4" data-bind="text: $data.Type"></td>
+                    <td class="col-md-4" >
+                        <ol data-bind="foreach: $data.Items">
+                            <li>
+                                <span>Id = </span><span data-bind="text: $data.Id"></span><br />
+                                <span>RecMode = </span><span data-bind="text: $data.RecMode"></span><br />
+                                <span>Value = </span><span data-bind="text: $data.Value"></span><br />
+                            </li>
+                        </ol>
+                    </td>
+                </tr>
             </tbody>
-        </table>           
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
+        </table>            
     </div>
-    <div class="col-md-4">        
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301871">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
+    <div data-bind="visible: shouldShowValues" class="col-md-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="col-md-4"> OrganizationUnit</th>
+                    <th class="col-md-4">Property</th>
+                    <th class="col-md-4">Value</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: orgUnitProps">
+                <tr>
+                    <td class="col-md-4" data-bind="text: OrganizationUnitIdentity"></td>
+                    <td class="col-md-4" data-bind="text: PropertyName"></td>
+                    <td class="col-md-4" data-bind="text: Value"></td>
+                </tr>
+            </tbody>           
+        </table>
     </div>
 </div>

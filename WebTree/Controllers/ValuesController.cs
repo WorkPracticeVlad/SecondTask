@@ -11,8 +11,7 @@ namespace WebTree.Controllers
 {
     public class ValuesController : ApiController
     {
-        string pathToEnviroment = ConfigurationManager.AppSettings["pathToEnviroment"];
-       
+        string pathToEnviroment = ConfigurationManager.AppSettings["pathToEnviroment"];   
         private IOperationWithDb _operationWithDB;
         public ValuesController()
         {
@@ -41,10 +40,11 @@ namespace WebTree.Controllers
         {
         }
 
-        public void Delete()
+        public bool Delete()
         {
             _operationWithDB.DeleteTreeFromDb();
             _operationWithDB.InsertTreeToDb(pathToEnviroment);
+            return true;
         }
         // DELETE api/values/5
         public void Delete(int id)
