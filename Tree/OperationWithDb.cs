@@ -16,7 +16,6 @@ namespace Tree
         List<OrganizationUnit> _orgUnits = new List<OrganizationUnit>();
         List<Property> _props = new List<Property>();
         List<OrganizationUnitToProperty> _orgUnitToProps = new List<OrganizationUnitToProperty>();
-        Dictionary<Item, string> _items = new Dictionary<Item, string>();
         public List<OrganizationUnit> OrgUnints { get { return _orgUnits; } }
         public List<Property> Props { get { return _props; } }
         public List<OrganizationUnitToProperty> OrgUnitToProps { get { return _orgUnitToProps; } }
@@ -72,16 +71,6 @@ namespace Tree
                     if (reader.NextResult())
                         while (reader.Read())
                         {
-                            _items.Add(new Item
-                            {
-                                Id = reader.GetInt32(0),
-                                RecMode = reader.GetString(2),
-                                Value = reader.GetString(3)
-                            }, reader.GetString(1));
-                        }
-                    if (reader.NextResult())
-                        while (reader.Read())
-                        {
                             _orgUnits.Add(new OrganizationUnit
                             {
                                 Identity = reader.GetString(0),
@@ -102,15 +91,7 @@ namespace Tree
                 }
                 reader.Close();
             }
-            foreach (var prop in _props)
-            {
-                var temp = _items.Where(i => i.Value == prop.Name).Select(i => i.Key).ToList();
-                if (temp.Count != 0)
-                {
-                    prop.Items = new List<Item>();
-                    prop.Items.AddRange(temp);
-                }             
-            }
+            
         }
         string FormatInsertCommandSql(Dictionary<string, OrganizationUnit> orgUnits)
         {
@@ -127,23 +108,14 @@ namespace Tree
         string[] FormatInsertCommandSql(Dictionary<string, Property> props)
         {
             var propsStrBuilder = new StringBuilder();
-            var itemsStrBuilder = new StringBuilder();
             propsStrBuilder.Append("INSERT INTO Properties VALUES ");
-            itemsStrBuilder.Append("INSERT INTO Items VALUES ");
             foreach (var prop in props)
             {
                 propsStrBuilder.AppendFormat("('{0}', '{1}'), ", prop.Key, prop.Value.Type);
-                if (prop.Value.Items != null)
-                    foreach (var item in prop.Value.Items)
-                    {
-                        itemsStrBuilder.AppendFormat("('{0}', '{1}', '{2}'), ", prop.Key, item.RecMode, item.Value);
-                    }
             }
             propsStrBuilder.Remove(propsStrBuilder.Length - 2, 2);
             propsStrBuilder.Append(" ");
-            itemsStrBuilder.Remove(itemsStrBuilder.Length - 2, 2);
-            itemsStrBuilder.Append(" ");
-            return new string[] { propsStrBuilder.ToString(), itemsStrBuilder.ToString() };
+            return new string[] { propsStrBuilder.ToString() };
         }
         string FormatInsertCommandSql(IDictionary<string, OrganizationUnitToProperty> orgUnitToProps)
         {
@@ -163,8 +135,7 @@ namespace Tree
             strBuilder.Append(FormatInsertCommandSql(orgUnits));
             strBuilder.Append(FormatInsertCommandSql(props)[0]);
             strBuilder.Append(FormatInsertCommandSql(props)[1]);
-            strBuilder.Append(FormatInsertCommandSql(orgUnitToProps));
-            //strBuilder.Append(" IF OBJECT_ID('dbo.[fk_OrgUnitParent]', 'F') IS NULL ALTER TABLE OrganizationUnits ADD CONSTRAINT fk_OrgUnitParent FOREIGN KEY(ParentIdentity) REFERENCES [OrganizationUnits]([Identity]); ");
+            strBuilder.Append(FormatInsertCommandSql(orgUnitToProps));           
             return strBuilder.ToString();
         }
         string FormatFullDeleteCommandSql()
@@ -172,8 +143,7 @@ namespace Tree
             var strBuilder = new StringBuilder();
             var tables = new string[] { "OrganizationUnitToProperties", "Items", "OrganizationUnits", "Properties" };
             foreach (var table in tables)
-                strBuilder.AppendFormat("DELETE FROM {0}; ", table);
-            //strBuilder.Append(" IF OBJECT_ID('dbo.[fk_OrgUnitParent]', 'F') IS NOT NULL ALTER TABLE OrganizationUnits DROP CONSTRAINT fk_OrgUnitParent; ");
+                strBuilder.AppendFormat("DELETE FROM {0}; ", table);            
             return strBuilder.ToString();
         }
         string FormatFullSelectCommandSql()

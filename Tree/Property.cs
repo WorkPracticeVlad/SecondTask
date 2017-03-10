@@ -10,6 +10,5 @@ namespace Tree
     {
         public string Name { get; set; }
         public string Type { get; set; }
-        public List<Item> Items { get; set; }
     }
 }

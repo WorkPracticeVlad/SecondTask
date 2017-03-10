@@ -25,40 +25,34 @@ namespace Tree
             foreach (XmlNode instance in instances)
             {
                 var orgUnitId = AddOrganizationUnit(instance, null);
-                var propertiesNode = instance.FirstChild;
-                var propsValueToChild = AddPopsFromNode(propertiesNode);
-                AddOrganizationUnitToProperty(orgUnitId, propsValueToChild);
-                var configPathPropValue = TakeById(propsValueToChild, "configPath");
-                var adminDbConnectionPropValue = TakeById(propsValueToChild, "adminDbConnection");
-                ConsiderFolder(configPathPropValue.Value, propsValueToChild, orgUnitId);
+                var valuesInUnit = AddPopsFromNode(instance.FirstChild);
+                AddOrganizationUnitToProperty(orgUnitId, valuesInUnit);
+                var configPathPropValue = TakeById(valuesInUnit, "configPath");
+                ConsiderFolder(configPathPropValue.Value, orgUnitId);
                 int x = 1;
             }
         }
-        KeyValuePair<Property, string> TakeById(Dictionary<Property, string> propsValueToChild, string nameId)
+        KeyValuePair<Property, string> TakeById(Dictionary<Property, string> propsValue, string nameId)
         {
-            var propValue = propsValueToChild.Single(i => i.Key.Name == nameId);
-            propsValueToChild.Remove(propValue.Key);
+            var propValue = propsValue.Single(i => i.Key.Name == nameId);
             return propValue;
         }
-        void ConsiderFolder(string path, Dictionary<Property, string> propsFromParentWithValue, string parentId)
+        void ConsiderFolder(string path, string parentId)
         {
-            var orgUnitId = parentId;
-            Dictionary<Property, string> propsWithValuesToChild = new Dictionary<Property, string>();
+            var orgUnitId = parentId;         
             var folders = Directory.GetDirectories(path);
             var files = Directory.GetFiles(path);
             if (files.Length != 0)
             {
-                propsWithValuesToChild = ConsiderFolderContent(path, propsFromParentWithValue, files);
+                ConsiderFolderContent(path, files);
                 if (files.Contains(path + "\\identity.xml"))
                     orgUnitId = AddOrganizationUnit(path, path + "\\identity.xml", parentId);
                 else
                     orgUnitId = AddOrganizationUnit(path, parentId);
             }
-            else
-                FillPropsValuesToChild(propsFromParentWithValue, propsWithValuesToChild);
             foreach (var folderPath in folders)
             {
-                ConsiderFolder(folderPath, propsWithValuesToChild, orgUnitId);
+                ConsiderFolder(folderPath, orgUnitId);
             }
         }
         string AddOrganizationUnit(string path, string pathToDescription, string parenId)
@@ -127,12 +121,11 @@ namespace Tree
                     var prop = new Property
                     {
                         Name = chilNode.Attributes["name"].Value,
-                        Type = chilNode.Attributes["type"].Value,
-                        Items = AddNodeItems(chilNode.SelectSingleNode("items"))
+                        Type = chilNode.Attributes["type"].Value
                     };
                     if (!_props.ContainsKey(prop.Name))
                         _props.Add(prop.Name, prop);
-                    propsInOrgUnitWithValue.Add(prop, chilNode.InnerText);
+                    propsInOrgUnitWithValue.Add(prop, chilNode.InnerXml);
                 }
             }
             return propsInOrgUnitWithValue;
@@ -150,68 +143,43 @@ namespace Tree
                     });
             }
         }
-        private Dictionary<Property, string> ConsiderFolderContent(string path, Dictionary<Property, string> propsFromParentWithValue, string[] files)
+        private Dictionary<Property, string> ConsiderFolderContent(string path,  string[] files)
         {
             if (files.Contains(path + "\\organization_units.xml"))
-                ConsiderXmlTreeOrganizationUnits(path, propsFromParentWithValue);
-            return ConsiderOrganizationUnit(path, propsFromParentWithValue, files);
+                ConsiderXmlTreeOrganizationUnits(path);
+            return ConsiderOrganizationUnit(path, files);
         }
-        void ConsiderXmlTreeOrganizationUnits(string path, Dictionary<Property, string> propsFromParentWithValue)
+        void ConsiderXmlTreeOrganizationUnits(string path)
         {
             var doc = ReadXmlByPath(path + "\\organization_units.xml");
             var nodeOrgUnits = doc.SelectSingleNode("/organization-units");
-            ConsiderXmlNode(propsFromParentWithValue, nodeOrgUnits, GetOrgUnitId(path));
+            ConsiderXmlNode(nodeOrgUnits, GetOrgUnitId(path));
         }
-        private void ConsiderXmlNode(Dictionary<Property, string> propsFromParentWithValue, XmlNode node, string parentId)
+        private void ConsiderXmlNode( XmlNode node, string parentId)
         {
             foreach (XmlNode childNode in node)
             {
                 if (childNode.Name == "organization-unit")
                 {
                     var orgUnitId = AddOrganizationUnit(childNode, parentId);
-                    ConsiderXmlNode(ConsiderOrganizationUnit(childNode, propsFromParentWithValue), childNode, orgUnitId);
+                    ConsiderXmlNode( childNode, orgUnitId);
                 }
             }
         }
-        Dictionary<Property, string> ConsiderOrganizationUnit(XmlNode node, Dictionary<Property, string> propsFromParentWithValue)
+        Dictionary<Property, string> ConsiderOrganizationUnit(XmlNode node)
         {
-            return FillPropsValuesToChild(propsFromParentWithValue, AddPopsFromNode(node), node.Attributes["id"].Value);
+            return FillValues( AddPopsFromNode(node), node.Attributes["id"].Value);
         }
-        Dictionary<Property, string> ConsiderOrganizationUnit(string path, Dictionary<Property, string> propsFromParentWithValue, string[] files)
+        Dictionary<Property, string> ConsiderOrganizationUnit(string path,  string[] files)
         {
             if (files.Contains(path + "\\config.xml"))
-                return FillPropsValuesToChild(propsFromParentWithValue, AddProps(path + "\\config.xml"), GetOrgUnitId(path));
-            return FillPropsValuesToChild(propsFromParentWithValue, new Dictionary<Property, string>(), GetOrgUnitId(path));
+                return FillValues(AddProps(path + "\\config.xml"), GetOrgUnitId(path));
+            return FillValues( new Dictionary<Property, string>(), GetOrgUnitId(path));
         }
-        Dictionary<Property, string> FillPropsValuesToChild(Dictionary<Property, string> propsFromParentWithValue, Dictionary<Property, string> propsWithValuesToChild, string orgUnitId)
-        {
-            foreach (var propFromParentWithValue in propsFromParentWithValue)
-            {
-                if (!propsWithValuesToChild.ContainsKey(propFromParentWithValue.Key))
-                    propsWithValuesToChild.Add(propFromParentWithValue.Key, propFromParentWithValue.Value);
-            }
-            AddOrganizationUnitToProperty(orgUnitId, propsWithValuesToChild);
-            return propsWithValuesToChild;
-        }
-        Dictionary<Property, string> FillPropsValuesToChild(Dictionary<Property, string> propsFromParentWithValue, Dictionary<Property, string> propsWithValuesToChild)
-        {
-            foreach (var propFromParentWithValue in propsFromParentWithValue)
-            {
-                if (!propsWithValuesToChild.ContainsKey(propFromParentWithValue.Key))
-                    propsWithValuesToChild.Add(propFromParentWithValue.Key, propFromParentWithValue.Value);
-            }
-            return propsWithValuesToChild;
-        }
-        List<Item> AddNodeItems(XmlNode node)
-        {
-            if (node == null)
-                return null;
-            var itemsList = new List<Item>();
-            foreach (XmlNode chilNode in node.ChildNodes)
-            {
-                itemsList.Add(new Item { RecMode = chilNode.Attributes["recMode"].Value, Value = chilNode.InnerText });
-            }
-            return itemsList;
+        Dictionary<Property, string> FillValues( Dictionary<Property, string> valuesResult, string orgUnitId)
+        {          
+            AddOrganizationUnitToProperty(orgUnitId, valuesResult);
+            return valuesResult;
         }
         string AddOrganizationUnitDescription(string pathToDescription)
         {

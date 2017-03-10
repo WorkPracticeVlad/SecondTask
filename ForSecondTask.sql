@@ -20,10 +20,4 @@ CREATE TABLE OrganizationUnitToProperties
 CONSTRAINT PK_OrganizationUnitToProperty PRIMARY KEY NONCLUSTERED ([OrganizationUnitIdentity], [PropertyName]) 
 )
 go
-CREATE TABLE Items
-(
-[Id] int IDENTITY(1,1) PRIMARY KEY,
-[PropertyName] nvarchar(225) NOT NULL FOREIGN KEY REFERENCES Properties([Name]),
-[RecMode] nvarchar(max),
-[Value] nvarchar(max)
-)
+

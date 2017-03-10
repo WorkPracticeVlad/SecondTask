@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="IOperationWithDb.cs" />
     <Compile Include="OperationWithDb.cs" />
-    <Compile Include="Item.cs" />
     <Compile Include="OrganizationUnit.cs" />
     <Compile Include="OrganizationUnitToProperty.cs" />
     <Compile Include="Property.cs" />
