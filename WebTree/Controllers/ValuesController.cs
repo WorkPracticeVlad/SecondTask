@@ -44,7 +44,7 @@ namespace WebTree.Controllers
         {
             _operationWithDB.DeleteTreeFromDb();
             _operationWithDB.InsertTreeToDb(pathToEnviroment);
-            return true;
+            return true;          
         }
         // DELETE api/values/5
         public void Delete(int id)

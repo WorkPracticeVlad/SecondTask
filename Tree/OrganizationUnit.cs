@@ -11,5 +11,6 @@ namespace Tree
         public string Identity { get; set; }
         public string Description { get; set; }
         public bool IsVirtual { get; set; }
+        public string ParentIdentity { get; set; }
     }
 }

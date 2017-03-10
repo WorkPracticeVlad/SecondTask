@@ -34,23 +34,41 @@ function ViewModel() {
     self.units = ko.observableArray([]);
     self.props = ko.observableArray([]);
     self.orgUnitProps = ko.observableArray([]);
+    self.Refresh = function () {
+        $.ajax({
+            url: urlApi,
+            type: 'DELETE',
+            success: function (result) {
+                $.getJSON(urlApi, function (data) {
+                    self.units(data.OrgUnits);
+                    self.props(data.Props);
+                    self.orgUnitProps(data.OrgUnitToProps);
+                });
+            }
+        })
+    };
     $.getJSON(urlApi, function (data) {
         self.units(data.OrgUnits);
         self.props(data.Props);
         self.orgUnitProps(data.OrgUnitToProps);
-    })   
-}
-$("#refresh").click(function () {
-    $.ajax({
-        url: urlApi,
-        type: 'DELETE',
-        success: function (result) {
-            $.getJSON(urlApi, function (data) {
-                self.units(data.OrgUnits);
-                self.props(data.Props);
-                self.orgUnitProps(data.OrgUnitToProps);
-            })
-        }
     });
-});
+    self.ValuesToAncestor = ko.observableArray([]);
+    self.OrgUnitValuesLine = function (orgU) {
+        while (self.valuesToAncestor.length > 0) {
+            self.valuesToAncestor.pop();
+        }
+        (function AddToValuesToAncestor(orgUnt) {
+            for (var orgUntToProp in self.orgUnitProps) {
+                if (orgUnt.Identity === orgUntToProp.OrganizationUnitIdentity) {
+                    valuesToAncestor.push(orgUntToProp);
+                }
+            }
+            for (var orgUnit in self.units) {
+                if (orgUnt.ParentIdentity === orgUnit.Identity) {
+                    AddTovaluesToAncestor(orgUnit);
+                }
+            }
+        })(orgU);
+    }
+}
 ko.applyBindings(new ViewModel());

@@ -2,3 +2,4 @@ C:\Users\vorlov\documents\visual studio 2015\Projects\SecondTask\Tree\bin\Debug\
 C:\Users\vorlov\documents\visual studio 2015\Projects\SecondTask\Tree\bin\Debug\Tree.pdb
 C:\Users\vorlov\documents\visual studio 2015\Projects\SecondTask\Tree\obj\Debug\Tree.dll
 C:\Users\vorlov\documents\visual studio 2015\Projects\SecondTask\Tree\obj\Debug\Tree.pdb
+C:\Users\vorlov\Documents\Visual Studio 2015\Projects\SecondTask\Tree\obj\Debug\Tree.csprojResolveAssemblyReference.cache

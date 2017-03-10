@@ -2,7 +2,8 @@ CREATE TABLE OrganizationUnits
 (
 [Identity] nvarchar(225) NOT NULL PRIMARY KEY,
 [Description] nvarchar(max),
-[IsVirtual] bit
+[IsVirtual] bit,
+[ParentIdentity] nvarchar(225)  /*FOREIGN KEY REFERENCES OrganizationUnits([Identity])*/
 )
 go
 CREATE TABLE Properties

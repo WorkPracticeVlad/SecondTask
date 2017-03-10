@@ -27,7 +27,7 @@ namespace Tree
         }
         public int InsertTreeToDb(string path)
         {
-            _treeCrawler.EnterEnviroment(path);
+            _treeCrawler.EnterEnvironment(path);
             var insertExpression = FormatFullInsertCommandSql(_treeCrawler.OrgUnints, _treeCrawler.Props, _treeCrawler.OrgUnitToProps);
             var numberAffectedRows = 0;
             using (SqlConnection connection = new SqlConnection(_connString))
@@ -86,7 +86,8 @@ namespace Tree
                             {
                                 Identity = reader.GetString(0),
                                 Description = reader.GetString(1),
-                                IsVirtual = reader.GetBoolean(2)
+                                IsVirtual = reader.GetBoolean(2),
+                                ParentIdentity = reader.GetString(3)
                             });
                         }
                     if (reader.NextResult())
@@ -117,7 +118,7 @@ namespace Tree
             strBuilder.Append("INSERT INTO OrganizationUnits VALUES ");
             foreach (var orgUnit in orgUnits)
             {
-                strBuilder.AppendFormat("('{0}', '{1}', '{2}'), ", orgUnit.Key, orgUnit.Value.Description, orgUnit.Value.IsVirtual);
+                strBuilder.AppendFormat("('{0}', '{1}', '{2}', '{3}'), ", orgUnit.Key, orgUnit.Value.Description, orgUnit.Value.IsVirtual, orgUnit.Value.ParentIdentity);
             }
             strBuilder.Remove(strBuilder.Length - 2, 2);
             strBuilder.Append(" ");
@@ -158,12 +159,13 @@ namespace Tree
         }
         string FormatFullInsertCommandSql(Dictionary<string, OrganizationUnit> orgUnits, Dictionary<string, Property> props, IDictionary<string, OrganizationUnitToProperty> orgUnitToProps)
         {
-            var strBuilderer = new StringBuilder();
-            strBuilderer.Append(FormatInsertCommandSql(orgUnits));
-            strBuilderer.Append(FormatInsertCommandSql(props)[0]);
-            strBuilderer.Append(FormatInsertCommandSql(props)[1]);
-            strBuilderer.Append(FormatInsertCommandSql(orgUnitToProps));
-            return strBuilderer.ToString();
+            var strBuilder = new StringBuilder();
+            strBuilder.Append(FormatInsertCommandSql(orgUnits));
+            strBuilder.Append(FormatInsertCommandSql(props)[0]);
+            strBuilder.Append(FormatInsertCommandSql(props)[1]);
+            strBuilder.Append(FormatInsertCommandSql(orgUnitToProps));
+            //strBuilder.Append(" IF OBJECT_ID('dbo.[fk_OrgUnitParent]', 'F') IS NULL ALTER TABLE OrganizationUnits ADD CONSTRAINT fk_OrgUnitParent FOREIGN KEY(ParentIdentity) REFERENCES [OrganizationUnits]([Identity]); ");
+            return strBuilder.ToString();
         }
         string FormatFullDeleteCommandSql()
         {
@@ -171,6 +173,7 @@ namespace Tree
             var tables = new string[] { "OrganizationUnitToProperties", "Items", "OrganizationUnits", "Properties" };
             foreach (var table in tables)
                 strBuilder.AppendFormat("DELETE FROM {0}; ", table);
+            //strBuilder.Append(" IF OBJECT_ID('dbo.[fk_OrgUnitParent]', 'F') IS NOT NULL ALTER TABLE OrganizationUnits DROP CONSTRAINT fk_OrgUnitParent; ");
             return strBuilder.ToString();
         }
         string FormatFullSelectCommandSql()
