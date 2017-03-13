@@ -2,17 +2,12 @@
 <script src="~/Scripts/MyJS.js"></script>
 }
 <div class="jumbotron">
-    <h1>ASP.NET</h1>
     <p class="lead">Refresh data</p>
     <button data-bind="click: Refresh" class="btn btn-info btn-lg"> Refresh</button>  
 </div>
-<div>
-    <button data-bind="click: ShowUnits, visible: shouldShowUnitBtn" class="btn btn-primary btn-block">Units</button>
-    <button data-bind="click: ShowProps, visible: shouldShowPropBtn" class="btn btn-primary btn-block">Props</button>
-    <button data-bind="click: ShowValues, visible: shouldShowValueBtn" class="btn btn-primary btn-block">Values</button>
-</div>
 <div class="row">
-    <div data-bind="visible: shouldShowUnits" class="col-md-12">
+    <p>Units</p>
+    <div  class="col-md-12">
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -32,33 +27,25 @@
             </tbody>                     
         </table>
     </div>
-    <div data-bind="visible: shouldShowProps" class="col-md-12">
+    <p>Properties</p>
+    <div  class="col-md-12">
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th class="col-md-4">Name</th>
-                    <th class="col-md-4">Type</th>
-                    <th class="col-md-4">Items</th>
+                    <th class="col-md-6">Name</th>
+                    <th class="col-md-6">Type</th>                 
                 </tr>
             </thead>
             <tbody data-bind="foreach: props">
                 <tr>
-                    <td class="col-md-4" data-bind="text: $data.Name"></td>
-                    <td class="col-md-4" data-bind="text: $data.Type"></td>
-                    <td class="col-md-4" >
-                        <ol data-bind="foreach: $data.Items">
-                            <li>
-                                <span>Id = </span><span data-bind="text: $data.Id"></span><br />
-                                <span>RecMode = </span><span data-bind="text: $data.RecMode"></span><br />
-                                <span>Value = </span><span data-bind="text: $data.Value"></span><br />
-                            </li>
-                        </ol>
-                    </td>
+                    <td class="col-md-6" data-bind="text: $data.Name"></td>
+                    <td class="col-md-6" data-bind="text: $data.Type"></td>
                 </tr>
             </tbody>
         </table>            
     </div>
-    <div data-bind="visible: shouldShowValues" class="col-md-12">
+    <p>Values</p>
+    <div  class="col-md-12">
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -67,7 +54,7 @@
                     <th class="col-md-4">Value</th>
                 </tr>
             </thead>
-            <tbody data-bind="foreach: orgUnitProps">
+            <tbody data-bind="foreach: values">
                 <tr>
                     <td class="col-md-4" data-bind="text: OrganizationUnitIdentity"></td>
                     <td class="col-md-4" data-bind="text: PropertyName"></td>
@@ -76,4 +63,5 @@
             </tbody>           
         </table>
     </div>
+
 </div>

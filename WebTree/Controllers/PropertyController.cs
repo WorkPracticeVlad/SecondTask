@@ -9,39 +9,40 @@ using Tree;
 
 namespace WebTree.Controllers
 {
-    public class ValuesController : ApiController
+    public class PropertyController : ApiController
     {
         private OperationWithDb _operationWithDB;
         int _pageCount;
         int itemsPerPage = 2;
-        public ValuesController()
+        // GET: api/Property
+        public PropertyController()
         {
             _operationWithDB = new OperationWithDb();
-            _pageCount = _operationWithDB.CountValuesPages(itemsPerPage);
+            _pageCount = _operationWithDB.CountPropertyPages(itemsPerPage);
         }
-        // GET: api/Values
+        // GET: api/Property
         public int Get()
         {
-            return  _pageCount;
+            return _pageCount;
         }
 
-        // GET: api/Values/5
-        public List<OrganizationUnitToProperty> Get(int id)
+        // GET: api/Property/5
+        public List<Property> Get(int id)
         {
-            return _operationWithDB.ReadPage(id, itemsPerPage, "[Value]", new List<OrganizationUnitToProperty>());
+            return _operationWithDB.ReadPage(id, itemsPerPage, "[Name]", new List<Property>());
         }
 
-        // POST: api/Values
+        // POST: api/Property
         public void Post([FromBody]string value)
         {
         }
 
-        // PUT: api/Values/5
+        // PUT: api/Property/5
         public void Put(int id, [FromBody]string value)
         {
         }
 
-        // DELETE: api/Values/5
+        // DELETE: api/Property/5
         public void Delete(int id)
         {
         }

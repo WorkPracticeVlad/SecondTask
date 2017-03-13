@@ -20,72 +20,46 @@ namespace Tree
         public Dictionary<string, OrganizationUnitToProperty> OrgUnitToProps { get { return _orgUnitToProps; } }
         public void EnterEnvironment(string path)
         {
-            var doc = ReadXmlByPath(path);
-            var instances = doc.SelectSingleNode("/instances");
-            foreach (XmlNode instance in instances)
+            foreach (XmlNode instance in ReadXmlByPath(path).SelectSingleNode("/instances"))
             {
                 var orgUnitId = AddOrganizationUnit(instance, null);
                 var valuesInUnit = AddPopsFromNode(instance.FirstChild);
-                AddOrganizationUnitToProperty(orgUnitId, valuesInUnit);
-                var configPathPropValue = TakeById(valuesInUnit, "configPath");
-                ConsiderFolder(configPathPropValue.Value, orgUnitId);
+                AddValues(orgUnitId, valuesInUnit);
+                ConsiderFolder(TakeById(valuesInUnit, "configPath").Value, orgUnitId);
                 int x = 1;
             }
         }
-        KeyValuePair<Property, string> TakeById(Dictionary<Property, string> propsValue, string nameId)
-        {
-            var propValue = propsValue.Single(i => i.Key.Name == nameId);
-            return propValue;
-        }
         void ConsiderFolder(string path, string parentId)
         {
-            var orgUnitId = parentId;         
-            var folders = Directory.GetDirectories(path);
             var files = Directory.GetFiles(path);
             if (files.Length != 0)
             {
                 ConsiderFolderContent(path, files);
                 if (files.Contains(path + "\\identity.xml"))
-                    orgUnitId = AddOrganizationUnit(path, path + "\\identity.xml", parentId);
+                    parentId = AddOrganizationUnit(path, path + "\\identity.xml", parentId);
                 else
-                    orgUnitId = AddOrganizationUnit(path, parentId);
+                    parentId = AddOrganizationUnit(path, null, parentId);
             }
-            foreach (var folderPath in folders)
+            foreach (var folderPath in Directory.GetDirectories(path))
             {
-                ConsiderFolder(folderPath, orgUnitId);
+                ConsiderFolder(folderPath, parentId);
             }
         }
         string AddOrganizationUnit(string path, string pathToDescription, string parenId)
         {
             string orgUnitId = GetOrgUnitId(path);
+            var descr = "";
+            if (!String.IsNullOrEmpty(pathToDescription))
+                descr = ReadXmlByPath(pathToDescription).SelectSingleNode("/organization-unit/@description").Value;
             if (!_orgUnits.ContainsKey(orgUnitId))
                 _orgUnits.Add(orgUnitId,
                 new OrganizationUnit
                 {
                     Identity = orgUnitId,
-                    Description = AddOrganizationUnitDescription(pathToDescription),
+                    Description = descr,
                     IsVirtual = false,
                     ParentIdentity = parenId
                 });
-            return orgUnitId;
-        }
-        string AddOrganizationUnit(string path, string parentId)
-        {
-            string orgUnitId = GetOrgUnitId(path);
-            if (!_orgUnits.ContainsKey(orgUnitId))
-                _orgUnits.Add(orgUnitId,
-                new OrganizationUnit
-                {
-                    Identity = orgUnitId,
-                    Description = "",
-                    IsVirtual = false,
-                    ParentIdentity = parentId
-                });
-            return orgUnitId;
-        }
-        private string GetOrgUnitId(string path)
-        {
-            string orgUnitId = path.Substring(path.LastIndexOf(backSlash) + 1);
             return orgUnitId;
         }
         string AddOrganizationUnit(XmlNode node, string parentId)
@@ -105,11 +79,14 @@ namespace Tree
                 });
             return orgUnitId;
         }
+        private string GetOrgUnitId(string path)
+        {
+            string orgUnitId = path.Substring(path.LastIndexOf(backSlash) + 1);
+            return orgUnitId;
+        }
         Dictionary<Property, string> AddProps(string path)
         {
-            var doc = ReadXmlByPath(path);
-            var node = doc.SelectSingleNode("/configuration");
-            return AddPopsFromNode(node);
+            return AddPopsFromNode(ReadXmlByPath(path).SelectSingleNode("/configuration"));
         }
         Dictionary<Property, string> AddPopsFromNode(XmlNode node)
         {
@@ -130,7 +107,7 @@ namespace Tree
             }
             return propsInOrgUnitWithValue;
         }
-        void AddOrganizationUnitToProperty(string orgUnitId, Dictionary<Property, string> propsInOrgUnitWithValue)
+        void AddValues(string orgUnitId, Dictionary<Property, string> propsInOrgUnitWithValue)
         {
             foreach (var nameValueProp in propsInOrgUnitWithValue)
             {
@@ -143,54 +120,35 @@ namespace Tree
                     });
             }
         }
-        private Dictionary<Property, string> ConsiderFolderContent(string path,  string[] files)
+        private void ConsiderFolderContent(string path, string[] files)
         {
             if (files.Contains(path + "\\organization_units.xml"))
-                ConsiderXmlTreeOrganizationUnits(path);
-            return ConsiderOrganizationUnit(path, files);
+                ConsiderXmlNode(ReadXmlByPath(path + "\\organization_units.xml").SelectSingleNode("/organization-units"), GetOrgUnitId(path));
+            if (files.Contains(path + "\\config.xml"))
+                AddValues(GetOrgUnitId(path), AddProps(path + "\\config.xml"));
         }
-        void ConsiderXmlTreeOrganizationUnits(string path)
-        {
-            var doc = ReadXmlByPath(path + "\\organization_units.xml");
-            var nodeOrgUnits = doc.SelectSingleNode("/organization-units");
-            ConsiderXmlNode(nodeOrgUnits, GetOrgUnitId(path));
-        }
-        private void ConsiderXmlNode( XmlNode node, string parentId)
+        private void ConsiderXmlNode(XmlNode node, string parentId)
         {
             foreach (XmlNode childNode in node)
             {
                 if (childNode.Name == "organization-unit")
                 {
                     var orgUnitId = AddOrganizationUnit(childNode, parentId);
-                    ConsiderXmlNode( childNode, orgUnitId);
+                    AddValues(orgUnitId, AddPopsFromNode(childNode));
+                    ConsiderXmlNode(childNode, orgUnitId);
                 }
             }
-        }
-        Dictionary<Property, string> ConsiderOrganizationUnit(XmlNode node)
-        {
-            return FillValues( AddPopsFromNode(node), node.Attributes["id"].Value);
-        }
-        Dictionary<Property, string> ConsiderOrganizationUnit(string path,  string[] files)
-        {
-            if (files.Contains(path + "\\config.xml"))
-                return FillValues(AddProps(path + "\\config.xml"), GetOrgUnitId(path));
-            return FillValues( new Dictionary<Property, string>(), GetOrgUnitId(path));
-        }
-        Dictionary<Property, string> FillValues( Dictionary<Property, string> valuesResult, string orgUnitId)
-        {          
-            AddOrganizationUnitToProperty(orgUnitId, valuesResult);
-            return valuesResult;
-        }
-        string AddOrganizationUnitDescription(string pathToDescription)
-        {
-            XmlDocument doc = ReadXmlByPath(pathToDescription);
-            return doc.SelectSingleNode("/organization-unit/@description").Value;
         }
         XmlDocument ReadXmlByPath(string path)
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(path);
             return doc;
+        }
+        KeyValuePair<Property, string> TakeById(Dictionary<Property, string> propsValue, string nameId)
+        {
+            var propValue = propsValue.Single(i => i.Key.Name == nameId);
+            return propValue;
         }
     }
 }

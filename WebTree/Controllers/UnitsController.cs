@@ -6,42 +6,43 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using Tree;
+using WebTree.Models;
 
 namespace WebTree.Controllers
 {
-    public class ValuesController : ApiController
+    public class UnitsController : ApiController
     {
         private OperationWithDb _operationWithDB;
         int _pageCount;
         int itemsPerPage = 2;
-        public ValuesController()
+        // GET: api/Units
+        public UnitsController()
         {
             _operationWithDB = new OperationWithDb();
-            _pageCount = _operationWithDB.CountValuesPages(itemsPerPage);
+            _pageCount = _operationWithDB.CountUnitPages(itemsPerPage);
         }
-        // GET: api/Values
         public int Get()
         {
-            return  _pageCount;
+            return _pageCount;
         }
 
-        // GET: api/Values/5
-        public List<OrganizationUnitToProperty> Get(int id)
+        // GET: api/Units/5
+        public List<OrganizationUnit> Get(int id)
         {
-            return _operationWithDB.ReadPage(id, itemsPerPage, "[Value]", new List<OrganizationUnitToProperty>());
+             return _operationWithDB.ReadPage(id, itemsPerPage, "[Identity]", new List<OrganizationUnit>()); 
         }
 
-        // POST: api/Values
+        // POST: api/Units
         public void Post([FromBody]string value)
         {
         }
 
-        // PUT: api/Values/5
+        // PUT: api/Units/5
         public void Put(int id, [FromBody]string value)
         {
         }
 
-        // DELETE: api/Values/5
+        // DELETE: api/Units/5
         public void Delete(int id)
         {
         }

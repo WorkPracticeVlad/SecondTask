@@ -14,9 +14,7 @@ namespace WebTree.Controllers
 
         public ActionResult Index()
         {           
-            ViewBag.Title = "Home Page";
-            var cr = new TreeCrawler();
-            cr.EnterEnvironment(ConfigurationManager.AppSettings["pathToEnviroment"]);        
+            ViewBag.Title = "Home Page";       
             return View();
         }
     }
