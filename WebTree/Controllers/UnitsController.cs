@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using Tree;
+using Tree.Data;
 using WebTree.Models;
 
 namespace WebTree.Controllers
@@ -31,7 +32,11 @@ namespace WebTree.Controllers
         {
              return _operationWithDB.ReadPage(id, itemsPerPage, "[Identity]", new List<OrganizationUnit>()); 
         }
-
+        [Route("api/units/{id}/{identity}")]
+        public List<OrganizationUnitToProperty> Get(int id, string identity)
+        {
+            return _operationWithDB.ReadOrganizationUnitValuesFromDb(identity);
+        }
         // POST: api/Units
         public void Post([FromBody]string value)
         {

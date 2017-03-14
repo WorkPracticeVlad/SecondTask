@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tree
+namespace Tree.Data
 {
-    public class OrganizationUnit
+    public class OrganizationUnit : IStich
     {
         public string Identity { get; set; }
         public string Description { get; set; }

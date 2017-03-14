@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Tree.Data;
 
 namespace Tree
 {
@@ -31,7 +32,7 @@ namespace Tree
         public int InsertTreeToDb(string path)
         {
             _treeCrawler.EnterEnvironment(path);
-            var insertExpression = FormatFullInsertCommandSql(_treeCrawler.OrgUnints, _treeCrawler.Props, _treeCrawler.OrgUnitToProps);
+            var insertExpression = FormatFullInsertCommandSql(_treeCrawler.OrgUnits, _treeCrawler.Properties, _treeCrawler.OrganizationUnitToProperties);
             var numberAffectedRows = 0;
             using (SqlConnection connection = new SqlConnection(_connString))
             {

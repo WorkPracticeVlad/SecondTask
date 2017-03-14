@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tree
+namespace Tree.Data
 {
-    public class Property
+    public class Property : IStich
     {
         public string Name { get; set; }
         public string Type { get; set; }

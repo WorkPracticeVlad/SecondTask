@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Tree;
+using Tree.DB;
 
 namespace WebTree.Controllers
 {
@@ -14,7 +15,13 @@ namespace WebTree.Controllers
 
         public ActionResult Index()
         {           
-            ViewBag.Title = "Home Page";       
+            ViewBag.Title = "Home Page";
+            var test = new OperationUnitDb();
+            var xtest = test.ReadPage(1, "[Identity]");     
+            return View();
+        }
+        public ActionResult TreePages()
+        {
             return View();
         }
     }

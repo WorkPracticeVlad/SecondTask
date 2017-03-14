@@ -1,5 +1,4 @@
-﻿let urlApies = ["http://localhost:49997/api/tree", "http://localhost:49997/api/values", "http://localhost:49997/api/units", "http://localhost:49997/api/property"];
-let tempo;
+﻿let urlApi = "http://localhost:49997/api/tree";
 function TreeViewModel() {
     var self = this;  
     self.units = ko.observableArray([]);
@@ -7,10 +6,10 @@ function TreeViewModel() {
     self.values = ko.observableArray([]);
     self.Refresh = function () {
         $.ajax({
-            url: urlApies[0],
+            url: urlApi,
             type: 'DELETE',
             success: function (result) {
-                $.getJSON(urlApies[0], function (data) {
+                $.getJSON(urlApi, function (data) {
                     self.units(data.OrgUnits);
                     self.props(data.Props);
                     self.values(data.OrgUnitToProps);
@@ -18,7 +17,7 @@ function TreeViewModel() {
             }
         })
     };
-    $.getJSON(urlApies[0], function (data) {
+    $.getJSON(urlApi, function (data) {
         self.units(data.OrgUnits);
         self.props(data.Props);
         self.values(data.OrgUnitToProps);
