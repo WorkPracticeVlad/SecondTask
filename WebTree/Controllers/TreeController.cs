@@ -6,44 +6,29 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using Tree;
+using Tree.Manage;
 using WebTree.Models;
 
 namespace WebTree.Controllers
 {
     public class TreeController : ApiController
     {
-        string pathToEnviroment = ConfigurationManager.AppSettings["pathToEnviroment"];
-        private IOperationWithDb _operationWithDB;
+        private Manager _manager;
+
         public TreeController()
         {
-            _operationWithDB = new OperationWithDb();
+           _manager = new Manager();
         }
         public TreeModel Get()
         {
-            _operationWithDB.ReadTreeFromDb();
-            return new TreeModel { OrgUnits = _operationWithDB.OrgUnints, OrgUnitToProps = _operationWithDB.OrgUnitToProps, Props = _operationWithDB.Props };
+            return new TreeModel { OrgUnits = _manager.OrgUnitsRepository.ReadDataFromDb(),
+                Values = _manager.ValuesRepository.ReadDataFromDb(),
+                Properties = _manager.PropertiesRepository.ReadDataFromDb()
+            };
         }
-
-        public string Get(int id)
+        public void Delete()
         {
-            return "value";
-        }
-
-        public void Post([FromBody]string value)
-        {
-        }
-        public void Put(int id, [FromBody]string value)
-        {
-            
-        }
-        public bool Delete()
-        {
-            _operationWithDB.DeleteTreeFromDb();
-            _operationWithDB.InsertTreeToDb(pathToEnviroment);
-            return true;
-        }
-        public void Delete(int id)
-        {
-        }
+            _manager.RefreshTree();
+        }      
     }
 }

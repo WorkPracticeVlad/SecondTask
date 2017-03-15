@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tree.Data
 {
-    public class OrganizationUnitToProperty : IStich
+    public class OrganizationUnitToProperty
     {
         public string OrganizationUnitIdentity { get; set; }
         public string PropertyName { get; set; }

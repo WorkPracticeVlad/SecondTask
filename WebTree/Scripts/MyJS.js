@@ -11,16 +11,16 @@ function TreeViewModel() {
             success: function (result) {
                 $.getJSON(urlApi, function (data) {
                     self.units(data.OrgUnits);
-                    self.props(data.Props);
-                    self.values(data.OrgUnitToProps);
+                    self.props(data.Properties);
+                    self.values(data.Values);
                 });
             }
         })
     };
     $.getJSON(urlApi, function (data) {
         self.units(data.OrgUnits);
-        self.props(data.Props);
-        self.values(data.OrgUnitToProps);
+        self.props(data.Properties);
+        self.values(data.Values);
     });
 }
 ko.applyBindings(new TreeViewModel());

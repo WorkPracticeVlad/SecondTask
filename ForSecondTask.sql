@@ -76,7 +76,7 @@ EXEC sp_executesql @SqlCommand
 END;
 SET NOCOUNT OFF;
 GO
-create function fnItemsCountPerPage
+create function [dbo].[fnCountPages]
 (
 @Count as int,
 @ItemsPerPage as int
@@ -119,7 +119,7 @@ begin
 declare @Count as int
 declare @Remnant as int
 select @Count= [dbo].[fnCountPerTable](@TableName)
-return [dbo].[fnItemsCountPerPage](@Count,@ItemsPerPage)
+return [dbo].[fnCountPages](@Count,@ItemsPerPage)
 end
 GO
 CREATE PROC SelectAllFromTables
@@ -150,6 +150,26 @@ EXEC sp_executesql @SqlCommand
 END;
 SET NOCOUNT OFF;
 GO
+CREATE PROC SelectAllFromTable( @TableName as nvarchar(128))
+AS
+SET NOCOUNT ON;
+BEGIN
+DECLARE @SqlCommand NVARCHAR(MAX);
+SET @SqlCommand= N'SELECT * FROM '+ @TableName
+EXEC sp_executesql @SqlCommand
+END;
+SET NOCOUNT OFF;
+GO
+CREATE PROC DeleteAllFromTable( @TableName as nvarchar(128))
+AS
+SET NOCOUNT ON;
+BEGIN
+DECLARE @SqlCommand NVARCHAR(MAX);
+SET @SqlCommand= N'DELETE FROM '+ @TableName
+EXEC sp_executesql @SqlCommand
+END;
+SET NOCOUNT OFF;
+GO
 CREATE TYPE [dbo].[OrganizationUnitsType] AS TABLE(
  [Identity] nvarchar(225) ,
 [Description] nvarchar(max),
@@ -166,6 +186,41 @@ BEGIN
  SET NOCOUNT ON;
      INSERT [dbo].[OrganizationUnits]([Identity], [Description], [IsVirtual], [ParentIdentity]) 
      SELECT [Identity], [Description], [IsVirtual], [ParentIdentity] FROM @OrgUnits;
+ SET NOCOUNT OFF;
+END
+GO
+CREATE TYPE [dbo].[PropertiesType] AS TABLE(
+[Name] nvarchar(225),
+[Type] nvarchar(max) 
+)
+GO
+create procedure [dbo].[InsertProperties]
+(  
+    @Properties PropertiesType READONLY
+)
+AS
+BEGIN
+ SET NOCOUNT ON;
+     INSERT [dbo].[Properties]([Name], [Type]) 
+     SELECT [Name], [Type] FROM @Properties;
+ SET NOCOUNT OFF;
+END
+GO
+CREATE TYPE [dbo].[OrganizationUnitToPropertiesType] AS TABLE(
+[OrganizationUnitIdentity] nvarchar(225),
+[PropertyName] nvarchar(225),
+[Value] nvarchar(max)
+)
+GO
+create procedure [dbo].[InsertOrganizationUnitToProperties]
+(  
+    @OrganizationUnitToProperties OrganizationUnitToPropertiesType READONLY
+)
+AS
+BEGIN
+ SET NOCOUNT ON;
+     INSERT [dbo].[OrganizationUnitToProperties]([OrganizationUnitIdentity], [PropertyName], [Value]) 
+     SELECT [OrganizationUnitIdentity], [PropertyName], [Value] FROM @OrganizationUnitToProperties;
  SET NOCOUNT OFF;
 END
 GO

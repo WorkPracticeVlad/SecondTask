@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tree.Data
 {
-    public class Property : IStich
+    public class Property 
     {
         public string Name { get; set; }
         public string Type { get; set; }

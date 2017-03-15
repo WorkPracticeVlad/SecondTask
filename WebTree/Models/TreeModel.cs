@@ -10,7 +10,7 @@ namespace WebTree.Models
     public class TreeModel
     {
         public List<OrganizationUnit> OrgUnits { get; set; }
-        public List<Property> Props { get; set; } 
-        public List<OrganizationUnitToProperty> OrgUnitToProps { get; set; } 
+        public List<Property> Properties { get; set; } 
+        public List<OrganizationUnitToProperty> Values { get; set; } 
     }
 }

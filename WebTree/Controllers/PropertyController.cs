@@ -7,45 +7,28 @@ using System.Net.Http;
 using System.Web.Http;
 using Tree;
 using Tree.Data;
+using Tree.Manage;
 
 namespace WebTree.Controllers
 {
     public class PropertyController : ApiController
     {
-        private OperationWithDb _operationWithDB;
-        int _pageCount;
-        int itemsPerPage = 2;
-        // GET: api/Property
+        private Manager _manager;
+
         public PropertyController()
         {
-            _operationWithDB = new OperationWithDb();
-            _pageCount = _operationWithDB.CountPropertyPages(itemsPerPage);
+             _manager=new Manager();
         }
         // GET: api/Property
         public int Get()
         {
-            return _pageCount;
+            return _manager.PropertiesRepository.CountPages();
         }
 
         // GET: api/Property/5
         public List<Property> Get(int id)
         {
-            return _operationWithDB.ReadPage(id, itemsPerPage, "[Name]", new List<Property>());
-        }
-
-        // POST: api/Property
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT: api/Property/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/Property/5
-        public void Delete(int id)
-        {
+            return _manager.PropertiesRepository.ReadPageFromDb(id, "[Name]");
         }
     }
 }

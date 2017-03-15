@@ -41,18 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\IStich.cs" />
     <Compile Include="Data\OrganizationUnit.cs" />
     <Compile Include="Data\OrganizationUnitToProperty.cs" />
     <Compile Include="Data\Property.cs" />
-    <Compile Include="DB\OperationTableDb.cs" />
-    <Compile Include="DB\OperationTreeDb.cs" />
-    <Compile Include="DB\OperationUnitDb.cs" />
-    <Compile Include="IOperationWithDb.cs" />
-    <Compile Include="OperationWithDb.cs" />
+    <Compile Include="DB\OrganizationUnitRepository.cs" />
+    <Compile Include="DB\OrganizationUnitToPropertyRepository.cs" />
+    <Compile Include="DB\PropertyRepository.cs" />
+    <Compile Include="DB\Repository.cs" />
+    <Compile Include="Manage\Manager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TreeCrawler.cs" />
-    <Compile Include="TreeService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
