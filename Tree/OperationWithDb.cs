@@ -17,7 +17,7 @@ namespace Tree
         private TreeCrawler _treeCrawler;
         string[] tables = new string[] { "[dbo].[OrganizationUnitToProperties]", "[dbo].[OrganizationUnits]", "[dbo].[Properties]" };
         string[] procs = new string[] { "[dbo].[RowsPerPage]", "[dbo].[SelectAllValuesForOrganizationUnit]", "[dbo].[SelectOrganizationUnitToAncestors]" };
-        string[] func = new string[] { "[dbo].[fnItemsCountPerPageInTable]" };
+        string[] func = new string[] { "[dbo].[fnCountPagesInTable]" };
         List<OrganizationUnit> _orgUnits = new List<OrganizationUnit>();
         List<Property> _props = new List<Property>();
         List<OrganizationUnitToProperty> _orgUnitToProps = new List<OrganizationUnitToProperty>();

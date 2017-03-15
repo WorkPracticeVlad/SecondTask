@@ -8,40 +8,64 @@ using Tree.Data;
 
 namespace Tree.DB
 {
-    public class OperationUnitDb : OperationDb
+    public class OperationUnitDb : OperationTableDb
     {
-        public OperationUnitDb()
+        private string _procSelectAllValuesForOrganizationUnit;
+        public OperationUnitDb(int itemsPePage)
+            : this("[dbo].[OrganizationUnits]", itemsPePage)
         {
-            _tableName = "[dbo].[OrganizationUnits]";
-            _itemsPerPage = 4;
+
         }
-        public override List<IStich> ReadPage(int page, string column)
+        public OperationUnitDb(string tableName, int itemsPerPage)
+            : base( tableName,itemsPerPage)
         {
-            var items = new List<IStich>();
+            tableName = "[dbo].[OrganizationUnits]";
+            _tableName = tableName;
+            _procSelectAllValuesForOrganizationUnit = "[dbo].[SelectAllValuesForOrganizationUnit]";
+        }
+        public List<IStich> ReadOrganizationUnitValuesFromDb(string unitIdentity)
+        {
+            List<IStich> items = new List<IStich>();
+            var selectAllValuesForOrganizationUnitExpression = _procSelectAllValuesForOrganizationUnit;
             using (SqlConnection connection = new SqlConnection(_connString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand(_procRowsPerPage, connection);
-                AddSqlParemeters(page, _itemsPerPage, _tableName, column, command);
-                using (SqlDataReader reader = command.ExecuteReader())
+                SqlCommand command = new SqlCommand(selectAllValuesForOrganizationUnitExpression, connection);
+                AddSqlParemeters(unitIdentity, command);
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.HasRows)
                 {
                     if (reader.HasRows)
                     {
                         while (reader.Read())
                         {
-                            items.Add(new OrganizationUnit
+                            if (reader.IsDBNull(1))
                             {
-                                Identity = reader.GetString(0),
-                                Description = reader.GetString(1),
-                                IsVirtual = reader.GetBoolean(2),
-                                ParentIdentity = reader.GetString(3)
-                            });
+                                AddItem(items, reader, "[dbo].[OrganizationUnitToProperties]");
+                                continue;
+                            }
+                            AddItem(items, reader, "[dbo].[OrganizationUnitToProperties]");
                         }
                     }
-                    reader.Close();
+                    while (reader.NextResult())
+                        while (reader.Read())
+                        {
+                            if (reader.IsDBNull(1))
+                            {
+                                AddItem(items, reader, "[dbo].[OrganizationUnitToProperties]");
+                                continue;
+                            }
+                            AddItem(items, reader, "[dbo].[OrganizationUnitToProperties]");
+                        }
                 }
+                reader.Close();
             }
             return items;
+        }
+        private void AddSqlParemeters(string identity, SqlCommand command)
+        {
+            command.CommandType = System.Data.CommandType.StoredProcedure;
+            command.Parameters.Add(AddSqlParameter("@Identity", identity));
         }
     }
 }

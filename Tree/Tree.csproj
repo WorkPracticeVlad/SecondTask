@@ -45,7 +45,8 @@
     <Compile Include="Data\OrganizationUnit.cs" />
     <Compile Include="Data\OrganizationUnitToProperty.cs" />
     <Compile Include="Data\Property.cs" />
-    <Compile Include="DB\OperationDb.cs" />
+    <Compile Include="DB\OperationTableDb.cs" />
+    <Compile Include="DB\OperationTreeDb.cs" />
     <Compile Include="DB\OperationUnitDb.cs" />
     <Compile Include="IOperationWithDb.cs" />
     <Compile Include="OperationWithDb.cs" />

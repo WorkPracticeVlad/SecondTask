@@ -108,7 +108,7 @@ AND (index_id=0 or index_id=1);
 return @Count
 end
 GO
-create function fnItemsCountPerPageInTable
+create function fnCountPagesInTable
 (
 @ItemsPerPage as int,
 @TableName as nvarchar(128)
@@ -122,15 +122,50 @@ select @Count= [dbo].[fnCountPerTable](@TableName)
 return [dbo].[fnItemsCountPerPage](@Count,@ItemsPerPage)
 end
 GO
-CREATE PROC SelectAllFromTable( @TableName as nvarchar(128))
+CREATE PROC SelectAllFromTables
 AS
 SET NOCOUNT ON;
 BEGIN
 DECLARE @SqlCommand NVARCHAR(MAX);
-SET @SqlCommand= N'
-SELECT  *
-FROM '+ @TableName
+SET @SqlCommand= N'EXEC sp_MSForEachTable "SELECT * FROM ?"'
 EXEC sp_executesql @SqlCommand
 END;
 SET NOCOUNT OFF;
+GO
+CREATE PROC DeleteAllFromTables
+AS
+SET NOCOUNT ON;
+BEGIN
+DECLARE @SqlCommand NVARCHAR(MAX);
+SET @SqlCommand= N'EXEC sp_MSForEachTable "DISABLE TRIGGER ALL ON ?"
+
+EXEC sp_MSForEachTable "ALTER TABLE ? NOCHECK CONSTRAINT ALL"
+
+EXEC sp_MSForEachTable "DELETE FROM ?"
+
+EXEC sp_MSForEachTable "ALTER TABLE ? CHECK CONSTRAINT ALL"
+
+EXEC sp_MSForEachTable "ENABLE TRIGGER ALL ON ?"'
+EXEC sp_executesql @SqlCommand
+END;
+SET NOCOUNT OFF;
+GO
+CREATE TYPE [dbo].[OrganizationUnitsType] AS TABLE(
+ [Identity] nvarchar(225) ,
+[Description] nvarchar(max),
+[IsVirtual] bit,
+[ParentIdentity] nvarchar(225) 
+)
+GO
+create procedure [dbo].[InsertOrganizationUnits]
+(  
+    @OrgUnits OrganizationUnitsType READONLY
+)
+AS
+BEGIN
+ SET NOCOUNT ON;
+     INSERT [dbo].[OrganizationUnits]([Identity], [Description], [IsVirtual], [ParentIdentity]) 
+     SELECT [Identity], [Description], [IsVirtual], [ParentIdentity] FROM @OrgUnits;
+ SET NOCOUNT OFF;
+END
 GO

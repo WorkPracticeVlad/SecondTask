@@ -16,6 +16,7 @@ namespace Tree
         Dictionary<string, Property> _properties = new Dictionary<string, Property>();
         Dictionary<string, OrganizationUnitToProperty> _orgUnitToProperties = new Dictionary<string, OrganizationUnitToProperty>();
         char backSlash = '\\';
+        char dot = '.';
         readonly string configPathAtr = "configPath";
         public Dictionary<string, OrganizationUnit> OrgUnits { get { return _orgUnits; } }
         public Dictionary<string, Property> Properties { get { return _properties; } }
@@ -25,7 +26,7 @@ namespace Tree
             foreach (XmlNode instance in ReadXmlByPath(path).GetElementsByTagName("instance"))
             {
                 var orgUnitId = AddOrgUnit(instance, null);
-                var valuesInUnit = AddPopsFromNode(instance);
+                var valuesInUnit = AddPopertiesFromNode(instance);
                 AddValues(orgUnitId, valuesInUnit);
                 ConsiderFolder(TakeById(valuesInUnit, configPathAtr).Value, orgUnitId);
                 int x = 1;
@@ -37,17 +38,17 @@ namespace Tree
             if (File.Exists(path + "\\organization_units.xml"))
                 ConsiderXmlNode(ReadXmlByPath(path + "\\organization_units.xml").SelectSingleNode("/organization-units"), orgUnitId);
             if (File.Exists(path + "\\config.xml"))
-                AddValues(orgUnitId, AddProps(path + "\\config.xml"));
+                AddValues(orgUnitId, AddProperties(path + "\\config.xml"));
             if (!path.EndsWith(backSlash + "organization"))
-                parentId = AddOrganizationUnit(path, orgUnitId, parentId);
+                parentId = AddOrgUnit(path, orgUnitId, parentId);
             foreach (var folderPath in Directory.GetDirectories(path))
             {
                 ConsiderFolder(folderPath, parentId);
             }
         }
-        string AddOrganizationUnit(string path, string orgUnitId, string parenId)
+        string AddOrgUnit(string path, string orgUnitId, string parenId)
         {
-            var descr = "";
+            string descr = null;
             if (File.Exists(path + "\\identity.xml"))
                 descr = ReadXmlByPath(path + "\\identity.xml").SelectSingleNode("/organization-unit/@description")?.Value;
             if (!_orgUnits.ContainsKey(orgUnitId))
@@ -59,13 +60,13 @@ namespace Tree
                     IsVirtual = false,
                     ParentIdentity = parenId
                 });
-            return orgUnitId;
+            return orgUnitId.Replace(backSlash, dot);
         }
         string AddOrgUnit(XmlNode node, string parentId)
         {
             if (String.IsNullOrEmpty(parentId))
-                parentId = "INSTANCE";
-            var orgUnitId = parentId + backSlash + node.Attributes["id"]?.Value;
+                parentId = "Instanse";
+            var orgUnitId = parentId + dot + node.Attributes["id"]?.Value;
             var description = node.Attributes["description"]?.Value;
             if (!_orgUnits.ContainsKey(orgUnitId))
                 _orgUnits.Add(orgUnitId,
@@ -76,24 +77,24 @@ namespace Tree
                     IsVirtual = true,
                     ParentIdentity = parentId
                 });
-            return orgUnitId;
+            return orgUnitId.Replace(backSlash, dot);
         }
         private string GetOrgUnitId(string path)
         {
             if (path.EndsWith(backSlash + "organization"))
                 return null;
             if (path.EndsWith(backSlash + "config"))
-                return "Root";
+                return "RootConfig";
             string orgUnitId = path.Substring(path.LastIndexOf(backSlash + "organization") + 14);
-            return orgUnitId;
+            return orgUnitId.Replace(backSlash, dot);
         }
-        Dictionary<Property, string> AddProps(string path)
+        Dictionary<Property, string> AddProperties(string path)
         {
-            return AddPopsFromNode(ReadXmlByPath(path).SelectSingleNode("/configuration"));
+            return AddPopertiesFromNode(ReadXmlByPath(path).SelectSingleNode("/configuration"));
         }
-        Dictionary<Property, string> AddPopsFromNode(XmlNode node)
+        Dictionary<Property, string> AddPopertiesFromNode(XmlNode node)
         {
-            var propsInOrgUnitWithValue = new Dictionary<Property, string>();
+            var propertiesInOrgUnitWithValue = new Dictionary<Property, string>();
             foreach (XmlNode propertyNode in node.SelectNodes(".//property"))
             {
                 var property = new Property
@@ -103,13 +104,13 @@ namespace Tree
                 };
                 if (!_properties.ContainsKey(property.Name))
                     _properties.Add(property.Name, property);
-                propsInOrgUnitWithValue.Add(property, propertyNode.InnerXml);
+                propertiesInOrgUnitWithValue.Add(property, propertyNode.InnerXml);
             }
-            return propsInOrgUnitWithValue;
+            return propertiesInOrgUnitWithValue;
         }
-        void AddValues(string orgUnitId, Dictionary<Property, string> propsInOrgUnitWithValue)
+        void AddValues(string orgUnitId, Dictionary<Property, string> propertiesInOrgUnitWithValue)
         {
-            foreach (var nameValueProperty in propsInOrgUnitWithValue)
+            foreach (var nameValueProperty in propertiesInOrgUnitWithValue)
             {
                 if (!_orgUnitToProperties.ContainsKey(orgUnitId + nameValueProperty.Key.Name))
                     _orgUnitToProperties.Add(orgUnitId + nameValueProperty.Key.Name, new OrganizationUnitToProperty
@@ -127,7 +128,7 @@ namespace Tree
                 if (childNode.Name == "organization-unit")
                 {
                     var orgUnitId = AddOrgUnit(childNode, parentId);
-                    AddValues(orgUnitId, AddPopsFromNode(childNode));
+                    AddValues(orgUnitId, AddPopertiesFromNode(childNode));
                     ConsiderXmlNode(childNode, orgUnitId);
                 }
             }
