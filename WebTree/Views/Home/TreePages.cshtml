@@ -4,13 +4,44 @@
 @{
     ViewBag.Title = "TreePages";
 }
-<h2>TreePages</h2>
+<h4>TreePages</h4>
+<button id="page1" class="btn-warning" data-bind="click : Toggle">Units</button>
+<button id="page2" class="btn-info" data-bind="click : Toggle">Properties</button>
+<button id="page0" class="btn-info" data-bind="click : Toggle">Values</button>
 <div class="row" id="pages">
-    <div class="col-md-12" data-bind="visible: viewMode() == 'propertiesMode', template : {name : 'propertiesTemplate'}"></div>
-    @*<div class="col-md-12" data-bind="visible: viewMode() =='unitsMode', template : {name : 'unitsTemplate'}"></div>
-    <div class="col-md-12" data-bind="visible: viewMode() =='valuesMode', template : {name : 'valuesTemplate'}"></div>*@
+    <div class="col-md-12" data-bind="visible: viewMode() =='http://localhost:49997/api/units', template : {name : 'unitsTemplate'}"></div>
+    <div class="col-md-12" data-bind="visible: viewMode() == 'http://localhost:49997/api/property', template : {name : 'propertiesTemplate'}"></div>
+    <div class="col-md-12" data-bind="visible: viewMode() =='http://localhost:49997/api/values', template : {name : 'valuesTemplate'}"></div>
 </div>
+<script type="text/html" id="unitsTemplate">
+
+    <div class="col-md-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="col-md-5">Identity</th>
+                    <th class="col-md-2">Description</th>
+                    <th class="col-md-2">IsVirtual</th>
+                    <th class="col-md-3">ParentIdentity</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: units">
+                <tr>
+                    <td class="col-md-5" data-bind="text: Identity "></td>
+                    <td class="col-md-2" data-bind="text: Description"></td>
+                    <td class="col-md-2" data-bind="text: IsVirtual"></td>
+                    <td class="col-md-3" data-bind="text: ParentIdentity"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="foreach : pages">
+        |<button data-bind="text : $data , click : $parent.LoadPage, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>|
+    </div>
+</script>
+
 <script type="text/html" id="propertiesTemplate">
+    
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -18,13 +49,61 @@
                 <th class="col-md-6">Type</th>
             </tr>
         </thead>
-        <tbody data-bind="foreach : props">
+        <tbody data-bind="foreach : properties">
             <tr>
                 <td class="col-md-6" data-bind="text: $data.Name"></td>
                 <td class="col-md-6" data-bind="text: $data.Type"></td>
             </tr>
         </tbody>
     </table>
-    <div data-bind="text: numberOfPagesProps"></div>
-    <div data-bind="foreach : pagesProps"><button data-bind="text : $data , click : $parent.LoadPageProps"></button>,</div>
+    <div data-bind="foreach : pages">
+    |<button data-bind="text : $data , click : $parent.LoadPage , css : { 'btn-primary' : $parent.currentPage() === $data}"></button>|
+    </div>
 </script>
+
+<script type="text/html" id="valuesTemplate">
+
+    <div class="col-md-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="col-md-5"> OrganizationUnit</th>
+                    <th class="col-md-2">Property</th>
+                    <th class="col-md-5">Value</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: values">
+                <tr>
+                    <td class="col-md-5" data-bind="text: OrganizationUnitIdentity"></td>
+                    <td class="col-md-2" data-bind="text: PropertyName"></td>
+                    <td class="col-md-5" data-bind="text: Value"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="foreach : pages">
+    |<button data-bind="text : $data , click : $parent.LoadPage , css : { 'btn-primary' : $parent.currentPage() === $data}"></button>|
+    </div>
+</script>
+
+@*<script type="text/html" id="valuesPerUnitTemplate">
+    <p class="btn-default">Back to units</p>
+    <div class="col-md-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="col-md-5"> OrganizationUnit</th>
+                    <th class="col-md-2">Property</th>
+                    <th class="col-md-5">Value</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: valuesPerUnit">
+                <tr>
+                    <td class="col-md-5" data-bind="text: OrganizationUnitIdentity"></td>
+                    <td class="col-md-2" data-bind="text: PropertyName"></td>
+                    <td class="col-md-5" data-bind="text: Value"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</script>*@

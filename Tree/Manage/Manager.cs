@@ -23,7 +23,7 @@ namespace Tree.Manage
             _treeCrawler = new TreeCrawler(_pathToEnivorment);
             OrgUnitsRepository = new OrganizationUnitRepository("[dbo].[OrganizationUnits]", 3);
             PropertiesRepository = new PropertyRepository("[dbo].[Properties]", 4);
-            ValuesRepository = new OrganizationUnitToPropertyRepository("[dbo].[OrganizationUnitToProperties]", 5);
+            ValuesRepository = new OrganizationUnitToPropertyRepository("[dbo].[OrganizationUnitToProperties]", 3);
         }
         public void RefreshTree()
         {
@@ -35,7 +35,7 @@ namespace Tree.Manage
             _treeCrawler.EnterEnvironment();
             OrgUnitsRepository.InsertToDb(_treeCrawler.OrgUnits.Values.ToList());
             PropertiesRepository.InsertToDb(_treeCrawler.Properties.Values.ToList());
-            ValuesRepository.InsertToDb(_treeCrawler.OrganizationUnitToProperties.Values.ToList());
+            ValuesRepository.InsertToDb(_treeCrawler.OrgUnitToProperties.Values.ToList());
         }
         void DeleteTree()
         {

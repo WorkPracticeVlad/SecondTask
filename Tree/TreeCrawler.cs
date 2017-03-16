@@ -12,19 +12,18 @@ namespace Tree
 {
     public class TreeCrawler
     {
-        Dictionary<string, OrganizationUnit> _orgUnits = new Dictionary<string, OrganizationUnit>();
-        Dictionary<string, Property> _properties = new Dictionary<string, Property>();
-        Dictionary<string, OrganizationUnitToProperty> _orgUnitToProperties = new Dictionary<string, OrganizationUnitToProperty>();
         char backSlash = '\\';
         char borderChar = '.';
         readonly string configPathAtr = "configPath";
         private string _pathToEnviroment;
-
-        public Dictionary<string, OrganizationUnit> OrgUnits { get { return _orgUnits; } }
-        public Dictionary<string, Property> Properties { get { return _properties; } }
-        public Dictionary<string, OrganizationUnitToProperty> OrganizationUnitToProperties { get { return _orgUnitToProperties; } }
+        public Dictionary<string, OrganizationUnit> OrgUnits { get; private set; }
+        public Dictionary<string, Property> Properties { get; private set; }
+        public Dictionary<string, OrganizationUnitToProperty> OrgUnitToProperties { get; private set; }
         public TreeCrawler(string pathToEnviroment)
         {
+            OrgUnitToProperties = new Dictionary<string, OrganizationUnitToProperty>();
+            Properties = new Dictionary<string, Property>();
+            OrgUnits = new Dictionary<string, OrganizationUnit>();
             _pathToEnviroment = pathToEnviroment;
         }
         public void EnterEnvironment()
@@ -56,8 +55,8 @@ namespace Tree
             string descr = null;
             if (File.Exists(path + "\\identity.xml"))
                 descr = ReadXmlByPath(path + "\\identity.xml").SelectSingleNode("/organization-unit/@description")?.Value;
-            if (!_orgUnits.ContainsKey(orgUnitId))
-                _orgUnits.Add(orgUnitId,
+            if (!OrgUnits.ContainsKey(orgUnitId))
+                OrgUnits.Add(orgUnitId,
                 new OrganizationUnit
                 {
                     Identity = orgUnitId,
@@ -73,8 +72,8 @@ namespace Tree
                 parentId = "Instanse";
             var orgUnitId = parentId + borderChar + node.Attributes["id"]?.Value;
             var description = node.Attributes["description"]?.Value;
-            if (!_orgUnits.ContainsKey(orgUnitId))
-                _orgUnits.Add(orgUnitId,
+            if (!OrgUnits.ContainsKey(orgUnitId))
+                OrgUnits.Add(orgUnitId,
                 new OrganizationUnit
                 {
                     Identity = orgUnitId,
@@ -107,11 +106,11 @@ namespace Tree
                     Name = propertyNode.Attributes["name"]?.Value,
                     Type = propertyNode.Attributes["type"]?.Value
                 };
-                if (!_properties.ContainsKey(property.Name))
-                    _properties.Add(property.Name, property);
+                if (!Properties.ContainsKey(property.Name))
+                    Properties.Add(property.Name, property);
                 else
-                    if (_properties[property.Name].Type==null)
-                        _properties[property.Name].Type = property.Type;
+                    if (Properties[property.Name].Type==null)
+                        Properties[property.Name].Type = property.Type;
                 propertiesInOrgUnitWithValue.Add(property, propertyNode.InnerXml);
             }
             return propertiesInOrgUnitWithValue;
@@ -120,8 +119,8 @@ namespace Tree
         {
             foreach (var nameValueProperty in propertiesInOrgUnitWithValue)
             {
-                if (!_orgUnitToProperties.ContainsKey(orgUnitId + nameValueProperty.Key.Name))
-                    _orgUnitToProperties.Add(orgUnitId + nameValueProperty.Key.Name, new OrganizationUnitToProperty
+                if (!OrgUnitToProperties.ContainsKey(orgUnitId + nameValueProperty.Key.Name))
+                    OrgUnitToProperties.Add(orgUnitId + nameValueProperty.Key.Name, new OrganizationUnitToProperty
                     {
                         OrganizationUnitIdentity = orgUnitId,
                         PropertyName = nameValueProperty.Key.Name,

@@ -12,8 +12,8 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th class="col-md-3">Identity</th>
-                    <th class="col-md-4">Description</th>
+                    <th class="col-md-5">Identity</th>
+                    <th class="col-md-2">Description</th>
                     <th class="col-md-2">IsVirtual</th>
                     <th class="col-md-3">ParentIdentity</th>
                 </tr>
@@ -50,16 +50,16 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th class="col-md-4"> OrganizationUnit</th>
-                    <th class="col-md-4">Property</th>
-                    <th class="col-md-4">Value</th>
+                    <th class="col-md-5"> OrganizationUnit</th>
+                    <th class="col-md-2">Property</th>
+                    <th class="col-md-5">Value</th>
                 </tr>
             </thead>
             <tbody data-bind="foreach: values">
                 <tr>
-                    <td class="col-md-4" data-bind="text: OrganizationUnitIdentity"></td>
-                    <td class="col-md-4" data-bind="text: PropertyName"></td>
-                    <td class="col-md-4" data-bind="text: Value"></td>
+                    <td class="col-md-5" data-bind="text: OrganizationUnitIdentity"></td>
+                    <td class="col-md-2" data-bind="text: PropertyName"></td>
+                    <td class="col-md-5" data-bind="text: Value"></td>
                 </tr>
             </tbody>           
         </table>

@@ -1,31 +1,51 @@
-﻿let urlApies = ["http://localhost:49997/api/values", "http://localhost:49997/api/units", "http://localhost:49997/api/property"];
+﻿let urlApies = ['http://localhost:49997/api/values', 'http://localhost:49997/api/units', 'http://localhost:49997/api/property'];
 function ViewModel() {
     var self = this;
-    self.units = ko.observableArray([]);
-    self.props = ko.observableArray([]);
     self.values = ko.observableArray([]);
-    self.pagesProps = ko.observableArray([]);
-    self.currentPageProps = ko.observable(1);
-    self.numberOfPagesProps = ko.observable();    
-    self.viewMode = ko.observable('propertiesMode');
-    self.LoadPageProps = function (page) {
-        self.currentPageProps(page);
-        self.LoadProps();
+    self.units = ko.observableArray([]);
+    self.properties = ko.observableArray([]);
+    self.pages = ko.observableArray([]);
+    self.currentPage= ko.observable(1);  
+    self.viewMode = ko.observable(urlApies[1]);
+    self.Toggle = function (data, event) {
+        $("#page" + urlApies.indexOf(self.viewMode())).removeClass("btn-warning").addClass("btn-info");
+        $("#" + event.target.id).removeClass("btn-info").addClass("btn-warning");
+        self.viewMode(urlApies[Number(event.target.id.slice(-1))]);
+        self.LoadPage(1);
+        self.BuildPages();
+    };
+    self.LoadPage = function (page) {
+        self.currentPage(page);
+        self.Load();
     }
-    self.LoadProps = function () {
-        $.getJSON(urlApies[2] + "/"+self.currentPageProps(), function (data) {        
-            self.props(data);
+    self.Load = function () {
+        $.getJSON(self.viewMode() + "/" + self.currentPage(), function (data) {
+            switch (self.viewMode()) {
+                case urlApies[1]:
+                    self.units(data);
+                    break;
+                case urlApies[2]:
+                    self.properties(data);
+                    break;
+                default:
+                    self.values(data);
+                    break;
+            }
         });
-    }      
-    self.LoadProps();
+    }
+    //self.LoadUnitValues = function (data) {
+    //    $.getJSON(self.viewMode() + "/" + self.currentPage()+"/"+, function (data) {        
+    //                self.units(data);          
+    //    });
+    //}
+    self.Load();
     self.BuildPages = function () {
-        $.get(urlApies[2], function (data) {
-            self.numberOfPagesProps(data);
+        $.get(self.viewMode(), function (data) {
             let tempoArr = [];
-            for (let i = 1; i <= self.numberOfPagesProps() ; i++) {
+            for (let i = 1; i <= data ; i++) {
                 tempoArr.push(i);
             }
-            self.pagesProps(tempoArr);
+            self.pages(tempoArr);
         })     
     }
     self.BuildPages();

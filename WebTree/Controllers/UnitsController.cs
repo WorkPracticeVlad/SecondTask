@@ -27,10 +27,10 @@ namespace WebTree.Controllers
         {
             return _manager.OrgUnitsRepository.ReadPageFromDb(id, "[Identity]");  
         }
-        [Route("api/units/{id}/{identityEnd}")]
-        public List<OrganizationUnitToProperty> Get(int id, string identityEnd)
+        [Route("api/units/{id}/{identityTail}")]
+        public List<OrganizationUnitToProperty> Get(int id, string identityTail)
         {
-            return _manager.ValuesRepository.ReadOrganizationUnitValuesFromDb(identityEnd);
+            return _manager.ValuesRepository.ReadOrganizationUnitValuesFromDb(identityTail);
         }
     }
 }

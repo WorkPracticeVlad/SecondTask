@@ -34,6 +34,15 @@ namespace Tree.DB
 
         protected override void AddItem(List<Property> items, SqlDataReader reader)
         {
+            if (reader.IsDBNull(1))
+            {
+                items.Add(new Property
+                {
+                    Name = reader?.GetString(0),
+                    Type = null
+                });
+                return;
+            }
             items.Add(new Property
             {
                 Name = reader?.GetString(0),
