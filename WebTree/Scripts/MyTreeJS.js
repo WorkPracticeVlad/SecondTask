@@ -33,11 +33,11 @@ function ViewModel() {
             }
         });
     }
-    //self.LoadUnitValues = function (data) {
-    //    $.getJSON(self.viewMode() + "/" + self.currentPage()+"/"+, function (data) {        
-    //                self.units(data);          
-    //    });
-    //}
+    self.LoadUnitValues = function (row) {
+        $.getJSON(self.viewMode() + "/" + self.currentPage() + '/' + row.Identity.replace(/\./g, '|'), function (data) {
+            var x = data;
+        });
+    }
     self.Load();
     self.BuildPages = function () {
         $.get(self.viewMode(), function (data) {

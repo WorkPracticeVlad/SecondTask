@@ -46,7 +46,7 @@ where [Identity] like '%'+@IdentityTail
 return @Identity
 end
 GO
-CREATE PROC SelectAllValuesForOrganizationUnit(@Identity as nvarchar(255))
+CREATE PROC SelectAllValuesForOrganizationUnitByIdentiyTail(@Identity as nvarchar(255))
 AS
 SET NOCOUNT ON;
 BEGIN

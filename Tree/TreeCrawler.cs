@@ -38,7 +38,7 @@ namespace Tree
         }
         void ConsiderFolder(string path, string parentId)
         {
-            var orgUnitId = GetOrgUnitId(path);
+            var orgUnitId = GetOrgUnitId(path, parentId);
             if (File.Exists(path + "\\organization_units.xml"))
                 ConsiderXmlNode(ReadXmlByPath(path + "\\organization_units.xml").SelectSingleNode("/organization-units"), orgUnitId);
             if (File.Exists(path + "\\config.xml"))
@@ -69,7 +69,7 @@ namespace Tree
         string AddOrgUnit(XmlNode node, string parentId)
         {
             if (String.IsNullOrEmpty(parentId))
-                parentId = "Instanse";
+                parentId = "";
             var orgUnitId = parentId + borderChar + node.Attributes["id"]?.Value;
             var description = node.Attributes["description"]?.Value;
             if (!OrgUnits.ContainsKey(orgUnitId))
@@ -83,14 +83,16 @@ namespace Tree
                 });
             return orgUnitId.Replace(backSlash, borderChar);
         }
-        private string GetOrgUnitId(string path)
+        private string GetOrgUnitId(string path, string parentId)
         {
+            if (parentId == ".US.RootConfig")
+                parentId = "";
             if (path.EndsWith(backSlash + "organization"))
                 return null;
             if (path.EndsWith(backSlash + "config"))
-                return "RootConfig";
-            string orgUnitId = path.Substring(path.LastIndexOf(backSlash + "organization") + 14);
-            return orgUnitId.Replace(backSlash, borderChar);
+                return parentId+borderChar+"RootConfig";
+            string orgUnitId = parentId +borderChar +path.Substring(path.LastIndexOf(backSlash) + 1);
+            return orgUnitId;
         }
         Dictionary<Property, string> AddProperties(string path)
         {

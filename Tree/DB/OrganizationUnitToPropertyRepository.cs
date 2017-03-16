@@ -54,7 +54,7 @@ namespace Tree.DB
                 Value = reader?.GetString(2)
             });
         }
-        public List<OrganizationUnitToProperty> ReadOrganizationUnitValuesFromDb(string unitIdentityEnd)
+        public List<OrganizationUnitToProperty> ReadOrganizationUnitValuesFromDb(string unitIdentity)
         {
             List<OrganizationUnitToProperty> items = new List<OrganizationUnitToProperty>();
             using (SqlConnection connection = new SqlConnection(_connString))
@@ -62,7 +62,7 @@ namespace Tree.DB
                 connection.Open();
                 SqlCommand command = new SqlCommand(_selcetAllValuesFoOrgUnit, connection);
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.Add(AddSqlParameter("@Identity", unitIdentityEnd));
+                command.Parameters.Add(AddSqlParameter("@Identity", unitIdentity));
                 SqlDataReader reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
