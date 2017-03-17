@@ -14,7 +14,7 @@ namespace WebTree.Controllers
     public class PropertyController : ApiController
     {
         private Manager _manager;
-
+        int _itemsPerPage = 5;
         public PropertyController()
         {
              _manager=new Manager();
@@ -22,13 +22,13 @@ namespace WebTree.Controllers
         // GET: api/Property
         public int Get()
         {
-            return _manager.PropertiesRepository.CountPages();
+            return _manager.PropertiesRepository.CountPages(_itemsPerPage);
         }
 
         // GET: api/Property/5
         public List<Property> Get(int id)
         {
-            return _manager.PropertiesRepository.ReadPageFromDb(id, "[Name]");
+            return _manager.PropertiesRepository.ReadPageFromDb(id, "[Name]", _itemsPerPage);
         }
     }
 }

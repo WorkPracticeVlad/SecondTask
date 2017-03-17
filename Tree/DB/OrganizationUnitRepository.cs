@@ -12,9 +12,8 @@ namespace Tree.DB
     public class OrganizationUnitRepository : Repository<OrganizationUnit>
     {
         private string _insertOrganizationUnits;
-        
-
-        public OrganizationUnitRepository(string tableName, int itemsPerPage) : base(tableName, itemsPerPage)
+        const string TABLE_NAME = "[dbo].[OrganizationUnits]";
+        public OrganizationUnitRepository() : base(TABLE_NAME)
         {
             _insertOrganizationUnits = "[dbo].[InsertOrganizationUnits]";         
         }

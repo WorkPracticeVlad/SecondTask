@@ -14,7 +14,7 @@ namespace WebTree.Controllers
     public class ValuesController : ApiController
     {
         private Manager _manager;
-
+        int _itemsPerPage = 5;
         public ValuesController()
         {
             _manager = new Manager();
@@ -22,13 +22,13 @@ namespace WebTree.Controllers
         // GET: api/Values
         public int Get()
         {
-            return _manager.ValuesRepository.CountPages();
+            return _manager.ValuesRepository.CountPages(_itemsPerPage);
         }
 
         // GET: api/Values/5
         public List<OrganizationUnitToProperty> Get(int id)
         {
-            return _manager.ValuesRepository.ReadPageFromDb(id, "[OrganizationUnitIdentity]");
+            return _manager.ValuesRepository.ReadPageFromDb(id, "[OrganizationUnitIdentity]",_itemsPerPage);
         }
     }
 }

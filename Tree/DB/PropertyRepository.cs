@@ -12,8 +12,8 @@ namespace Tree.DB
    public class PropertyRepository : Repository<Property>
     {
         private string _insertProperties;
-
-        public PropertyRepository(string tableName, int itemsPerPage) : base(tableName, itemsPerPage)
+        const string TABLE_NAME = "[dbo].[Properties]";
+        public PropertyRepository() : base(TABLE_NAME)
         {
             _insertProperties = "[dbo].[InsertProperties]";
         }

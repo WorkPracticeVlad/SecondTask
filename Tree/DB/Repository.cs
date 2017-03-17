@@ -15,38 +15,36 @@ namespace Tree.DB
         protected string _fnPagesCount;
         protected string _procRowsPerPage;
         protected string _tableName;
-        protected int _itemsPerPage;
         protected string _selectAllFromTable;
         protected string _deleteAllFromTable;
-        public Repository(string tableName, int itemsPerPage)
+        public Repository(string tableName)
         {
             _connString = ConfigurationManager.ConnectionStrings["SecondTaskConnection"].ConnectionString;
             _fnPagesCount = "[dbo].[fnCountPagesInTable]";
             _procRowsPerPage = "[dbo].[RowsPerPage]";
             _tableName = tableName;
-            _itemsPerPage = itemsPerPage;
             _selectAllFromTable = "[dbo].[SelectAllFromTable]";
             _deleteAllFromTable = "[dbo].[DeleteAllFromTable]";
         }
-        public int CountPages()
+        public int CountPages(int itemsPerPage)
         {
             using (SqlConnection connection = new SqlConnection(_connString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(_fnPagesCount, connection);
-                var pageCountSqlPar = AddSqlParemeters(_itemsPerPage, _tableName, command);
+                var pageCountSqlPar = AddSqlParemeters(itemsPerPage, _tableName, command);
                 command.ExecuteNonQuery();
                 return (int)pageCountSqlPar.Value;
             }
         }
-        public List<T> ReadPageFromDb(int page, string column)
+        public List<T> ReadPageFromDb(int page, string column, int itemsPerPage)
         {
             var items = new List<T>();
             using (SqlConnection connection = new SqlConnection(_connString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(_procRowsPerPage, connection);
-                AddSqlParemeters(page, _itemsPerPage, _tableName, column, command);
+                AddSqlParemeters(page, itemsPerPage, _tableName, column, command);
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
                     if (reader.HasRows)

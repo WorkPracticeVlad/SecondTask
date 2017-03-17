@@ -15,22 +15,23 @@ namespace WebTree.Controllers
     public class UnitsController : ApiController
     {
         private Manager _manager;
+        int _itemsPerPage = 5;
         public UnitsController()
         {
             _manager = new Manager();
         }
         public int Get()
         {
-            return _manager.OrgUnitsRepository.CountPages();
+            return _manager.OrgUnitsRepository.CountPages(_itemsPerPage);
         }
         public List<OrganizationUnit> Get(int id)
         {
-            return _manager.OrgUnitsRepository.ReadPageFromDb(id, "[Identity]");  
+            return _manager.OrgUnitsRepository.ReadPageFromDb(id, "[Identity]",_itemsPerPage);  
         }
         [Route("api/units/{id}/{identity}")]
         public List<OrganizationUnitToProperty> Get(int id, string identity)
         {
-            return _manager.ValuesRepository.ReadOrganizationUnitValuesFromDb(identity.Replace('|', '.'));
+            return _manager.ValuesRepository.ReadOrganizationUnitValuesFromDb(identity.Replace('-', '.'));
         }
     }
 }

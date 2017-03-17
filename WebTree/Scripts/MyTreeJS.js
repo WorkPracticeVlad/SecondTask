@@ -1,4 +1,4 @@
-﻿let urlApies = ['http://localhost:49997/api/values', 'http://localhost:49997/api/units', 'http://localhost:49997/api/property'];
+﻿let urlApies = ['/api/values', '/api/units', '/api/property'];
 function ViewModel() {
     var self = this;
     self.values = ko.observableArray([]);
@@ -6,7 +6,7 @@ function ViewModel() {
     self.units = ko.observableArray([]);
     self.properties = ko.observableArray([]);
     self.pages = ko.observableArray([]);
-    self.currentPage= ko.observable(1);  
+    self.currentPage = ko.observable(1);
     self.viewMode = ko.observable(urlApies[1]);
     self.showUnitsButton = ko.observable(true);
     self.ToggleTables = function (data, event) {
@@ -50,7 +50,7 @@ function ViewModel() {
                 tempoArr.push(i);
             }
             self.pages(tempoArr);
-        })     
+        })
     }
     self.BackToUnits = function () {
         self.showUnitsButton(!self.showUnitsButton());

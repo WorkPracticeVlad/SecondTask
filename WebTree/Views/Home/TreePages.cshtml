@@ -12,9 +12,9 @@
     <button id="page0" class="btn-info" data-bind="click : ToggleTables">Values</button>
 </div>
 <div class="row" id="pages">
-    <div class="col-md-12" data-bind="visible: viewMode() =='http://localhost:49997/api/units', template : {name : 'unitsTemplate'}"></div>
-    <div class="col-md-12" data-bind="visible: viewMode() == 'http://localhost:49997/api/property', template : {name : 'propertiesTemplate'}"></div>
-    <div class="col-md-12" data-bind="visible: viewMode() =='http://localhost:49997/api/values', template : {name : 'valuesTemplate'}"></div>
+    <div class="col-md-12" data-bind="visible: viewMode() =='/api/units', template : {name : 'unitsTemplate'}"></div>
+    <div class="col-md-12" data-bind="visible: viewMode() == '/api/property', template : {name : 'propertiesTemplate'}"></div>
+    <div class="col-md-12" data-bind="visible: viewMode() =='/api/values', template : {name : 'valuesTemplate'}"></div>
     <div class="col-md-12" data-bind="visible: viewMode() =='valuesPerUnitMode3', template : {name : 'valuesPerUnitTemplate'}"></div>
 </div>
 <script type="text/html" id="unitsTemplate">
@@ -43,9 +43,8 @@
         |<button data-bind="text : $data , click : $parent.LoadPage, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>|
     </div>
 </script>
-
 <script type="text/html" id="propertiesTemplate">
-    
+
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -61,10 +60,9 @@
         </tbody>
     </table>
     <div data-bind="foreach : pages">
-    |<button data-bind="text : $data , click : $parent.LoadPage , css : { 'btn-primary' : $parent.currentPage() === $data}"></button>|
+        |<button data-bind="text : $data , click : $parent.LoadPage , css : { 'btn-primary' : $parent.currentPage() === $data}"></button>|
     </div>
 </script>
-
 <script type="text/html" id="valuesTemplate">
 
     <div class="col-md-12">
@@ -86,10 +84,9 @@
         </table>
     </div>
     <div data-bind="foreach : pages">
-    |<button data-bind="text : $data , click : $parent.LoadPage , css : { 'btn-primary' : $parent.currentPage() === $data}"></button>|
+        |<button data-bind="text : $data , click : $parent.LoadPage , css : { 'btn-primary' : $parent.currentPage() === $data}"></button>|
     </div>
 </script>
-
 <script type="text/html" id="valuesPerUnitTemplate">
     <div class="col-md-12">
         <table class="table table-bordered">

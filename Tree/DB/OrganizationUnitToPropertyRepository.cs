@@ -13,7 +13,8 @@ namespace Tree.DB
     {
         private string _insertOrganizationUnitToProperties;
         private string _selcetAllValuesForOrgUnit;
-        public OrganizationUnitToPropertyRepository(string tableName, int itemsPerPage) : base(tableName, itemsPerPage)
+        const string TABLE_NAME = "[dbo].[OrganizationUnitToProperties]";
+        public OrganizationUnitToPropertyRepository() : base(TABLE_NAME)
         {
             _insertOrganizationUnitToProperties = "[dbo].[InsertOrganizationUnitToProperties]";
             _selcetAllValuesForOrgUnit = "[dbo].[SelectAllValuesForOrganizationUnitByIdentiy]";
