@@ -21,9 +21,9 @@ namespace Tree.Manage
         {
             _pathToEnivorment = ConfigurationManager.AppSettings["pathToEnviroment"];
             _treeCrawler = new TreeCrawler(_pathToEnivorment);
-            OrgUnitsRepository = new OrganizationUnitRepository("[dbo].[OrganizationUnits]", 3);
-            PropertiesRepository = new PropertyRepository("[dbo].[Properties]", 4);
-            ValuesRepository = new OrganizationUnitToPropertyRepository("[dbo].[OrganizationUnitToProperties]", 3);
+            OrgUnitsRepository = new OrganizationUnitRepository("[dbo].[OrganizationUnits]", 5);
+            PropertiesRepository = new PropertyRepository("[dbo].[Properties]", 5);
+            ValuesRepository = new OrganizationUnitToPropertyRepository("[dbo].[OrganizationUnitToProperties]", 5);
         }
         public void RefreshTree()
         {

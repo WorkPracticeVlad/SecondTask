@@ -12,11 +12,11 @@ namespace Tree.DB
     public class OrganizationUnitToPropertyRepository : Repository<OrganizationUnitToProperty>
     {
         private string _insertOrganizationUnitToProperties;
-        private string _selcetAllValuesFoOrgUnit;
+        private string _selcetAllValuesForOrgUnit;
         public OrganizationUnitToPropertyRepository(string tableName, int itemsPerPage) : base(tableName, itemsPerPage)
         {
             _insertOrganizationUnitToProperties = "[dbo].[InsertOrganizationUnitToProperties]";
-            _selcetAllValuesFoOrgUnit = "[dbo].[SelectAllValuesForOrganizationUnit]";
+            _selcetAllValuesForOrgUnit = "[dbo].[SelectAllValuesForOrganizationUnitByIdentiy]";
         }
 
         public override int InsertToDb(List<OrganizationUnitToProperty> orgUnitToProperties)
@@ -60,7 +60,7 @@ namespace Tree.DB
             using (SqlConnection connection = new SqlConnection(_connString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand(_selcetAllValuesFoOrgUnit, connection);
+                SqlCommand command = new SqlCommand(_selcetAllValuesForOrgUnit, connection);
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add(AddSqlParameter("@Identity", unitIdentity));
                 SqlDataReader reader = command.ExecuteReader();

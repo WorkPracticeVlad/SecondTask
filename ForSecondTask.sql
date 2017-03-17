@@ -1,3 +1,10 @@
+USE master
+IF EXISTS(select * from sys.databases where name='SecondTask')
+DROP DATABASE [SecondTask]
+CREATE DATABASE [SecondTask]
+GO
+USE [SecondTask]
+GO
 CREATE TABLE OrganizationUnits
 (
 [Identity] nvarchar(225) NOT NULL PRIMARY KEY,
@@ -5,13 +12,13 @@ CREATE TABLE OrganizationUnits
 [IsVirtual] bit,
 [ParentIdentity] nvarchar(225)  /*FOREIGN KEY REFERENCES OrganizationUnits([Identity])*/
 )
-go
+GO
 CREATE TABLE Properties
 (
 [Name] nvarchar(225) NOT NULL PRIMARY KEY,
 [Type] nvarchar(max)
 )
-go
+GO
 CREATE TABLE OrganizationUnitToProperties
 (
 [OrganizationUnitIdentity] nvarchar(225) NOT NULL FOREIGN KEY REFERENCES OrganizationUnits([Identity]),
@@ -19,7 +26,7 @@ CREATE TABLE OrganizationUnitToProperties
 [Value] nvarchar(max),
 CONSTRAINT PK_OrganizationUnitToProperty PRIMARY KEY NONCLUSTERED ([OrganizationUnitIdentity], [PropertyName]) 
 )
-go
+GO
 create function fnGetOrganiztionUnitParent
 (
 @Identity as nvarchar(225)
@@ -45,6 +52,23 @@ select @Identity=[Identity] from [dbo].[OrganizationUnits]
 where [Identity] like '%'+@IdentityTail
 return @Identity
 end
+GO
+CREATE PROC SelectAllValuesForOrganizationUnitByIdentiy(@Identity as nvarchar(255))
+AS
+SET NOCOUNT ON;
+BEGIN
+WHILE @Identity<>''
+BEGIN
+select [Identity],[PropertyName],[Value] from [dbo].[OrganizationUnits] 
+left join [dbo].[OrganizationUnitToProperties] on
+[dbo].[OrganizationUnits].[Identity]=[dbo].[OrganizationUnitToProperties].
+[OrganizationUnitIdentity]
+and [OrganizationUnitIdentity]=@Identity
+where [Identity]=@Identity
+set @Identity=[dbo].[fnGetOrganiztionUnitParent](@Identity);
+END;
+END;
+SET NOCOUNT OFF;
 GO
 CREATE PROC SelectAllValuesForOrganizationUnitByIdentiyTail(@Identity as nvarchar(255))
 AS

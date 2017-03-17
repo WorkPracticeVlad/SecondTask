@@ -2,13 +2,16 @@
 function ViewModel() {
     var self = this;
     self.values = ko.observableArray([]);
+    self.valuesPerUnit = ko.observableArray([]);
     self.units = ko.observableArray([]);
     self.properties = ko.observableArray([]);
     self.pages = ko.observableArray([]);
     self.currentPage= ko.observable(1);  
     self.viewMode = ko.observable(urlApies[1]);
-    self.Toggle = function (data, event) {
-        $("#page" + urlApies.indexOf(self.viewMode())).removeClass("btn-warning").addClass("btn-info");
+    self.showUnitsButton = ko.observable(true);
+    self.ToggleTables = function (data, event) {
+        self.showUnitsButton(true);
+        $("#navButtons button").not("#backToUnit3").removeClass("btn-warning").addClass("btn-info");
         $("#" + event.target.id).removeClass("btn-info").addClass("btn-warning");
         self.viewMode(urlApies[Number(event.target.id.slice(-1))]);
         self.LoadPage(1);
@@ -34,11 +37,12 @@ function ViewModel() {
         });
     }
     self.LoadUnitValues = function (row) {
+        self.showUnitsButton(!self.showUnitsButton());
         $.getJSON(self.viewMode() + "/" + self.currentPage() + '/' + row.Identity.replace(/\./g, '|'), function (data) {
-            var x = data;
+            self.valuesPerUnit(data);
         });
+        self.viewMode('valuesPerUnitMode3');
     }
-    self.Load();
     self.BuildPages = function () {
         $.get(self.viewMode(), function (data) {
             let tempoArr = [];
@@ -48,6 +52,12 @@ function ViewModel() {
             self.pages(tempoArr);
         })     
     }
+    self.BackToUnits = function () {
+        self.showUnitsButton(!self.showUnitsButton());
+        self.viewMode(urlApies[1]);
+        self.LoadPage(self.currentPage());
+    }
     self.BuildPages();
+    self.Load();
 }
 ko.applyBindings(new ViewModel());

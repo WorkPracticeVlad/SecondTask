@@ -5,13 +5,17 @@
     ViewBag.Title = "TreePages";
 }
 <h4>TreePages</h4>
-<button id="page1" class="btn-warning" data-bind="click : Toggle">Units</button>
-<button id="page2" class="btn-info" data-bind="click : Toggle">Properties</button>
-<button id="page0" class="btn-info" data-bind="click : Toggle">Values</button>
+<div id="navButtons">
+    <button id="page1" class="btn-warning" data-bind="visible: showUnitsButton, click : ToggleTables">Units</button>
+    <button id="backToUnit3" class="btn-warning" data-bind="visible: !showUnitsButton(), click : BackToUnits">Back to units</button>
+    <button id="page2" class="btn-info" data-bind="click : ToggleTables">Properties</button>
+    <button id="page0" class="btn-info" data-bind="click : ToggleTables">Values</button>
+</div>
 <div class="row" id="pages">
     <div class="col-md-12" data-bind="visible: viewMode() =='http://localhost:49997/api/units', template : {name : 'unitsTemplate'}"></div>
     <div class="col-md-12" data-bind="visible: viewMode() == 'http://localhost:49997/api/property', template : {name : 'propertiesTemplate'}"></div>
     <div class="col-md-12" data-bind="visible: viewMode() =='http://localhost:49997/api/values', template : {name : 'valuesTemplate'}"></div>
+    <div class="col-md-12" data-bind="visible: viewMode() =='valuesPerUnitMode3', template : {name : 'valuesPerUnitTemplate'}"></div>
 </div>
 <script type="text/html" id="unitsTemplate">
 
@@ -86,8 +90,7 @@
     </div>
 </script>
 
-@*<script type="text/html" id="valuesPerUnitTemplate">
-    <p class="btn-default">Back to units</p>
+<script type="text/html" id="valuesPerUnitTemplate">
     <div class="col-md-12">
         <table class="table table-bordered">
             <thead>
@@ -106,4 +109,4 @@
             </tbody>
         </table>
     </div>
-</script>*@
+</script>

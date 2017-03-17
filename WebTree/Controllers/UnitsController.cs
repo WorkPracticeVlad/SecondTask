@@ -30,7 +30,7 @@ namespace WebTree.Controllers
         [Route("api/units/{id}/{identity}")]
         public List<OrganizationUnitToProperty> Get(int id, string identity)
         {
-            return _manager.ValuesRepository.ReadOrganizationUnitValuesFromDb(identity);
+            return _manager.ValuesRepository.ReadOrganizationUnitValuesFromDb(identity.Replace('|', '.'));
         }
     }
 }
