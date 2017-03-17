@@ -4,7 +4,7 @@
 @{
     ViewBag.Title = "TreePages";
 }
-<h4>TreePages</h4>
+<h3><a class="alert-info" href=@Url.Action("Index", "Home",null)>Home</a></h3>
 <div id="navButtons">
     <button id="page1" class="btn-warning" data-bind="visible: showUnitsButton, click : ToggleTables">Units</button>
     <button id="backToUnit3" class="btn-warning" data-bind="visible: !showUnitsButton(), click : BackToUnits">Back to units</button>

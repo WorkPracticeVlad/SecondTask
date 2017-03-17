@@ -38,15 +38,17 @@ namespace Tree
         }
         void ConsiderFolder(string path, string parentId)
         {
-            var orgUnitId = GetOrgUnitId(path, parentId);
-            if (File.Exists(path + "\\organization_units.xml"))
-                ConsiderXmlNode(ReadXmlByPath(path + "\\organization_units.xml").SelectSingleNode("/organization-units"), orgUnitId);
-            if (File.Exists(path + "\\config.xml"))
-                AddValues(orgUnitId, AddProperties(path + "\\config.xml"));
             if (!path.EndsWith(backSlash + "organization"))
-                parentId = AddOrgUnit(path, orgUnitId, parentId);
-            foreach (var folderPath in Directory.GetDirectories(path))
             {
+                var orgUnitId = GetOrgUnitId(path, parentId);
+                if (File.Exists(path + "\\organization_units.xml"))
+                    ConsiderXmlNode(ReadXmlByPath(path + "\\organization_units.xml").SelectSingleNode("/organization-units"), orgUnitId);
+                if (File.Exists(path + "\\config.xml"))
+                    AddValues(orgUnitId, AddProperties(path + "\\config.xml"));
+                    parentId = AddOrgUnit(path, orgUnitId, parentId);
+            }         
+            foreach (var folderPath in Directory.GetDirectories(path))
+            {                
                 ConsiderFolder(folderPath, parentId);
             }
         }
@@ -87,8 +89,6 @@ namespace Tree
         {
             if (parentId == ".US.RootConfig")
                 parentId = "";
-            if (path.EndsWith(backSlash + "organization"))
-                return null;
             if (path.EndsWith(backSlash + "config"))
                 return parentId+borderChar+"RootConfig";
             string orgUnitId = parentId +borderChar +path.Substring(path.LastIndexOf(backSlash) + 1);
