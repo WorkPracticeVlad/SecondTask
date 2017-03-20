@@ -1,4 +1,4 @@
-﻿let urlApies = ['/api/values', '/api/units', '/api/property'];
+﻿let urlApies = ['/api/values/get/', '/api/units/get/', '/api/property/get'];
 function ViewModel() {
     var self = this;
     self.values = ko.observableArray([]);

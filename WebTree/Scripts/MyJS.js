@@ -1,4 +1,4 @@
-﻿let urlApi = "http://localhost:49997/api/tree";
+﻿let urlApi = "http://localhost:49997/api/tree/get";
 function TreeViewModel() {
     var self = this;  
     self.units = ko.observableArray([]);
@@ -6,7 +6,7 @@ function TreeViewModel() {
     self.values = ko.observableArray([]);
     self.Refresh = function () {
         $.ajax({
-            url: urlApi,
+            url: "http://localhost:49997/api/tree/delete",
             type: 'DELETE',
             success: function (result) {
                 $.getJSON(urlApi, function (data) {

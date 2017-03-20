@@ -10,5 +10,6 @@ namespace Tree.Data
     {
         public string Name { get; set; }
         public string Type { get; set; }
+        public int CountOfUsage { get; set; }
     }
 }

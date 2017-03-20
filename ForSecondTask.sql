@@ -262,3 +262,74 @@ BEGIN
  SET NOCOUNT OFF;
 END
 GO
+create function fnCountPropertyUsage
+(
+@Property as nvarchar(225)
+)
+returns int
+as
+begin
+declare @Count as int
+select @Count=Count([PropertyName]) from [dbo].[OrganizationUnitToProperties] where 
+[PropertyName]=@Property
+return @Count
+end
+GO
+CREATE PROC PropertiesPerPage(@Page as int, @ItemsPerPage as int,  @ColumnToOrderBy as nvarchar(128))
+AS
+SET NOCOUNT ON;
+BEGIN
+DECLARE @SqlCommand NVARCHAR(MAX);
+SET @SqlCommand= N'
+SELECT  [Name], [Type], [dbo].[fnCountPropertyUsage]([Name]) as [Usage] from [dbo].[Properties]  
+ORDER BY '+@ColumnToOrderBy+N' 
+OFFSET '+CAST(@Page*@ItemsPerPage-@ItemsPerPage AS NVARCHAR(10))+N' ROWS
+FETCH NEXT '+CAST(@ItemsPerPage AS NVARCHAR(10))+N' ROWS ONLY;'
+EXEC sp_executesql @SqlCommand
+END;
+SET NOCOUNT OFF;
+GO
+CREATE PROC PropertiesPerPageFilter(@Page as int, @ItemsPerPage as int, @ColumnToOrderBy as nvarchar(128),@Filter as nvarchar(225))
+AS
+SET NOCOUNT ON;
+BEGIN
+DECLARE @SqlCommand NVARCHAR(MAX);
+SET @SqlCommand= N'
+SELECT  *
+FROM (SELECT  [Name], [Type], [dbo].[fnCountPropertyUsage]([Name]) as [Usage] from [dbo].[Properties] 
+WHERE  [Name] like '''+N'%'+@Filter+N'%'''+N') as Result 
+ORDER BY '+@ColumnToOrderBy+N' 
+OFFSET '+CAST(@Page*@ItemsPerPage-@ItemsPerPage AS NVARCHAR(10))+N' ROWS
+FETCH NEXT '+CAST(@ItemsPerPage AS NVARCHAR(10))+N' ROWS ONLY;'
+EXEC sp_executesql @SqlCommand
+END;
+SET NOCOUNT OFF;
+GO
+create function fnCountFilteredByNamePropertyTable
+(
+@Filter as nvarchar(225)
+)
+returns int
+as
+begin
+declare @Count as int
+SELECT @Count=Count(*)
+FROM [dbo].[Properties]
+WHERE [Name] like '%'+@Filter+'%'
+return @Count
+end
+GO
+create function fnCountPagesInFilteredByNamePropertyTable
+(
+@ItemsPerPage as int,
+@Filter as nvarchar(225)
+)
+returns int
+as
+begin
+declare @Count as int
+declare @Remnant as int
+select @Count= [dbo].[fnCountFilteredByNamePropertyTable](@Filter)
+return [dbo].[fnCountPages](@Count,@ItemsPerPage)
+end
+GO

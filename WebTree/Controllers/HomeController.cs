@@ -24,5 +24,9 @@ namespace WebTree.Controllers
         {
             return View();
         }
+        public ActionResult HomePages()
+        {
+            return View();
+        }
     }
 }

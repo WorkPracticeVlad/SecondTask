@@ -28,7 +28,7 @@ namespace WebTree.Controllers
         {
             return _manager.OrgUnitsRepository.ReadPageFromDb(id, "[Identity]",_itemsPerPage);  
         }
-        [Route("api/units/{id}/{identity}")]
+        [Route("api/units/get/{id}/{identity}")]
         public List<OrganizationUnitToProperty> Get(int id, string identity)
         {
             return _manager.ValuesRepository.ReadOrganizationUnitValuesFromDb(identity.Replace('-', '.'));

@@ -1,0 +1,93 @@
+﻿
+@{
+    ViewBag.Title = "HomePages";
+}
+@section scripts {
+<script src="~/Scripts/MyPropertyVM.js"></script>
+<script src="~/Scripts/MyOrgUnitVm.js"></script>
+<script src="~/Scripts/MyMainVM.js"></script>
+}
+<div id="main">
+
+    <div id="header">
+        <ul data-bind="foreach: panels">
+            <li><a href="#" data-bind="click: $parent.goToTeplate, text:'Load '+$data"></a></li>
+        </ul>
+    </div>
+
+    <div id="content" data-bind="template: { name: currentPanelData().panel, data: currentPanelData().data }"></div>
+
+</div>
+
+<script type="text/html" id="units-template">
+    <div>
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="col-md-5">Identity</th>
+                        <th class="col-md-2">Description</th>
+                        <th class="col-md-2">IsVirtual</th>
+                        <th class="col-md-3">ParentIdentity</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: units">
+                    <tr >
+                        <td class="col-md-5" data-bind="text: Identity "></td>
+                        <td class="col-md-2" data-bind="text: Description"></td>
+                        <td class="col-md-2" data-bind="text: IsVirtual"></td>
+                        <td class="col-md-3" data-bind="text: ParentIdentity"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="properties-template">
+    <p>Filter:</p><input data-bind="textInput: filter, event: { input : Initialize }" />
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="col-md-4">Name</th>
+                <th class="col-md-4">Type</th>
+                <th class="col-md-4">Usage</th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach : properties">
+            <tr  data-bind="click : $root.checkClick">
+                <td class="col-md-4" data-bind="text: $data.Name"></td>
+                <td class="col-md-4" data-bind="text: $data.Type"></td>
+                <td class="col-md-4" data-bind="text: $data.CountOfUsage"></td>
+            </tr>
+        </tbody>
+    </table>
+    <div data-bind="foreach : pages">
+        <button data-bind="text : $data , click : $parent.Load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
+    </div>
+</script>
+
+<script type="text/html" id="propertiesUsage-template">
+    <h4>Property usage</h4>
+    <p>Filter:</p>
+    <input data-bind="textInput: filter, event: { input : Initialize }" />
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="col-md-4">Unit</th>
+                <th class="col-md-4">Value</th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach : values">
+            <tr>
+                <td class="col-md-4" data-bind="text: $data."></td>
+                <td class="col-md-4" data-bind="text: $data."></td>
+            </tr>
+        </tbody>
+    </table>
+    <div data-bind="foreach : pages">
+        <button data-bind="text : $data , click : $parent.Load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
+    </div>
+</script>
+
+
