@@ -3,6 +3,7 @@
     ViewBag.Title = "HomePages";
 }
 @section scripts {
+<script src="~/Scripts/MyPropertyUsageVM.js"></script>
 <script src="~/Scripts/MyPropertyVM.js"></script>
 <script src="~/Scripts/MyOrgUnitVm.js"></script>
 <script src="~/Scripts/MyMainVM.js"></script>
@@ -45,7 +46,7 @@
 </script>
 
 <script type="text/html" id="properties-template">
-    <p>Filter:</p><input data-bind="textInput: filter, event: { input : Initialize }" />
+    <span>Filter:</span><input data-bind="textInput: filter, event: { input : Initialize }" /><br />
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -55,10 +56,10 @@
             </tr>
         </thead>
         <tbody data-bind="foreach : properties">
-            <tr  data-bind="click : $root.checkClick">
+            <tr >
                 <td class="col-md-4" data-bind="text: $data.Name"></td>
                 <td class="col-md-4" data-bind="text: $data.Type"></td>
-                <td class="col-md-4" data-bind="text: $data.CountOfUsage"></td>
+                <td class="col-md-4" data-bind="text: $data.CountOfUsage, click : $root.goToPropertiesUsage"></td>
             </tr>
         </tbody>
     </table>
@@ -69,22 +70,18 @@
 
 <script type="text/html" id="propertiesUsage-template">
     <h4>Property usage</h4>
-    <p>Filter:</p>
-    <input data-bind="textInput: filter, event: { input : Initialize }" />
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th class="col-md-4">Unit</th>
-                <th class="col-md-4">Value</th>
-            </tr>
-        </thead>
-        <tbody data-bind="foreach : values">
-            <tr>
-                <td class="col-md-4" data-bind="text: $data."></td>
-                <td class="col-md-4" data-bind="text: $data."></td>
-            </tr>
-        </tbody>
-    </table>
+    <span>Filter:</span><input data-bind="textInput: filter, event: { input : Initialize }" /><br />
+    <div class="col-md-12">
+        <div>            
+                <div class="col-md-6"><strong>Unit </strong></div>
+                <div class="col-md-6"><strong>Value </strong></div>
+        </div>
+        <div data-bind="foreach : values">
+                <div class="col-md-6" ><span data-bind="text: $data.OrganizationUnitIdentity, bootstrapPopover : {content : $parent.returnPropertyTag($data.Value)}"></span></div>
+                <div class="col-md-6"><span  data-bind="text: $data.Value"></span></div>
+            <hr />       
+        </div>
+    </div>
     <div data-bind="foreach : pages">
         <button data-bind="text : $data , click : $parent.Load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
     </div>

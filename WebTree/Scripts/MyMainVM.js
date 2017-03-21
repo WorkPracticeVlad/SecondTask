@@ -1,16 +1,20 @@
 ﻿   MainVM = function(){
        var self = this;
-       self.checkClick = function (page) {
-           let y = page;
-          let x = 1;
+       self.goToPropertiesUsage = function (row) {
+           self.currentPanelData()['panel'] = 'propertiesUsage' + "-template";
+           self.currentPanelData()['data'] = panelViewModels['propertiesUsage'](row);
+           self.currentPanelData.valueHasMutated();
        }
        self.panels = [
            "units",
-           "properties"
+           "properties",
        ];
        var panelViewModels = {
            "units": new OrgUnitVM(),
-           "properties": new PrpoertyVM()
+           "properties": new PropertyVM(),
+           "propertiesUsage": function SetPropertyUsageVM(name) {
+               return new PropertyUsageVM(name);       
+           }
        };
        self.currentPanelData = ko.observable({
            panel: 'units-template',

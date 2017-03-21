@@ -13,7 +13,7 @@ namespace Tree.DB
     {
         private string _insertOrganizationUnitToProperties;
         private string _selcetAllValuesForOrgUnit;
-        const string TABLE_NAME = "[dbo].[OrganizationUnitToProperties]";
+        const string TABLE_NAME = "[dbo].[OrganizationUnitToProperties]";       
         public OrganizationUnitToPropertyRepository() : base(TABLE_NAME)
         {
             _insertOrganizationUnitToProperties = "[dbo].[InsertOrganizationUnitToProperties]";
@@ -77,5 +77,6 @@ namespace Tree.DB
             }
             return items;
         }
+       
     }
 }

@@ -17,6 +17,11 @@ namespace Tree.DB
         protected string _tableName;
         protected string _selectAllFromTable;
         protected string _deleteAllFromTable;
+        protected string _procRowsPerPageFiltered;
+        protected string _procPagesCountFiltered;
+        protected string _procRowPerPageFilterAndColumnValue;
+        protected string _procCountPagesInFilteredByColumnValue;
+
         public Repository(string tableName)
         {
             _connString = ConfigurationManager.ConnectionStrings["SecondTaskConnection"].ConnectionString;
@@ -25,6 +30,10 @@ namespace Tree.DB
             _tableName = tableName;
             _selectAllFromTable = "[dbo].[SelectAllFromTable]";
             _deleteAllFromTable = "[dbo].[DeleteAllFromTable]";
+            _procRowsPerPageFiltered = "[dbo].[RowsPerPageFilter]";
+            _procPagesCountFiltered = "[dbo].[CountPagesInFiltered]";
+            _procRowPerPageFilterAndColumnValue = "[dbo].[RowPerPageFilterAndColumnValue]";
+            _procCountPagesInFilteredByColumnValue = "[dbo].[CountPagesInFilteredByColumnValue]";
         }
         public int CountPages(int itemsPerPage)
         {
@@ -37,6 +46,52 @@ namespace Tree.DB
                 return (int)pageCountSqlPar.Value;
             }
         }
+        public int CountPagesFiltered(int itemsPerPage, string columnToFilter, string filter)
+        {
+            using (SqlConnection connection = new SqlConnection(_connString))
+            {
+                int pageCount=0;
+                connection.Open();
+                SqlCommand command = new SqlCommand(_procPagesCountFiltered, connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add(AddSqlParameter("@ItemsPerPage", itemsPerPage));
+                command.Parameters.Add(AddSqlParameter("@TableName", _tableName));
+                command.Parameters.Add(AddSqlParameter("@ColumnToFilter", columnToFilter));
+                command.Parameters.Add(AddSqlParameter("@Filter", filter));
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                        while (reader.Read())
+                            pageCount = reader.GetInt32(0);
+                    reader.Close();
+                }
+                return pageCount;
+            }
+        }
+        public int CountPagesFiltered(int itemsPerPage, string columnToFilter, string filter, string columnForValue, string value)
+        {
+            using (SqlConnection connection = new SqlConnection(_connString))
+            {
+                int pageCount = 0;
+                connection.Open();
+                SqlCommand command = new SqlCommand(_procCountPagesInFilteredByColumnValue, connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add(AddSqlParameter("@ItemsPerPage", itemsPerPage));
+                command.Parameters.Add(AddSqlParameter("@TableName", _tableName));
+                command.Parameters.Add(AddSqlParameter("@ColumnToFilter", columnToFilter));
+                command.Parameters.Add(AddSqlParameter("@Filter", filter));
+                command.Parameters.Add(AddSqlParameter("@ColumnForValue", columnForValue));
+                command.Parameters.Add(AddSqlParameter("@Value", value));
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                        while (reader.Read())
+                            pageCount = reader.GetInt32(0);
+                    reader.Close();
+                }
+                return pageCount;
+            }
+        }
         public List<T> ReadPageFromDb(int page, string column, int itemsPerPage)
         {
             var items = new List<T>();
@@ -45,6 +100,57 @@ namespace Tree.DB
                 connection.Open();
                 SqlCommand command = new SqlCommand(_procRowsPerPage, connection);
                 AddSqlParemeters(page, itemsPerPage, _tableName, column, command);
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                        while (reader.Read())
+                            AddItem(items, reader);
+                    reader.Close();
+                }
+            }
+            return items;
+        }
+        public List<T> ReadFilteredPageFromDb(int page, string columnToOrder, int itemsPerPage, string columnToFilter, string filter)
+        {
+            var items = new List<T>();
+            using (SqlConnection connection = new SqlConnection(_connString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(_procRowsPerPageFiltered, connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add(AddSqlParameter("@TableName", _tableName));
+                command.Parameters.Add(AddSqlParameter("@Page", page));
+                command.Parameters.Add(AddSqlParameter("@ItemsPerPage", itemsPerPage));               
+                command.Parameters.Add(AddSqlParameter("@ColumnToOrderBy", columnToOrder));
+                command.Parameters.Add(AddSqlParameter("@ColumnToFilter", columnToFilter));
+                command.Parameters.Add(AddSqlParameter("@Filter", filter));
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                        while (reader.Read())
+                            AddItem(items, reader);
+                    reader.Close();
+                }
+            }
+            return items;
+        }
+        public List<T> ReadFilteredPageFromDb(int page, string columnToOrder, int itemsPerPage, string columnToFilter, 
+            string filter,string columnForValue, string value)
+        {
+            var items = new List<T>();
+            using (SqlConnection connection = new SqlConnection(_connString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(_procRowPerPageFilterAndColumnValue, connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add(AddSqlParameter("@TableName", _tableName));
+                command.Parameters.Add(AddSqlParameter("@Page", page));
+                command.Parameters.Add(AddSqlParameter("@ItemsPerPage", itemsPerPage));
+                command.Parameters.Add(AddSqlParameter("@ColumnToOrderBy", columnToOrder));
+                command.Parameters.Add(AddSqlParameter("@ColumnToFilter", columnToFilter));
+                command.Parameters.Add(AddSqlParameter("@Filter", filter));
+                command.Parameters.Add(AddSqlParameter("@ColumnForValue", columnForValue));
+                command.Parameters.Add(AddSqlParameter("@Value", value));
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
                     if (reader.HasRows)
@@ -89,7 +195,7 @@ namespace Tree.DB
         }
         protected SqlParameter AddSqlParemeters(int itemsPerPage, string table, SqlCommand command)
         {
-            command.CommandType = System.Data.CommandType.StoredProcedure;
+            command.CommandType = CommandType.StoredProcedure;
             command.Parameters.Add(AddSqlParameter("@ItemsPerPage", itemsPerPage));
             command.Parameters.Add(AddSqlParameter("@TableName", table));
             SqlParameter returnValue = command.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);

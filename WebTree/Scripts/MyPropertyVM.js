@@ -1,4 +1,4 @@
-﻿PrpoertyVM = function () {
+﻿PropertyVM = function () { 
     var self = this;
     self.filter = ko.observable('');
     self.properties = ko.observableArray();
