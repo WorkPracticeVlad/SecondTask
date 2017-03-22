@@ -13,9 +13,32 @@ namespace Tree.DB
     {
         private string _insertOrganizationUnits;
         const string TABLE_NAME = "[dbo].[OrganizationUnits]";
+        private string _procSelectOrgUnitsByParent;
+
         public OrganizationUnitRepository() : base(TABLE_NAME)
         {
-            _insertOrganizationUnits = "[dbo].[InsertOrganizationUnits]";         
+            _insertOrganizationUnits = "[dbo].[InsertOrganizationUnits]";
+            _procSelectOrgUnitsByParent = "[dbo].[SelectOrgUnitsByParent]";
+        }
+        public List<OrganizationUnit> ReadChildrenFromDb(string parent)
+        {
+            var items = new List<OrganizationUnit>();
+            using (SqlConnection connection = new SqlConnection(_connString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(_procSelectOrgUnitsByParent, connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add(AddSqlParameter("@Identity", parent));
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                        while (reader.Read())
+                            AddItem(items, reader);
+                    reader.Close();
+                }
+            }
+            return items;
         }
         public override int InsertToDb(List<OrganizationUnit> units)
         {

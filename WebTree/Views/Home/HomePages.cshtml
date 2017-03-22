@@ -3,10 +3,10 @@
     ViewBag.Title = "HomePages";
 }
 @section scripts {
-<script src="~/Scripts/MyPropertyUsageVM.js"></script>
-<script src="~/Scripts/MyPropertyVM.js"></script>
-<script src="~/Scripts/MyOrgUnitVm.js"></script>
-<script src="~/Scripts/MyMainVM.js"></script>
+    <script src="~/Scripts/MyPropertyUsageVM.js"></script>
+    <script src="~/Scripts/MyPropertyVM.js"></script>
+    <script src="~/Scripts/MyOrgUnitVm.js"></script>
+    <script src="~/Scripts/MyMainVM.js"></script>
 }
 <div id="main">
 
@@ -22,31 +22,21 @@
 
 <script type="text/html" id="units-template">
     <div>
-        <div class="col-md-12">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th class="col-md-5">Identity</th>
-                        <th class="col-md-2">Description</th>
-                        <th class="col-md-2">IsVirtual</th>
-                        <th class="col-md-3">ParentIdentity</th>
-                    </tr>
-                </thead>
-                <tbody data-bind="foreach: units">
-                    <tr >
-                        <td class="col-md-5" data-bind="text: Identity "></td>
-                        <td class="col-md-2" data-bind="text: Description"></td>
-                        <td class="col-md-2" data-bind="text: IsVirtual"></td>
-                        <td class="col-md-3" data-bind="text: ParentIdentity"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <ul data-bind="template: { name: 'treeNode', foreach: $data.units }"></ul>
+
+        <script id="treeNode" type="text/html">
+            <li>
+                <span data-bind="text : Identity , click : $parent.Load"></span>
+                <ul data-bind="template: { name: 'treeNode', foreach: Children }"></ul>
+            </li>
+        </script>
     </div>
 </script>
 
 <script type="text/html" id="properties-template">
-    <span>Filter:</span><input data-bind="textInput: filter, event: { input : Initialize }" /><br />
+    <span>Filter:</span>
+    <input data-bind="textInput: filter, event: { input : Initialize }" />
+    <br />
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -56,7 +46,7 @@
             </tr>
         </thead>
         <tbody data-bind="foreach : properties">
-            <tr >
+            <tr>
                 <td class="col-md-4" data-bind="text: $data.Name"></td>
                 <td class="col-md-4" data-bind="text: $data.Type"></td>
                 <td class="col-md-4" data-bind="text: $data.CountOfUsage, click : $root.goToPropertiesUsage"></td>
@@ -70,16 +60,18 @@
 
 <script type="text/html" id="propertiesUsage-template">
     <h4>Property usage</h4>
-    <span>Filter:</span><input data-bind="textInput: filter, event: { input : Initialize }" /><br />
+    <span>Filter:</span>
+    <input data-bind="textInput: filter, event: { input : Initialize }" />
+    <br />
     <div class="col-md-12">
-        <div>            
-                <div class="col-md-6"><strong>Unit </strong></div>
-                <div class="col-md-6"><strong>Value </strong></div>
+        <div>
+            <div class="col-md-6"><strong>Unit </strong></div>
+            <div class="col-md-6"><strong>Value </strong></div>
         </div>
         <div data-bind="foreach : values">
-                <div class="col-md-6" ><span data-bind="text: $data.OrganizationUnitIdentity, bootstrapPopover : {content : $parent.returnPropertyTag($data.Value)}"></span></div>
-                <div class="col-md-6"><span  data-bind="text: $data.Value"></span></div>
-            <hr />       
+            <div class="col-md-6"><span data-bind="text: $data.OrganizationUnitIdentity, bootstrapPopover : {content : $parent.returnPropertyTag($data.Value)}"></span></div>
+            <div class="col-md-6"><span data-bind="text: $data.Value"></span></div>
+            <hr />
         </div>
     </div>
     <div data-bind="foreach : pages">

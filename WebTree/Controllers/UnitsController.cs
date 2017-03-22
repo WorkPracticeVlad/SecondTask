@@ -33,5 +33,11 @@ namespace WebTree.Controllers
         {
             return _manager.ValuesRepository.ReadOrganizationUnitValuesFromDb(identity.Replace('-', '.'));
         }
+        [HttpGet]
+        [Route("api/units/childrenbyparent/{id}")]
+        public List<OrganizationUnit> ChildrenByParent(string id = "")
+        {
+            return _manager.OrgUnitsRepository.ReadChildrenFromDb(id);
+        }
     }
 }

@@ -71,7 +71,7 @@ namespace Tree
         string AddOrgUnit(XmlNode node, string parentId)
         {
             if (String.IsNullOrEmpty(parentId))
-                parentId = "";
+                parentId = "Enviroment";
             var orgUnitId = parentId + borderChar + node.Attributes["id"]?.Value;
             var description = node.Attributes["description"]?.Value;
             if (!OrgUnits.ContainsKey(orgUnitId))

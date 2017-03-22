@@ -57,7 +57,7 @@ CREATE PROC SelectAllValuesForOrganizationUnitByIdentiy(@Identity as nvarchar(25
 AS
 SET NOCOUNT ON;
 BEGIN
-WHILE @Identity<>''
+WHILE @Identity<>'Enviroment'
 BEGIN
 select [Identity],[PropertyName],[Value] from [dbo].[OrganizationUnits] 
 left join [dbo].[OrganizationUnitToProperties] on
@@ -75,7 +75,7 @@ AS
 SET NOCOUNT ON;
 BEGIN
 set @Identity=[dbo].[fnGetIdentityByIdentiyTail](@Identity)
-WHILE @Identity<>''
+WHILE @Identity<>'Enviroment'
 BEGIN
 select [Identity],[PropertyName],[Value] from [dbo].[OrganizationUnits] 
 left join [dbo].[OrganizationUnitToProperties] on
@@ -91,7 +91,7 @@ GO
 CREATE PROC SelectOrganizationUnitToAncestors(@Identity as nvarchar(255))
 AS
 SET NOCOUNT ON;
-WHILE @Identity<>''
+WHILE @Identity<>'Enviroment'
 BEGIN
 select * from [dbo].[OrganizationUnits]
 where [Identity]=@Identity;
@@ -455,5 +455,14 @@ Insert @TempoTable exec  [dbo].[CountRowsFilterByColumnValue]@TableName,@ColumnT
 select @Count= [CountFiltered] from @TempoTable
 select [dbo].[fnCountPages](@Count,@ItemsPerPage)
 end
+SET NOCOUNT OFF;
+GO
+CREATE PROC SelectOrgUnitsByParent(@Identity as nvarchar(255))
+AS
+SET NOCOUNT ON;
+BEGIN
+select * from [dbo].[OrganizationUnits] 
+where [ParentIdentity]=@Identity
+END;
 SET NOCOUNT OFF;
 GO
