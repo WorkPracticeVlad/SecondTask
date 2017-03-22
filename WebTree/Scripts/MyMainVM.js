@@ -1,8 +1,8 @@
 ﻿   MainVM = function(){
        var self = this;
        self.goToPropertiesUsage = function (row) {
-           self.currentPanelData()['panel'] = 'propertiesUsage' + "-template";
-           self.currentPanelData()['data'] = panelViewModels['propertiesUsage'](row);
+           self.currentPanelData().panel = 'propertiesUsage-template';
+           self.currentPanelData().data = panelViewModels.propertiesUsage(row);
            self.currentPanelData.valueHasMutated();
        }
        self.panels = [
@@ -21,8 +21,8 @@
            data: panelViewModels["units"]
        });       
        self.goToTeplate = function(name) {
-           self.currentPanelData()['panel'] = name + "-template";
-           self.currentPanelData()['data'] = panelViewModels[name];
+           self.currentPanelData().panel = name + "-template";
+           self.currentPanelData().data = panelViewModels[name];
            self.currentPanelData.valueHasMutated();
        }
    }

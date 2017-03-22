@@ -37,7 +37,7 @@ namespace WebTree.Controllers
         [Route("api/units/childrenbyparent/{id}")]
         public List<OrganizationUnit> ChildrenByParent(string id = "")
         {
-            return _manager.OrgUnitsRepository.ReadChildrenFromDb(id);
+            return _manager.OrgUnitsRepository.ReadChildrenFromDb(id.Replace('-','.'));
         }
     }
 }
