@@ -11,14 +11,14 @@ let toggleOrgUnitIsExpanded = function (orgUnit) {
     let tempo = orgUnit.isExpanded();
     orgUnit.isExpanded(!tempo);
 }
-let toggleClickOnLoad = function (orgUnit) {
+let toggleClick = function (orgUnit) {
     orgUnit.click(toggleOrgUnitIsExpanded);
 }
 let recursiveIdentityFind = function (nestedArr,identity,dataArr) {
     for (let i = 0; i < nestedArr.length; i++) {
         if (identity === nestedArr[i].identity()) {
             nestedArr[i].children(dataArr);
-            toggleClickOnLoad(nestedArr[i]);
+            toggleClick(nestedArr[i]);
             return;
         }
         recursiveIdentityFind(nestedArr[i].children(), identity, dataArr);

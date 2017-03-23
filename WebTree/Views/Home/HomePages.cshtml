@@ -27,9 +27,9 @@
         <script id="treeNode" type="text/html">
             <li>
                 <span data-bind="click : click()">#</span>
-                <text data-bind="visible : isExpanded">
+                <text>
                     <span data-bind="text : identity"></span>
-                    <ul data-bind="template: { name: 'treeNode', foreach: children }"></ul>
+                    <ul data-bind="template: { name: 'treeNode', foreach: children }, visible : isExpanded"></ul>
                 </text>    
             </li>
         </script>
@@ -64,7 +64,7 @@
 <script type="text/html" id="propertiesUsage-template">
     <h4>Property usage</h4>
     <span>Filter:</span>
-    <input data-bind="textInput: filter, event: { input : Initialize }" />
+    <input data-bind="textInput: filter, event: { input : initialize }" />
     <br />
     <div class="col-md-12">
         <div>
@@ -78,7 +78,7 @@
         </div>
     </div>
     <div data-bind="foreach : pages">
-        <button data-bind="text : $data , click : $parent.Load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
+        <button data-bind="text : $data , click : $parent.load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
     </div>
 </script>
 

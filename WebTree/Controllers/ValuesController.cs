@@ -64,5 +64,15 @@ namespace WebTree.Controllers
         {
             return _manager.ValuesRepository.ReadFilteredPageFromDb(page, "[OrganizationUnitIdentity]",_itemsPerPage, "[OrganizationUnitIdentity]",filter,"[PropertyName]",id);
         }
+        [Route("api/values/byorgunit/{id}/{page}")]
+        public List<OrganizationUnitToProperty> ByOrgUnit(string id, int page)
+        {
+            return _manager.ValuesRepository.ReadOrganizationUnitValuesFromDb(id.Replace('-', '.'));
+        }
+        [Route("api/values/byorgunit/{id}/{page}/{filter}")]
+        public List<OrganizationUnitToProperty> ByOrgUnit(string id, int page, string filter="")
+        {
+            return _manager.ValuesRepository.ReadOrganizationUnitValuesFromDb(id.Replace('-', '.'));
+        }
     }
 }

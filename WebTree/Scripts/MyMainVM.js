@@ -18,7 +18,7 @@
        };
        self.currentPanelData = ko.observable({
            panel: 'units-template',
-           data: panelViewModels["units"]
+           data: panelViewModels.units
        });       
        self.goToTeplate = function(name) {
            self.currentPanelData().panel = name + "-template";

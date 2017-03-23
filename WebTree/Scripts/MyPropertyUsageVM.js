@@ -16,13 +16,13 @@ PropertyUsageVM = function (property) {
     self.returnPropertyTag = function (value) {
         return '<property type="' + property.Type + '" name="' + property.Name + '">' + value + '</property>';
     };
-    self.Load = function (page) {
+    self.load = function (page) {
         self.currentPage(page);
         $.getJSON('/api/values/byproperty/' + property.Name + '/' + self.currentPage() + '/' + self.filter(), function (data) {
             self.values(data);
         });
     };
-    self.BuildPages = function () {
+    self.buildPages = function () {
         $.get('/api/values/pagesbyproperty/' + property.Name + '/' + self.filter(), function (data) {
             let tempoArr = [];
             for (let i = 1; i <= data ; i++) {
@@ -31,9 +31,9 @@ PropertyUsageVM = function (property) {
             self.pages(tempoArr);
         })
     };
-    self.Initialize = function () {
-        self.BuildPages();
-        self.Load(1);
+    self.initialize = function () {
+        self.buildPages();
+        self.load(1);
     }
-    self.Initialize();
+    self.initialize();
 }
