@@ -3,6 +3,7 @@
     ViewBag.Title = "HomePages";
 }
 @section scripts {
+    <script src="~/Scripts/MyValuesByOrgUnitVM.js"></script>
     <script src="~/Scripts/MyPropertyUsageVM.js"></script>
     <script src="~/Scripts/MyPropertyVM.js"></script>
     <script src="~/Scripts/MyOrgUnitVm.js"></script>
@@ -28,9 +29,9 @@
             <li>
                 <span data-bind="click : click()">#</span>
                 <text>
-                    <span data-bind="text : identity"></span>
+                    <span data-bind="text : identity, click : $root.goToValuesByOrgUnit"></span>
                     <ul data-bind="template: { name: 'treeNode', foreach: children }, visible : isExpanded"></ul>
-                </text>    
+                </text>
             </li>
         </script>
     </div>
@@ -83,10 +84,10 @@
 </script>
 
 
-<script type="text/html" id="unitValues-template">
-    <h4>Property usage</h4>
+<script type="text/html" id="valuesByOrgUnit-template">
+    <h4></h4>
     <span>Filter:</span>
-    <input data-bind="textInput: filter, event: { input : Initialize }" />
+    <input data-bind="textInput: filter, event: { input : initialize }" />
     <br />
     <div class="col-md-12">
         <div>

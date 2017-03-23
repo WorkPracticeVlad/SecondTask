@@ -87,8 +87,6 @@ namespace Tree
         }
         private string GetOrgUnitId(string path, string parentId)
         {
-            if (parentId == ".US.RootConfig")
-                parentId = "";
             if (path.EndsWith(backSlash + "config"))
                 return parentId+borderChar+"RootConfig";
             string orgUnitId = parentId +borderChar +path.Substring(path.LastIndexOf(backSlash) + 1);

@@ -5,6 +5,11 @@
            self.currentPanelData().data = panelViewModels.propertiesUsage(row);
            self.currentPanelData.valueHasMutated();
        }
+       self.goToValuesByOrgUnit = function (orgUnit) {
+           self.currentPanelData().panel = 'valuesByOrgUnit-template';
+           self.currentPanelData().data = panelViewModels.valuesByOrgUnit(orgUnit);
+           self.currentPanelData.valueHasMutated();
+       }
        self.panels = [
            "units",
            "properties",
@@ -12,8 +17,11 @@
        var panelViewModels = {
            "units": new OrgUnitVM(),
            "properties": new PropertyVM(),
-           "propertiesUsage": function SetPropertyUsageVM(name) {
-               return new PropertyUsageVM(name);       
+           "propertiesUsage": function setPropertyUsageVM(name) {
+               return new PropertyUsageVM(name);
+           },
+           "valuesByOrgUnit": function setValuesByOrgUnitVM(orgUnit) {
+               return new ValuesByOrgUnitVM(orgUnit);
            }
        };
        self.currentPanelData = ko.observable({

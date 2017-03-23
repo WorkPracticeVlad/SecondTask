@@ -466,3 +466,41 @@ where [ParentIdentity]=@Identity
 END;
 SET NOCOUNT OFF;
 GO
+create proc CountPagesValuesForOrganizationUnitByIdentiyFiltered
+(
+@ItemsPerPage as int,
+@Identity as nvarchar(225),
+@Filter as nvarchar(225)
+)
+as
+SET NOCOUNT ON;
+begin
+declare @Count as int
+declare @Table as table (OrganizationUnitIdentity  nvarchar(225),PropertyName nvarchar(225), Value nvarchar(225))
+insert @Table exec [dbo].[SelectAllValuesForOrganizationUnitByIdentiy]@Identity
+select @Count=count(distinct PropertyName) from @Table
+select [dbo].[fnCountPages](@Count,@ItemsPerPage)
+end
+SET NOCOUNT OFF;
+GO
+create proc RowsPerPageValuesForOrganizationUnitByIdentiyFiltered
+(
+@Identity as nvarchar(225),
+@Page as int,
+@ItemsPerPage as int,
+@Filter as nvarchar(225)
+)
+as
+SET NOCOUNT ON;
+begin
+declare @Table as table (OrganizationUnitIdentity  nvarchar(225),PropertyName nvarchar(225), Value nvarchar(225))
+insert @Table exec [dbo].[SelectAllValuesForOrganizationUnitByIdentiy]@Identity
+select * from @Table WHERE PropertyName like '%'+@Filter+'%'  
+and PropertyName in(select distinct PropertyName from @Table
+ORDER BY PropertyName 
+OFFSET @Page*@ItemsPerPage-@ItemsPerPage ROWS
+FETCH NEXT @ItemsPerPage ROWS ONLY
+)
+end
+SET NOCOUNT OFF;
+GO

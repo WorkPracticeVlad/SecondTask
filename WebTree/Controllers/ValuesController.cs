@@ -64,15 +64,29 @@ namespace WebTree.Controllers
         {
             return _manager.ValuesRepository.ReadFilteredPageFromDb(page, "[OrganizationUnitIdentity]",_itemsPerPage, "[OrganizationUnitIdentity]",filter,"[PropertyName]",id);
         }
-        [Route("api/values/byorgunit/{id}/{page}")]
-        public List<OrganizationUnitToProperty> ByOrgUnit(string id, int page)
+        [HttpGet]
+        [Route("api/values/pagesbyorgunit/{id}")]
+        public int PagesByOrgUnit(string id)
         {
-            return _manager.ValuesRepository.ReadOrganizationUnitValuesFromDb(id.Replace('-', '.'));
+            return _manager.ValuesRepository.CountPagesByOrgUnit(_itemsPerPage, id.Replace('-', '.'), "");
         }
-        [Route("api/values/byorgunit/{id}/{page}/{filter}")]
-        public List<OrganizationUnitToProperty> ByOrgUnit(string id, int page, string filter="")
+        [HttpGet]
+        [Route("api/values/pagesbyorgunit/{id}/{filter}")]
+        public int PagesByOrgUnit(string id, string filter)
         {
-            return _manager.ValuesRepository.ReadOrganizationUnitValuesFromDb(id.Replace('-', '.'));
+            return _manager.ValuesRepository.CountPagesByOrgUnit(_itemsPerPage, id.Replace('-', '.'), filter);
+        }
+        [HttpGet]
+        [Route("api/values/byorgunit/{id}/{page}")]
+        public List<ValuesForRespose> ByOrgUnit(string id, int page)
+        {
+            return _manager.ValuesRepository.ReadPageOrganizationUnitValuesFilteredFromDb(id.Replace('-', '.'),page,_itemsPerPage,"");
+        }
+        [HttpGet]
+        [Route("api/values/byorgunit/{id}/{page}/{filter}")]
+        public List<ValuesForRespose> ByOrgUnit(string id, int page, string filter="")
+        {
+            return _manager.ValuesRepository.ReadPageOrganizationUnitValuesFilteredFromDb(id.Replace('-', '.'), page, _itemsPerPage, filter);
         }
     }
 }
