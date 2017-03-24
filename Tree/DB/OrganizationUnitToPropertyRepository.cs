@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using Tree.Data;
+using Tree.Data.SubData;
 
 namespace Tree.DB
 {
@@ -103,7 +104,7 @@ namespace Tree.DB
             }
             return items;
         }
-        public Dictionary<string, List<OrganizationUnitToProperty>> ReadPageOrganizationUnitValuesFilteredFromDb(string unitIdentity, int page, int itemsPerPage, string filter)
+        public ForOrgUnitProperties ReadPageOrganizationUnitValuesFilteredFromDb(string unitIdentity, int page, int itemsPerPage, string filter)
         {
             List<OrganizationUnitToProperty> items = new List<OrganizationUnitToProperty>();
             using (SqlConnection connection = new SqlConnection(_connString))
@@ -125,19 +126,29 @@ namespace Tree.DB
                             AddItem(items, reader);
                 }
                 reader.Close();
-            }//
-            var valuesForResponse = new Dictionary<string, List<OrganizationUnitToProperty>>();
-            if (!items.Any(i => i.OrganizationUnitIdentity == unitIdentity))
-                valuesForResponse.Add("OrgUnitName-" + unitIdentity, null);
-            foreach (var p in items.Select(u => u.PropertyName).Distinct().ToList())
-            {
-                valuesForResponse.Add(p, items.Where(i => i.PropertyName == p).ToList());
+            }// 
+            var forOrgUnitProperties = new ForOrgUnitProperties();
+            forOrgUnitProperties.Header = new List<OrgUnitIdentityTailPair>();
+            forOrgUnitProperties.Data = new List<PropertyToUnitsValuePairs>();
+            foreach (var item in items.Select(u => u.OrganizationUnitIdentity).Distinct().ToList())
+            {               
+                forOrgUnitProperties.Header.Add(new OrgUnitIdentityTailPair { Identity = item, Tail = item.Substring(item.LastIndexOf('.'))});
             }
-            foreach (var u in items.Select(u => u.OrganizationUnitIdentity).Distinct().ToList())
+            foreach (var item in items.Select(u => u.PropertyName).Distinct().ToList())
             {
-                valuesForResponse.Add("OrgUnitName-" + u, items.Where(i => i.PropertyName == u).ToList());
+                var listUnitsToValues = new List<OrgUnitValuePair>();
+                foreach (var i in items.Where(i => i.PropertyName == item).ToList())
+                {
+                    listUnitsToValues.Add(new OrgUnitValuePair { OrgUnitIdentity = i.OrganizationUnitIdentity, Value = i.Value });
+                }
+                forOrgUnitProperties.Data.Add(new PropertyToUnitsValuePairs
+                {
+                    Property = item,
+                    UnitsToValues = listUnitsToValues
+                });
             }
-            return valuesForResponse;
+           
+            return forOrgUnitProperties;
         }
     }
 }

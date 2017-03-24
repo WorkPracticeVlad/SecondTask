@@ -89,6 +89,8 @@ namespace Tree
         {
             if (path.EndsWith(backSlash + "config"))
                 return parentId+borderChar+"RootConfig";
+            if (parentId.EndsWith("RootConfig"))
+                return borderChar+ path.Substring(path.LastIndexOf(backSlash) + 1);
             string orgUnitId = parentId +borderChar +path.Substring(path.LastIndexOf(backSlash) + 1);
             return orgUnitId;
         }
