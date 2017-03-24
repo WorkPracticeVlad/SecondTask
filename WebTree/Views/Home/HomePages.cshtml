@@ -39,7 +39,7 @@
 
 <script type="text/html" id="properties-template">
     <span>Filter:</span>
-    <input data-bind="textInput: filter, event: { input : Initialize }" />
+    <input data-bind="textInput: filter, event: { input : initialize }" />
     <br />
     <table class="table table-bordered">
         <thead>
@@ -51,14 +51,14 @@
         </thead>
         <tbody data-bind="foreach : properties">
             <tr>
-                <td class="col-md-4" data-bind="text: $data.Name"></td>
-                <td class="col-md-4" data-bind="text: $data.Type"></td>
-                <td class="col-md-4" data-bind="text: $data.CountOfUsage, click : $root.goToPropertiesUsage"></td>
+                <td class="col-md-4" data-bind="text: $data.name"></td>
+                <td class="col-md-4" data-bind="text: $data.type"></td>
+                <td class="col-md-4" data-bind="text: $data.countOfUsage, click : $root.goToPropertiesUsage"></td>
             </tr>
         </tbody>
     </table>
     <div data-bind="foreach : pages">
-        <button data-bind="text : $data , click : $parent.Load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
+        <button data-bind="text : $data , click : $parent.load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
     </div>
 </script>
 
@@ -73,8 +73,8 @@
             <div class="col-md-6"><strong>Value </strong></div>
         </div>
         <div data-bind="foreach : values">
-            <div class="col-md-6"><span data-bind="text: $data.OrganizationUnitIdentity, bootstrapPopover : {content : $parent.returnPropertyTag($data.Value)}"></span></div>
-            <div class="col-md-6"><span data-bind="text: $data.Value"></span></div>
+            <div class="col-md-6"><span data-bind="text: $data.organizationUnitIdentity, bootstrapPopover : {content : $parent.returnPropertyTag($data.Value)}"></span></div>
+            <div class="col-md-6"><span data-bind="text: $data.value"></span></div>
             <hr />
         </div>
     </div>
@@ -83,24 +83,29 @@
     </div>
 </script>
 
-
 <script type="text/html" id="valuesByOrgUnit-template">
     <h4></h4>
     <span>Filter:</span>
     <input data-bind="textInput: filter, event: { input : initialize }" />
     <br />
-    <div class="col-md-12">
-        <div>
-            <span><strong>Name</strong></span>
-            <span>foreach</span>
-        </div>
-        <div @*data-bind="foreach : values"*@>
-            <span><strong>Name</strong></span>
-            <span>foreach</span>
-        </div>
-    </div>
+    <div >
+        <table class="table table-bordered">
+            <thead>
+                <tr data-bind="foreach : unitsName">
+                    <th data-bind="text: $data"></th>
+                </tr>
+            </thead>
+            <tbody @*data-bind="foreach : properties"*@>
+                <tr>
+                    <td  @*data-bind="text: $data.name"*@></td>
+                    <td @*data-bind="text: $data.type"*@></td>
+                    <td  @*data-bind="text: $data.countOfUsage, click : $root.goToPropertiesUsage"*@></td>
+                </tr>
+            </tbody>
+        </table>
     <div data-bind="foreach : pages">
         <button data-bind="text : $data , click : $parent.Load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
+    </div>
     </div>
 </script>
 

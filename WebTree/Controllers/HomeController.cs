@@ -20,10 +20,7 @@ namespace WebTree.Controllers
             ViewBag.Title = "Home Page"; 
             return View();
         }
-        public ActionResult TreePages()
-        {
-            return View();
-        }
+
         public ActionResult HomePages()
         {
             return View();

@@ -1,4 +1,4 @@
-﻿   MainVM = function(){
+﻿var MainVM = function(){
        var self = this;
        self.goToPropertiesUsage = function (row) {
            self.currentPanelData().panel = 'propertiesUsage-template';

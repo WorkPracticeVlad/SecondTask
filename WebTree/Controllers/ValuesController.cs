@@ -78,13 +78,13 @@ namespace WebTree.Controllers
         }
         [HttpGet]
         [Route("api/values/byorgunit/{id}/{page}")]
-        public List<ValuesForRespose> ByOrgUnit(string id, int page)
+        public Dictionary<string, List<OrganizationUnitToProperty>> ByOrgUnit(string id, int page)
         {
             return _manager.ValuesRepository.ReadPageOrganizationUnitValuesFilteredFromDb(id.Replace('-', '.'),page,_itemsPerPage,"");
         }
         [HttpGet]
         [Route("api/values/byorgunit/{id}/{page}/{filter}")]
-        public List<ValuesForRespose> ByOrgUnit(string id, int page, string filter="")
+        public Dictionary<string, List<OrganizationUnitToProperty>> ByOrgUnit(string id, int page, string filter="")
         {
             return _manager.ValuesRepository.ReadPageOrganizationUnitValuesFilteredFromDb(id.Replace('-', '.'), page, _itemsPerPage, filter);
         }

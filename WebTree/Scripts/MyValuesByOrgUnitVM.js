@@ -1,26 +1,25 @@
-﻿ValuesByOrgUnitVM = function (orgUnit) {
+﻿var ValuesByOrgUnitVM = function (orgUnit) {
     var self = this;
     self.filter = ko.observable('');
-    self.valuesProperties = ko.observableArray();
-    self.valuesUnits = ko.observableArray();
+    self.valuesByProperties = ko.observableArray();
+    self.unitsName = ko.observableArray();
     self.pages = ko.observableArray();
     self.currentPage = ko.observable();
     self.load = function (page) {
         self.currentPage(page);
         let identity = orgUnit.identity();
         $.getJSON('/api/values/byorgunit/' + identity.replace(/\./g, '-') + '/' + self.currentPage() + '/' + self.filter(), function (data) {
-            let tempoArrProperty = [];
-            let tempoArrUnits = [];
-            for (var i = 0; i < data.length; i++) {
-                if (data[i].NameGroup.startsWith('OrgUnitName-')) {
-                    tempoArrUnits.push(data[i])
-                } else {
-                    tempoArrProperty.push(data[i])
-                }
+            let tempoArrUnitsName = [];
+            let dataKeys = Object.keys(data);
+            for (var i = 0; i < dataKeys.length; i++) {
+                if (dataKeys[i].startsWith('orgUnitName-')) {
+                    tempoArrUnitsName.push(dataKeys[i].substr(dataKeys[i].indexOf('-') + 1));
+                    delete data[dataKeys[i]];
+                } 
             }
-
-            self.valuesProperties(tempoArrProperty);
-            self.valuesUnits(tempoArrUnits);
+            tempoArrUnitsName.push('Name');
+            self.valuesByProperties(data);
+            self.unitsName(tempoArrUnitsName.reverse());
         });
     };
     self.buildPages = function () {

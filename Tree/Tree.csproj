@@ -45,7 +45,6 @@
     <Compile Include="Data\OrganizationUnit.cs" />
     <Compile Include="Data\OrganizationUnitToProperty.cs" />
     <Compile Include="Data\Property.cs" />
-    <Compile Include="Data\ValuesForRespose.cs" />
     <Compile Include="DB\OrganizationUnitRepository.cs" />
     <Compile Include="DB\OrganizationUnitToPropertyRepository.cs" />
     <Compile Include="DB\PropertyRepository.cs" />

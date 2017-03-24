@@ -1,4 +1,4 @@
-﻿let orgUnit = function (identity, description, isVirtual, parentIdentity,click,isExpanded) {
+﻿let OrgUnit = function (identity, description, isVirtual, parentIdentity,click,isExpanded) {
     this.identity = ko.observable(identity);
     this.description = ko.observable(description);
     this.isVirtual = ko.observable(isVirtual);
@@ -32,10 +32,10 @@ OrgUnitVM = function () {
         $.get('/api/units/childrenbyparent/' + identittyToUrl, function (dataGet) {
             let orgUnitChildrenArr = [];
             for (var i = 0; i < dataGet.length; i++) {
-                orgUnitChildrenArr.push(new orgUnit(dataGet[i].Identity, dataGet[i].Description, dataGet[i].IsVirtual, dataGet[i].ParentIdentity, self.load, true));
+                orgUnitChildrenArr.push(new OrgUnit(dataGet[i].identity, dataGet[i].description, dataGet[i].isVirtual, dataGet[i].parentIdentity, self.load, true));
             }
             recursiveIdentityFind(self.units(), data.identity(), orgUnitChildrenArr);
         });
     };
-    self.units = ko.observableArray([new orgUnit('Enviroment', 'Enviroment', 'true', '', self.load,true)]);
+    self.units = ko.observableArray([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.load,true)]);
 }

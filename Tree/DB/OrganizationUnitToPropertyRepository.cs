@@ -60,7 +60,7 @@ namespace Tree.DB
                 Value = reader?.GetString(2)
             });
         }
-        public int CountPagesByOrgUnit(int itemsPerPage,string identity ,string filter)
+        public int CountPagesByOrgUnit(int itemsPerPage, string identity, string filter)
         {
             using (SqlConnection connection = new SqlConnection(_connString))
             {
@@ -103,7 +103,7 @@ namespace Tree.DB
             }
             return items;
         }
-        public List<ValuesForRespose> ReadPageOrganizationUnitValuesFilteredFromDb(string unitIdentity, int page, int itemsPerPage, string filter)
+        public Dictionary<string, List<OrganizationUnitToProperty>> ReadPageOrganizationUnitValuesFilteredFromDb(string unitIdentity, int page, int itemsPerPage, string filter)
         {
             List<OrganizationUnitToProperty> items = new List<OrganizationUnitToProperty>();
             using (SqlConnection connection = new SqlConnection(_connString))
@@ -126,16 +126,18 @@ namespace Tree.DB
                 }
                 reader.Close();
             }//
-            var valuesForResponse = new List<ValuesForRespose>();
+            var valuesForResponse = new Dictionary<string, List<OrganizationUnitToProperty>>();
+            if (!items.Any(i => i.OrganizationUnitIdentity == unitIdentity))
+                valuesForResponse.Add("OrgUnitName-" + unitIdentity, null);
             foreach (var p in items.Select(u => u.PropertyName).Distinct().ToList())
             {
-                valuesForResponse.Add(new ValuesForRespose {NameGroup=p, Values= items.Where(i => i.PropertyName == p).ToList() });
+                valuesForResponse.Add(p, items.Where(i => i.PropertyName == p).ToList());
             }
             foreach (var u in items.Select(u => u.OrganizationUnitIdentity).Distinct().ToList())
             {
-                valuesForResponse.Add(new ValuesForRespose { NameGroup ="OrgUnitName-"+ u, Values = items.Where(i => i.PropertyName == u).ToList() });
+                valuesForResponse.Add("OrgUnitName-" + u, items.Where(i => i.PropertyName == u).ToList());
             }
-            return valuesForResponse;       
+            return valuesForResponse;
         }
     }
 }
