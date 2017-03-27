@@ -5,7 +5,7 @@
            "properties",
     ];
     self.goToTeplate = function (name) {
-        window.location.replace("/home/homepages/"+name);;
+        window.location.replace("/home/homepages#"+name);;
     }
     self.units = ko.observableArray([]);
     self.props = ko.observableArray([]);
