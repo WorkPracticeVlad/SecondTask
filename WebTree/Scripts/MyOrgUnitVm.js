@@ -1,4 +1,4 @@
-﻿let OrgUnit = function (identity, description, isVirtual, parentIdentity,click,isExpanded) {
+﻿let OrgUnit = function (identity, description, isVirtual, parentIdentity, click, isExpanded) {
     this.identity = ko.observable(identity);
     this.description = ko.observable(description);
     this.isVirtual = ko.observable(isVirtual);
@@ -14,19 +14,26 @@ let toggleOrgUnitIsExpanded = function (orgUnit) {
 let toggleClick = function (orgUnit) {
     orgUnit.click(toggleOrgUnitIsExpanded);
 }
-let recursiveIdentityFind = function (nestedArr,identity,dataArr) {
+let recursiveIdentityFind = function (nestedArr, identity, dataArr) {
     for (let i = 0; i < nestedArr.length; i++) {
         if (identity === nestedArr[i].identity()) {
             nestedArr[i].children(dataArr);
             toggleClick(nestedArr[i]);
-            return;
         }
         recursiveIdentityFind(nestedArr[i].children(), identity, dataArr);
     }
 }
-
+let BuildBranch = function (arrToFill,dataArr) {
+    for (var i = 0; i < dataArr.length; i++) {
+        arrToFill.push(new OrgUnit(dataArr[i].identity,
+            dataArr[i].description,
+            dataArr[i].isVirtual, dataArr[i].parentIdentity, toggleOrgUnitIsExpanded, true));
+            BuildBranch(arrToFill[i].children(), dataArr[i].children);
+    }
+}
 OrgUnitVM = function () {
     var self = this;
+    self.filter = ko.observable('');
     self.load = function (data, event) {
         let identittyToUrl = data.identity().replace(/\./g, '-');
         $.get('/api/units/childrenbyparent/' + identittyToUrl, function (dataGet) {
@@ -37,5 +44,18 @@ OrgUnitVM = function () {
             recursiveIdentityFind(self.units(), data.identity(), orgUnitChildrenArr);
         });
     };
-    self.units = ko.observableArray([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.load,true)]);
+    self.loadFiltered = function () {
+        let identittyToUrl = self.filter().replace(/\./g, '-');
+        $.get('/api/units/branchesfiltered/' + identittyToUrl, function (dataGet) {
+            let orgUnitBranches = [];
+            BuildBranch(orgUnitBranches, dataGet[0].children);
+            self.units()[0].children(orgUnitBranches);
+        });     
+    }
+    self.filter.subscribe(function (newFilter) {
+        if (newFilter=='') {
+            self.units()[0].children(null);
+        }      
+    });
+    self.units = ko.observableArray([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.load, true)]);
 }

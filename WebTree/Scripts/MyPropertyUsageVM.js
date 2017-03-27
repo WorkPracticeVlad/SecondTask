@@ -1,9 +1,13 @@
 ﻿ko.bindingHandlers.bootstrapPopover = {
     init: function (element, valueAccessor, allBindingsAccessor, PropertyUsageVM) {
         var options = valueAccessor();
-        var defaultOptions = {};
-        options = $.extend(true, {}, defaultOptions, options);
-        $(element).popover(options);
+        $(element).popover({
+            placement: 'right',
+            content: options.content,
+            delay:400,
+            html: true,
+            trigger: 'hover'
+        });
     }
 };
 
@@ -14,7 +18,7 @@ var PropertyUsageVM = function (property) {
     self.pages = ko.observableArray();
     self.currentPage = ko.observable();
     self.returnPropertyTag = function (value) {
-        return '<property type="' + property.type + '" name="' + property.name + '">' + value + '</property>';
+        return '<textarea style="width:250px;height:132px;background-color: #e5eeff;" readonly><property type="' + property.type + '" name="' + property.name + '">' + value + '</property></textarea>';
     };
     self.load = function (page) {
         self.currentPage(page);

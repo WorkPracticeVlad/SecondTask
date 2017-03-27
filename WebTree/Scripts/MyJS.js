@@ -1,5 +1,12 @@
 ﻿let TreeViewModel = function() {
-    var self = this;  
+    var self = this;
+    self.panels = [
+           "units",
+           "properties",
+    ];
+    self.goToTeplate = function (name) {
+        window.location.replace("/home/homepages/"+name);;
+    }
     self.units = ko.observableArray([]);
     self.props = ko.observableArray([]);
     self.values = ko.observableArray([]);

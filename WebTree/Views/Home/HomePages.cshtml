@@ -12,9 +12,7 @@
 <div id="main">
 
     <div id="header">
-        <ul data-bind="foreach: panels">
-            <li><a href="#" data-bind="click: $parent.goToTeplate, text:'Load '+$data"></a></li>
-        </ul>
+       <br />
     </div>
 
     <div id="content" data-bind="template: { name: currentPanelData().panel, data: currentPanelData().data }"></div>
@@ -23,8 +21,8 @@
 
 <script type="text/html" id="units-template">
     <div>
+        <input data-bind="textInput: filter, event: { input : loadFiltered }" />
         <ul data-bind="template: { name: 'treeNode', foreach: $data.units }"></ul>
-
         <script id="treeNode" type="text/html">
             <li>
                 <span data-bind="click : click()">#</span>
@@ -73,7 +71,7 @@
             <div class="col-md-6"><strong>Value </strong></div>
         </div>
         <div data-bind="foreach : values">
-            <div class="col-md-6"><span data-bind="text: $data.organizationUnitIdentity, bootstrapPopover : {content : $parent.returnPropertyTag($data.Value)}"></span></div>
+            <div class="col-md-6"><span data-bind="text: $data.organizationUnitIdentity, bootstrapPopover : {content : $parent.returnPropertyTag($data.value)}"></span></div>
             <div class="col-md-6"><span data-bind="text: $data.value"></span></div>
             <hr />
         </div>
@@ -88,7 +86,7 @@
     <span>Filter:</span>
     <input data-bind="textInput: filter, event: { input : initialize }" />
     <br />
-    <div >
+    <div>
         <table class="table table-bordered">
             <thead>
                 <tr data-bind="foreach : unitsName">
@@ -96,15 +94,20 @@
                 </tr>
             </thead>
             <tbody data-bind="foreach : valuesByProperties">
-                <tr>
-                    <td data-bind="text: property"></td>
-                    
+                <tr data-bind="foreach : unitsToValues">
+                    <!-- ko if: $index() == 0 -->
+                    <th data-bind="text: $parent.property"></th>
+                    <td data-bind="text: value"></td>
+                    <!-- /ko -->
+                    <!-- ko if: $index() != 0 -->
+                    <td data-bind="text: value"></td>
+                    <!-- /ko -->
                 </tr>
             </tbody>
         </table>
-    <div data-bind="foreach : pages">
-        <button data-bind="text : $data , click : $parent.Load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
-    </div>
+        <div data-bind="foreach : pages">
+            <button data-bind="text : $data , click : $parent.load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
+        </div>
     </div>
 </script>
 

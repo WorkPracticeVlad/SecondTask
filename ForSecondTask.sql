@@ -479,6 +479,7 @@ declare @Count as int
 declare @Table as table (OrganizationUnitIdentity  nvarchar(225),PropertyName nvarchar(225), Value nvarchar(225))
 insert @Table exec [dbo].[SelectAllValuesForOrganizationUnitByIdentiy]@Identity
 select @Count=count(distinct PropertyName) from @Table
+where PropertyName like '%'+@Filter+'%'
 select [dbo].[fnCountPages](@Count,@ItemsPerPage)
 end
 SET NOCOUNT OFF;
@@ -496,11 +497,57 @@ begin
 declare @Table as table (OrganizationUnitIdentity  nvarchar(225),PropertyName nvarchar(225), Value nvarchar(225))
 insert @Table exec [dbo].[SelectAllValuesForOrganizationUnitByIdentiy]@Identity
 select * from @Table WHERE PropertyName like '%'+@Filter+'%'  
-and PropertyName in(select distinct PropertyName from @Table
+and PropertyName in(select distinct PropertyName from @Table)
 ORDER BY PropertyName 
-OFFSET @Page*@ItemsPerPage-@ItemsPerPage ROWS
+OFFSET  @Page*@ItemsPerPage-@ItemsPerPage ROWS
 FETCH NEXT @ItemsPerPage ROWS ONLY
+end
+SET NOCOUNT OFF;
+GO
+create proc SelectOrgUnitsToAncestorsFiltered
+(
+@Filter as nvarchar(225)
 )
+as
+SET NOCOUNT ON;
+begin
+declare @Table as table (
+[Identity]  nvarchar(225),
+[Description] nvarchar(225),
+IsVirtual bit,
+[ParentIdentity]  nvarchar(225)
+ )
+ declare @TempoIdentity as nvarchar(225)
+ declare curs cursor for
+ select [Identity] from [dbo].[OrganizationUnits]
+ where [Identity] like '%'+@Filter+'%'
+ open curs
+ FETCH NEXT FROM curs INTO @TempoIdentity
+ while @@FETCH_STATUS = 0 BEGIN
+   insert @Table exec [dbo].[SelectOrganizationUnitToAncestors]@TempoIdentity
+   fetch next from curs into @TempoIdentity
+END
+close curs
+deallocate curs
+select distinct * from @Table
+end
+SET NOCOUNT OFF;
+GO
+create proc SelectOrgUnitsToAncestorsIdentity
+(
+@Identity as nvarchar(225)
+)
+as
+SET NOCOUNT ON;
+begin
+declare @Table as table (
+[Identity]  nvarchar(225),
+[Description] nvarchar(225),
+IsVirtual bit,
+[ParentIdentity]  nvarchar(225)
+)
+insert @Table exec [dbo].[SelectOrganizationUnitToAncestors]@Identity
+select [Identity] from @Table
 end
 SET NOCOUNT OFF;
 GO

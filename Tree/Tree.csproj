@@ -49,6 +49,7 @@
     <Compile Include="Data\SubData\ForOrgUnitProperties.cs" />
     <Compile Include="Data\SubData\OrgUnitIdentityTailPair.cs" />
     <Compile Include="Data\SubData\OrgUnitValuePair.cs" />
+    <Compile Include="Data\SubData\UnitTreeNode.cs" />
     <Compile Include="DB\OrganizationUnitRepository.cs" />
     <Compile Include="DB\OrganizationUnitToPropertyRepository.cs" />
     <Compile Include="DB\PropertyRepository.cs" />

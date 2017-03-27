@@ -15,25 +15,15 @@ var ValuesByOrgUnitVM = function (orgUnit) {
         $.getJSON('/api/values/byorgunit/' + identity.replace(/\./g, '-') + '/' + self.currentPage() + '/' + self.filter(), function (dataGet) {
             let tempoArrHeader = [];
             let tempoArrData = [];
-            let tempoArrIds = [];
             for (var i = 0; i < dataGet.header.length; i++) {
                 tempoArrHeader.push(dataGet.header[i]);
-                tempoArrIds.push(dataGet.header[i].identity);
             }
             for (var i = 0; i < dataGet.data.length; i++) {
-                let tempoIds = [];
-                for (var j = 0; j < dataGet.data[i].unitsToValues.length; j++) {
-                    tempoIds.push(dataGet.data[i].unitsToValues[j].orgUnitIdentity);
-                }
-                let diffIds=$(tempoArrIds).not(tempoIds).get();
-                for (var i = 0; i < diffIds.length; i++) {
-                    dataGet.data[i].unitsToValues.push({ orgUnitIdentity: diffIds[i], value: null });
-                }
-                tempoArrData.push(new ValuesByProperty(dataGet.data[i].property, dataGet.data[i].unitsToValues));
-            }            
-            tempoArrHeader.push({ identity: null, tail: 'Name' });
+                tempoArrData.push(dataGet.data[i]);
+            }
+            tempoArrHeader.unshift({ identity: null, tail: 'Name' });
             self.valuesByProperties(tempoArrData);
-            self.unitsName(tempoArrHeader.reverse());
+            self.unitsName(tempoArrHeader);
         });
     };
     self.buildPages = function () {

@@ -21,8 +21,9 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li></li>
-                    <li></li>
+                </ul>
+                <ul class="nav navbar-nav list-inline" data-bind="foreach: panels">
+                    <li><a href="#" data-bind="click: $parent.goToTeplate, text:'Load '+$data"></a></li>
                 </ul>
             </div>
         </div>

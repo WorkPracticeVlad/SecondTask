@@ -18,13 +18,16 @@ namespace Tree.DB
         const string TABLE_NAME = "[dbo].[OrganizationUnitToProperties]";
         private string _procRowsPerPageValuesForOrganizationUnitByIdentiyFiltered;
         private string _procCountPagesValuesForOrganizationUnitByIdentiyFiltered;
+        private string _procSelectOrgUnitsToAncestorsIdentity;
 
-        public OrganizationUnitToPropertyRepository() : base(TABLE_NAME)
+        public OrganizationUnitToPropertyRepository()
+            : base(TABLE_NAME)
         {
             _insertOrganizationUnitToProperties = "[dbo].[InsertOrganizationUnitToProperties]";
             _selcetAllValuesForOrgUnit = "[dbo].[SelectAllValuesForOrganizationUnitByIdentiy]";
             _procRowsPerPageValuesForOrganizationUnitByIdentiyFiltered = "[dbo].[RowsPerPageValuesForOrganizationUnitByIdentiyFiltered]";
             _procCountPagesValuesForOrganizationUnitByIdentiyFiltered = "[dbo].[CountPagesValuesForOrganizationUnitByIdentiyFiltered]";
+            _procSelectOrgUnitsToAncestorsIdentity = "[dbo].[SelectOrgUnitsToAncestorsIdentity]";
         }
         public override int InsertToDb(List<OrganizationUnitToProperty> orgUnitToProperties)
         {
@@ -56,9 +59,9 @@ namespace Tree.DB
             }
             items.Add(new OrganizationUnitToProperty
             {
-                OrganizationUnitIdentity = reader?.GetString(0),
-                PropertyName = reader?.GetString(1),
-                Value = reader?.GetString(2)
+                OrganizationUnitIdentity = reader.GetString(0),
+                PropertyName = reader.GetString(1),
+                Value = reader.GetString(2)
             });
         }
         public int CountPagesByOrgUnit(int itemsPerPage, string identity, string filter)
@@ -107,6 +110,7 @@ namespace Tree.DB
         public ForOrgUnitProperties ReadPageOrganizationUnitValuesFilteredFromDb(string unitIdentity, int page, int itemsPerPage, string filter)
         {
             List<OrganizationUnitToProperty> items = new List<OrganizationUnitToProperty>();
+            List<string> orgUnitsId = new List<string>();
             using (SqlConnection connection = new SqlConnection(_connString))
             {
                 connection.Open();
@@ -121,34 +125,24 @@ namespace Tree.DB
                 {
                     while (reader.Read())
                         AddItem(items, reader);
-                    while (reader.NextResult())
-                        while (reader.Read())
-                            AddItem(items, reader);
                 }
                 reader.Close();
-            }// 
-            var forOrgUnitProperties = new ForOrgUnitProperties();
-            forOrgUnitProperties.Header = new List<OrgUnitIdentityTailPair>();
-            forOrgUnitProperties.Data = new List<PropertyToUnitsValuePairs>();
-            foreach (var item in items.Select(u => u.OrganizationUnitIdentity).Distinct().ToList())
-            {               
-                forOrgUnitProperties.Header.Add(new OrgUnitIdentityTailPair { Identity = item, Tail = item.Substring(item.LastIndexOf('.'))});
             }
-            foreach (var item in items.Select(u => u.PropertyName).Distinct().ToList())
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
-                var listUnitsToValues = new List<OrgUnitValuePair>();
-                foreach (var i in items.Where(i => i.PropertyName == item).ToList())
+                connection.Open();
+                SqlCommand command = new SqlCommand(_procSelectOrgUnitsToAncestorsIdentity, connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add(AddSqlParameter("@Identity", unitIdentity));
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.HasRows)
                 {
-                    listUnitsToValues.Add(new OrgUnitValuePair { OrgUnitIdentity = i.OrganizationUnitIdentity, Value = i.Value });
+                    while (reader.Read())
+                        orgUnitsId.Add(reader.GetString(0));
                 }
-                forOrgUnitProperties.Data.Add(new PropertyToUnitsValuePairs
-                {
-                    Property = item,
-                    UnitsToValues = listUnitsToValues
-                });
+                reader.Close();
             }
-           
-            return forOrgUnitProperties;
+            return new ForOrgUnitProperties(items, orgUnitsId);
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tree.Data;
+using Tree.Data.SubData;
 
 namespace Tree.DB
 {
@@ -14,11 +15,14 @@ namespace Tree.DB
         private string _insertOrganizationUnits;
         const string TABLE_NAME = "[dbo].[OrganizationUnits]";
         private string _procSelectOrgUnitsByParent;
+        private string _procSelectOrgUnitsToAncestorsFiltered;
 
-        public OrganizationUnitRepository() : base(TABLE_NAME)
+        public OrganizationUnitRepository()
+            : base(TABLE_NAME)
         {
             _insertOrganizationUnits = "[dbo].[InsertOrganizationUnits]";
             _procSelectOrgUnitsByParent = "[dbo].[SelectOrgUnitsByParent]";
+            _procSelectOrgUnitsToAncestorsFiltered = "[dbo].[SelectOrgUnitsToAncestorsFiltered]";
         }
         public List<OrganizationUnit> ReadChildrenFromDb(string parent)
         {
@@ -27,7 +31,6 @@ namespace Tree.DB
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(_procSelectOrgUnitsByParent, connection);
-                command.CommandType = CommandType.StoredProcedure;
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add(AddSqlParameter("@Identity", parent));
                 using (SqlDataReader reader = command.ExecuteReader())
@@ -39,6 +42,27 @@ namespace Tree.DB
                 }
             }
             return items;
+        }
+        public List<UnitTreeNode> ReadBranchesFilteredFromDb(string filter)
+        {
+            var items = new List<OrganizationUnit>();
+            using (SqlConnection connection = new SqlConnection(_connString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(_procSelectOrgUnitsToAncestorsFiltered, connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add(AddSqlParameter("@Filter", filter));
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                        while (reader.Read())
+                            AddItem(items, reader);
+                    reader.Close();
+                }
+            }
+            var nodes = new List<UnitTreeNode>();
+            nodes.Add(new UnitTreeNode(items, "Enviroment"));
+            return nodes;
         }
         public override int InsertToDb(List<OrganizationUnit> units)
         {
@@ -66,18 +90,18 @@ namespace Tree.DB
                     Identity = reader.GetString(0),
                     Description = null,
                     IsVirtual = reader.GetBoolean(2),
-                    ParentIdentity = reader?.GetString(3)
+                    ParentIdentity = reader.GetString(3)
                 });
                 return;
             }
             items.Add(new OrganizationUnit
             {
                 Identity = reader.GetString(0),
-                Description = reader?.GetString(1),
+                Description = reader.GetString(1),
                 IsVirtual = reader.GetBoolean(2),
-                ParentIdentity = reader?.GetString(3)
+                ParentIdentity = reader.GetString(3)
             });
         }
-        
+
     }
 }

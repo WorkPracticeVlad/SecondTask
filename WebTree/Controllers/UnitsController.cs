@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Web.Http;
 using Tree;
 using Tree.Data;
+using Tree.Data.SubData;
 using Tree.Manage;
 using WebTree.Models;
 
@@ -28,16 +29,17 @@ namespace WebTree.Controllers
         {
             return _manager.OrgUnitsRepository.ReadPageFromDb(id, "[Identity]",_itemsPerPage);  
         }
-        [Route("api/units/get/{id}/{identity}")]
-        public List<OrganizationUnitToProperty> Get(int id, string identity)
-        {
-            return _manager.ValuesRepository.ReadOrganizationUnitValuesFromDb(identity.Replace('-', '.'));
-        }
         [HttpGet]
         [Route("api/units/childrenbyparent/{id}")]
         public List<OrganizationUnit> ChildrenByParent(string id = "")
         {
             return _manager.OrgUnitsRepository.ReadChildrenFromDb(id.Replace('-','.'));
+        }       
+        [HttpGet]
+        [Route("api/units/branchesfiltered/{id}")]
+        public List<UnitTreeNode> BranchesFiltered(string id = "")
+        {
+            return _manager.OrgUnitsRepository.ReadBranchesFilteredFromDb(id.Replace('-', '.'));
         }
     }
 }

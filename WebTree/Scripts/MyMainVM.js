@@ -10,6 +10,15 @@
            self.currentPanelData().data = panelViewModels.valuesByOrgUnit(orgUnit);
            self.currentPanelData.valueHasMutated();
        }
+       self.panelFromUrl = function () {
+           let url = window.location.href.toString();
+           if (url.substr(url.lastIndexOf('/') + 1) === '') {
+               return 'units';
+           }
+           else {
+               return url.substr(url.lastIndexOf('/'));
+           }
+       }
        self.panels = [
            "units",
            "properties",
@@ -25,7 +34,7 @@
            }
        };
        self.currentPanelData = ko.observable({
-           panel: 'units-template',
+           panel: self.panelFromUrl()+'-template',
            data: panelViewModels.units
        });       
        self.goToTeplate = function(name) {
