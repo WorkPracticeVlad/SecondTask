@@ -494,13 +494,15 @@ create proc RowsPerPageValuesForOrganizationUnitByIdentiyFiltered
 as
 SET NOCOUNT ON;
 begin
-declare @Table as table (OrganizationUnitIdentity  nvarchar(225),PropertyName nvarchar(225), Value nvarchar(225))
-insert @Table exec [dbo].[SelectAllValuesForOrganizationUnitByIdentiy]@Identity
-select * from @Table WHERE PropertyName like '%'+@Filter+'%'  
-and PropertyName in(select distinct PropertyName from @Table)
+declare @TableVal as table (OrganizationUnitIdentity  nvarchar(225),PropertyName nvarchar(225), Value nvarchar(225))
+insert @TableVal exec [dbo].[SelectAllValuesForOrganizationUnitByIdentiy]@Identity 
+select * from @TableVal where PropertyName in(
+select PropertyName from @TableVal 
+where PropertyName is not null and PropertyName like '%'+@Filter+'%'
+group by PropertyName 
 ORDER BY PropertyName 
 OFFSET  @Page*@ItemsPerPage-@ItemsPerPage ROWS
-FETCH NEXT @ItemsPerPage ROWS ONLY
+FETCH NEXT @ItemsPerPage ROWS ONLY)
 end
 SET NOCOUNT OFF;
 GO
