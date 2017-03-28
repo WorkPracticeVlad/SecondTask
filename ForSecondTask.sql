@@ -155,7 +155,6 @@ returns int
 as
 begin
 declare @Count as int
-declare @Remnant as int
 select @Count= [dbo].[fnCountPerTable](@TableName)
 return [dbo].[fnCountPages](@Count,@ItemsPerPage)
 end
@@ -502,7 +501,7 @@ where PropertyName is not null and PropertyName like '%'+@Filter+'%'
 group by PropertyName 
 ORDER BY PropertyName 
 OFFSET  @Page*@ItemsPerPage-@ItemsPerPage ROWS
-FETCH NEXT @ItemsPerPage ROWS ONLY)
+FETCH NEXT @ItemsPerPage ROWS ONLY) order by PropertyName
 end
 SET NOCOUNT OFF;
 GO

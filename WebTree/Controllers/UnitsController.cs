@@ -40,6 +40,6 @@ namespace WebTree.Controllers
         public List<UnitTreeNode> BranchesFiltered(string id = "")
         {
             return _manager.OrgUnitsRepository.ReadBranchesFilteredFromDb(id.Replace('-', '.'));
-        }
+        }       
     }
 }

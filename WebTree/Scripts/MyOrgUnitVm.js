@@ -1,4 +1,4 @@
-﻿let OrgUnit = function (identity, description, isVirtual, parentIdentity, click, isExpanded) {
+﻿let OrgUnit = function (identity, description, isVirtual, parentIdentity, click, isExpanded,pages,currentPage) {
     this.identity = ko.observable(identity);
     this.description = ko.observable(description);
     this.isVirtual = ko.observable(isVirtual);
@@ -6,6 +6,8 @@
     this.click = ko.observable(click);
     this.children = ko.observableArray();
     this.isExpanded = ko.observable(isExpanded);
+    this.pages = ko.observableArray(pages);
+    this.currentPage = ko.observable(currentPage);
 }
 let toggleOrgUnitIsExpanded = function (orgUnit) {
     let tempo = orgUnit.isExpanded();
@@ -44,7 +46,7 @@ OrgUnitVM = function () {
             recursiveIdentityFind(self.units(), data.identity(), orgUnitChildrenArr);
         });
     };
-    self.loadFiltered = function () {
+    self.loadFilteredBranches = function () {
         let identittyToUrl = self.filter().replace(/\./g, '-');
         $.get('/api/units/branchesfiltered/' + identittyToUrl, function (dataGet) {
             let orgUnitBranches = [];
@@ -55,6 +57,7 @@ OrgUnitVM = function () {
     self.filter.subscribe(function (newFilter) {
         if (newFilter=='') {
             self.units()[0].children(null);
+            self.units()[0].click(self.load);
         }      
     });
     self.units = ko.observableArray([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.load, true)]);

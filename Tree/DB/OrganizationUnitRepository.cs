@@ -22,7 +22,7 @@ namespace Tree.DB
         {
             _insertOrganizationUnits = "[dbo].[InsertOrganizationUnits]";
             _procSelectOrgUnitsByParent = "[dbo].[SelectOrgUnitsByParent]";
-            _procSelectOrgUnitsToAncestorsFiltered = "[dbo].[SelectOrgUnitsToAncestorsFiltered]";
+            _procSelectOrgUnitsToAncestorsFiltered = "[dbo].[SelectOrgUnitsToAncestorsFiltered]";           
         }
         public List<OrganizationUnit> ReadChildrenFromDb(string parent)
         {

@@ -21,7 +21,7 @@
 
 <script type="text/html" id="units-template">
     <div>
-        <input data-bind="textInput: filter, event: { input : loadFiltered }" />
+        <input data-bind="textInput: filter, event: { input : loadFilteredBranches}" />
         <ul data-bind="template: { name: 'treeNode', foreach: $data.units }"></ul>
         <script id="treeNode" type="text/html">
             <li>
