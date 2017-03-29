@@ -21,16 +21,19 @@
 
 <script type="text/html" id="units-template">
     <div>
-        <input data-bind="textInput: filter, event: { input : loadFilteredBranches}" />
+        <input data-bind="textInput: filter" />
         <ul data-bind="template: { name: 'treeNode', foreach: $data.units }"></ul>
         <script id="treeNode" type="text/html">
-            <li>
+            <li >
                 <span data-bind="click : click()">#</span>
                 <text>
                     <span data-bind="text : identity, click : $root.goToValuesByOrgUnit"></span>
                     <ul data-bind="template: { name: 'treeNode', foreach: children }, visible : isExpanded"></ul>
                 </text>
-            </li>
+                <span data-bind="foreach : pages " >
+                    <button data-bind="text : $data, click :$parent.click() , css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
+                </span>
+            </li>            
         </script>
     </div>
 </script>

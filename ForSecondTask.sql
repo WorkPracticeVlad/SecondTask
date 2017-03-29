@@ -327,7 +327,6 @@ returns int
 as
 begin
 declare @Count as int
-declare @Remnant as int
 select @Count= [dbo].[fnCountFilteredByNamePropertyTable](@Filter)
 return [dbo].[fnCountPages](@Count,@ItemsPerPage)
 end
@@ -549,6 +548,42 @@ IsVirtual bit,
 )
 insert @Table exec [dbo].[SelectOrganizationUnitToAncestors]@Identity
 select [Identity] from @Table
+end
+SET NOCOUNT OFF;
+GO
+create proc CountPagesUnitNode
+(
+@ItemsPerPage as int,
+@Identity as nvarchar(225)
+)
+as
+SET NOCOUNT ON;
+begin
+declare @Count as int
+declare @Table as  table([Identity] nvarchar(225),[Description] nvarchar(max),[IsVirtual] bit,
+[ParentIdentity] nvarchar(225))
+insert @Table exec [dbo].[SelectOrgUnitsByParent]@Identity
+SELECT @Count=COUNT([Identity]) FROM @Table
+select [dbo].[fnCountPages](@Count,@ItemsPerPage)
+end
+SET NOCOUNT OFF;
+GO
+create proc RowsPerUnitNode
+(
+@Identity as nvarchar(225),
+@Page as int,
+@ItemsPerPage as int
+)
+as
+SET NOCOUNT ON;
+begin
+declare @Table as  table([Identity] nvarchar(225),[Description] nvarchar(max),[IsVirtual] bit,
+[ParentIdentity] nvarchar(225))
+insert @Table exec [dbo].[SelectOrgUnitsByParent]@Identity 
+SELECT * FROM @Table
+ORDER BY [Identity] 
+OFFSET  @Page*@ItemsPerPage-@ItemsPerPage ROWS
+FETCH NEXT @ItemsPerPage ROWS ONLY
 end
 SET NOCOUNT OFF;
 GO

@@ -17,6 +17,7 @@ namespace WebTree.Controllers
     {
         private Manager _manager;
         int _itemsPerPage = 5;
+        int _itemsPerNode = 1;
         public UnitsController()
         {
             _manager = new Manager();
@@ -40,6 +41,18 @@ namespace WebTree.Controllers
         public List<UnitTreeNode> BranchesFiltered(string id = "")
         {
             return _manager.OrgUnitsRepository.ReadBranchesFilteredFromDb(id.Replace('-', '.'));
-        }       
+        }
+        [HttpGet]
+        [Route("api/units/pagesinnode/{id}")]
+        public int PagesInNode(string id )
+        {
+            return _manager.OrgUnitsRepository.CountUnitNodePages(_itemsPerNode,id.Replace('-', '.'));
+        }
+        [HttpGet]
+        [Route("api/units/rowinnode/{id}/{page}")]
+        public List<OrganizationUnit> RowInNode(string id , int page)
+        {
+            return _manager.OrgUnitsRepository.ReadUnitNodePageFromDb(id.Replace('-', '.'),page,_itemsPerNode);
+        }
     }
 }

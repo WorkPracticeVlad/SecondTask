@@ -16,13 +16,58 @@ namespace Tree.DB
         const string TABLE_NAME = "[dbo].[OrganizationUnits]";
         private string _procSelectOrgUnitsByParent;
         private string _procSelectOrgUnitsToAncestorsFiltered;
+        private string _procCountPagesUnitNode;
+        private string _procRowsPerUnitNode;
 
         public OrganizationUnitRepository()
             : base(TABLE_NAME)
         {
             _insertOrganizationUnits = "[dbo].[InsertOrganizationUnits]";
             _procSelectOrgUnitsByParent = "[dbo].[SelectOrgUnitsByParent]";
-            _procSelectOrgUnitsToAncestorsFiltered = "[dbo].[SelectOrgUnitsToAncestorsFiltered]";           
+            _procSelectOrgUnitsToAncestorsFiltered = "[dbo].[SelectOrgUnitsToAncestorsFiltered]";
+            _procCountPagesUnitNode = "[dbo].[CountPagesUnitNode]";
+            _procRowsPerUnitNode = "[dbo].[RowsPerUnitNode]";
+        }
+        public int CountUnitNodePages(int itemsPerPage, string parent)
+        {
+            using (SqlConnection connection = new SqlConnection(_connString))
+            {
+                int pageCount = 0;
+                connection.Open();
+                SqlCommand command = new SqlCommand(_procCountPagesUnitNode, connection);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.Add(AddSqlParameter("@ItemsPerPage", itemsPerPage));
+                command.Parameters.Add(AddSqlParameter("@Identity", parent));
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                        while (reader.Read())
+                            pageCount = reader.GetInt32(0);
+                    reader.Close();
+                }
+                return pageCount;
+            }
+        }
+        public List<OrganizationUnit> ReadUnitNodePageFromDb(string parent,int page, int itemsPerPage)
+        {
+            var items = new List<OrganizationUnit>();
+            using (SqlConnection connection = new SqlConnection(_connString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(_procRowsPerUnitNode, connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add(AddSqlParameter("@Identity", parent));
+                command.Parameters.Add(AddSqlParameter("@Page", page));
+                command.Parameters.Add(AddSqlParameter("@ItemsPerPage", itemsPerPage));
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                        while (reader.Read())
+                            AddItem(items, reader);
+                    reader.Close();
+                }
+            }
+            return items;
         }
         public List<OrganizationUnit> ReadChildrenFromDb(string parent)
         {
