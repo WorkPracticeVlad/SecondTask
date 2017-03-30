@@ -61,7 +61,7 @@
 </script>
 
 <script type="text/html" id="propertiesUsage-template">
-    <h4>Property usage</h4>
+    <h4 >Property name : <text data-bind="text : propertyName()"></text></h4>
     <span>Filter:</span>
     <input data-bind="textInput: filter, event: { input : initialize }" />
     <br />
@@ -109,6 +109,6 @@
             <button data-bind="text : $data , click : $parent.load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
         </div>
     </div>
-    <div data-bind="tableValuesByOrgUnit:identityOrgUnit, page:currentPage(), filter: filter()"></div>
+    <div data-bind="tableValuesByOrgUnit: dataForTable"></div>
 </script>
 

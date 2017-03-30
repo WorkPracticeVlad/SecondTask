@@ -13,6 +13,7 @@
 
 var PropertyUsageVM = function (property) {
     var self = this;
+    self.propertyName = ko.observable(property.name);
     self.filter = ko.observable('');
     self.values = ko.observableArray();
     self.pages = ko.observableArray();

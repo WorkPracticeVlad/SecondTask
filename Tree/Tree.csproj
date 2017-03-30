@@ -45,6 +45,7 @@
     <Compile Include="Data\OrganizationUnit.cs" />
     <Compile Include="Data\OrganizationUnitToProperty.cs" />
     <Compile Include="Data\Property.cs" />
+    <Compile Include="Data\SubData\OrgUnitWithPagesCount.cs" />
     <Compile Include="Data\SubData\PropertyToUnitsValuePairs.cs" />
     <Compile Include="Data\SubData\ForOrgUnitProperties.cs" />
     <Compile Include="Data\SubData\OrgUnitIdentityTailPair.cs" />

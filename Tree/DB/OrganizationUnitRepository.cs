@@ -28,7 +28,7 @@ namespace Tree.DB
             _procCountPagesUnitNode = "[dbo].[CountPagesUnitNode]";
             _procRowsPerUnitNode = "[dbo].[RowsPerUnitNode]";
         }
-        public int CountUnitNodePages(int itemsPerPage, string parent)
+        int CountUnitNodePages(int itemsPerPage, string parent)
         {
             using (SqlConnection connection = new SqlConnection(_connString))
             {
@@ -48,9 +48,10 @@ namespace Tree.DB
                 return pageCount;
             }
         }
-        public List<OrganizationUnit> ReadUnitNodePageFromDb(string parent,int page, int itemsPerPage)
+        public List<OrgUnitWithPagesCount> ReadUnitNodePageFromDb(string parent,int page, int itemsPerPage)
         {
             var items = new List<OrganizationUnit>();
+            var itemsToPages = new List<OrgUnitWithPagesCount>();
             using (SqlConnection connection = new SqlConnection(_connString))
             {
                 connection.Open();
@@ -67,7 +68,11 @@ namespace Tree.DB
                     reader.Close();
                 }
             }
-            return items;
+            foreach (var item in items)
+            {
+                itemsToPages.Add(new OrgUnitWithPagesCount { OrgUnit= item, PagesCount= CountUnitNodePages(itemsPerPage, item.Identity) });
+            }
+            return itemsToPages;
         }
         public List<OrganizationUnit> ReadChildrenFromDb(string parent)
         {

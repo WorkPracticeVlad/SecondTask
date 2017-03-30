@@ -36,13 +36,11 @@ let buildBranch = function (arrToFill,dataArr) {
 OrgUnitVM = function () {
     var self = this;
     self.filter = ko.observable('');
-    self.buildPages = function (identity) {
+    self.buildPages = function (data) {
         let tempoArr = [];
-        $.get('/api/units/pagesinnode/' + identity, function (data) {
-            for (let i = 1; i <= data ; i++) {
-                tempoArr.push(i);
-            }
-        });
+        for (let i = 1; i <= data ; i++) {
+            tempoArr.push(i);
+        }
         return tempoArr;
     };
     self.loadNodePage = function (parent,data, event) {
@@ -51,9 +49,10 @@ OrgUnitVM = function () {
         $.get('/api/units/rowinnode/' + identittyToUrl + '/' + data, function (dataGet) {
             let orgUnitChildrenArr = [];
             for (var i = 0; i < dataGet.length; i++) {
-                let tempoArr = self.buildPages(dataGet[i].identity.replace(/\./g, '-'));
-                orgUnitChildrenArr.push(new OrgUnit(dataGet[i].identity, dataGet[i].description, dataGet[i].isVirtual,
-                    dataGet[i].parentIdentity, self.loadNodePage, true, tempoArr , 1));
+                let unit = dataGet[i].orgUnit;
+                let pagesArr = self.buildPages(dataGet[i].pagesCount);
+                orgUnitChildrenArr.push(new OrgUnit(unit.identity, unit.description, unit.isVirtual,
+                     unit.parentIdentity, self.loadNodePage, true, pagesArr, 1));
             }
             recursiveIdentityFind(self.units(), parent.identity(), orgUnitChildrenArr);
         });
