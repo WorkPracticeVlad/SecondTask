@@ -14,6 +14,7 @@
         let url = window.location.href.toString();
         switch (url.substr(url.lastIndexOf('#') + 1)) {
             case '':
+                window.history.pushState(units, "HomePages", "/Home/HomePages#units");
                 return 'units';
                 break;
             case 'units':
@@ -41,11 +42,12 @@
             return new ValuesByOrgUnitVM(orgUnit);
         }
     };
-    self.currentPanelData = ko.observable({
+    self.currentPanelData = ko.observable({      
         panel: self.panelFromUrl() + '-template',
         data: panelViewModels[''+self.panelFromUrl()]
     });
     self.goToTeplate = function (name) {
+        window.history.pushState(name, "HomePages", "/Home/HomePages#"+name);
         self.currentPanelData().panel = name + "-template";
         self.currentPanelData().data = panelViewModels[name];
         self.currentPanelData.valueHasMutated();

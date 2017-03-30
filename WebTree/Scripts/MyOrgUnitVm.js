@@ -20,7 +20,7 @@ let recursiveIdentityFind = function (nestedArr, identity, dataArr) {
     for (let i = 0; i < nestedArr.length; i++) {
         if (identity === nestedArr[i].identity()) {
             nestedArr[i].children(dataArr);
-            toToggleOrgUnitIsExpandedClick(nestedArr[i]);
+            //toToggleOrgUnitIsExpandedClick(nestedArr[i]);
         }
         recursiveIdentityFind(nestedArr[i].children(), identity, dataArr);
     }
@@ -45,16 +45,17 @@ OrgUnitVM = function () {
         });
         return tempoArr;
     };
-    self.loadNodePage = function (data , event) {
-        let parent1=parent;
-        let identittyToUrl =data.identity().replace(/\./g, '-');        
-        $.get('/api/units/rowinnode/' + identittyToUrl + '/' + data.currentPage(), function (dataGet) {
+    self.loadNodePage = function (parent,data, event) {
+        let identittyToUrl = parent.identity().replace(/\./g, '-');
+        parent.currentPage(data);
+        $.get('/api/units/rowinnode/' + identittyToUrl + '/' + data, function (dataGet) {
             let orgUnitChildrenArr = [];
             for (var i = 0; i < dataGet.length; i++) {
+                let tempoArr = self.buildPages(dataGet[i].identity.replace(/\./g, '-'));
                 orgUnitChildrenArr.push(new OrgUnit(dataGet[i].identity, dataGet[i].description, dataGet[i].isVirtual,
-                    dataGet[i].parentIdentity, self.loadNodePage, true, self.buildPages(dataGet[i].identity.replace(/\./g, '-')), data.currentPage()));
+                    dataGet[i].parentIdentity, self.loadNodePage, true, tempoArr , 1));
             }
-            recursiveIdentityFind(self.units(), data.identity(), orgUnitChildrenArr);
+            recursiveIdentityFind(self.units(), parent.identity(), orgUnitChildrenArr);
         });
     };
     self.loadChildren = function (data, event) {

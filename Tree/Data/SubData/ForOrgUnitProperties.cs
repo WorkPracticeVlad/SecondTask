@@ -10,6 +10,7 @@ namespace Tree.Data.SubData
     {
         public ForOrgUnitProperties(List<OrganizationUnitToProperty> items, List<string> orgUnitsId)
         {
+            orgUnitsId.Reverse();
             var forOrgUnitProperties = this;
             forOrgUnitProperties.Header = new List<OrgUnitIdentityTailPair>();
             forOrgUnitProperties.Data = new List<PropertyToUnitsValuePairs>();
