@@ -3,6 +3,7 @@
     ViewBag.Title = "HomePages";
 }
 @section scripts {
+    <script src="~/Scripts/MyKoHandlers.js"></script>
     <script src="~/Scripts/MyValuesByOrgUnitVM.js"></script>
     <script src="~/Scripts/MyPropertyUsageVM.js"></script>
     <script src="~/Scripts/MyPropertyVM.js"></script>
@@ -12,7 +13,7 @@
 <div id="main">
 
     <div id="header">
-       <br />
+        <br />
     </div>
 
     <div id="content" data-bind="template: { name: currentPanelData().panel, data: currentPanelData().data }"></div>
@@ -24,13 +25,14 @@
         <input data-bind="textInput: filter" />
         <ul data-bind="template: { name: 'treeNode', foreach: $data.units }"></ul>
         <script id="treeNode" type="text/html">
-            <li >   <span data-bind="click:click(), visible: currentPage()===0">#</span>         
-                    <span data-bind="text : identity, click : $root.goToValuesByOrgUnit"></span>
-                    <span data-bind="foreach : pages ">
-                        <button data-bind="text : $data, click : $parent.click().bind($data,$parent), css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
-                    </span>
-                    <ul data-bind="template: { name: 'treeNode', foreach: children }, visible : isExpanded"></ul>                                     
-            </li>            
+            <li>
+                <span data-bind="click:click(), visible: currentPage()===0">#</span>
+                <span data-bind="text : identity, click : $root.goToValuesByOrgUnit"></span>
+                <span data-bind="foreach : pages ">
+                    <button data-bind="text : $data, click : $parent.click().bind($data,$parent), css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
+                </span>
+                <ul data-bind="template: { name: 'treeNode', foreach: children }, visible : isExpanded"></ul>
+            </li>
         </script>
     </div>
 </script>
@@ -55,13 +57,14 @@
             </tr>
         </tbody>
     </table>
-    <div data-bind="foreach : pages">
+    <div data-bind="pagesBuilder : pages(), currentPage: currentPage(), onPageClick: load"></div>
+    @*<div data-bind="foreach : pages">
         <button data-bind="text : $data , click : $parent.load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
-    </div>
+    </div>*@
 </script>
 
 <script type="text/html" id="propertiesUsage-template">
-    <h4 >Property name : <text data-bind="text : propertyName()"></text></h4>
+    <h4>Property name : <text data-bind="text : propertyName()"></text></h4>
     <span>Filter:</span>
     <input data-bind="textInput: filter, event: { input : initialize }" />
     <br />
@@ -76,18 +79,21 @@
             <hr />
         </div>
     </div>
-    <div data-bind="foreach : pages">
+    <div data-bind="pagesBuilder : pages(), currentPage: currentPage(), onPageClick: load"></div>
+    @*<div data-bind="foreach : pages">
         <button data-bind="text : $data , click : $parent.load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
-    </div>
+    </div>*@
 </script>
 
 <script type="text/html" id="valuesByOrgUnit-template">
-    <br/>
+    <br />
     <span>Filter:</span>
     <input data-bind="textInput: filter, event: { input : initialize }" />
     <br />
     <div>
-        <table class="table table-bordered">
+        <div data-bind="tableValuesByOrgUnit: dataForTable"></div>
+        <div data-bind="pagesBuilder : pages(), currentPage: currentPage(), onPageClick: load"></div>
+        @*<table class="table table-bordered">
             <thead>
                 <tr data-bind="foreach : unitsName">
                     <th data-bind="text: $data.tail"></th>
@@ -107,8 +113,7 @@
         </table>
         <div data-bind="foreach : pages">
             <button data-bind="text : $data , click : $parent.load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
-        </div>
-    </div>
-    <div data-bind="tableValuesByOrgUnit: dataForTable"></div>
+        </div>*@
+    </div>   
 </script>
 

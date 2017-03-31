@@ -244,6 +244,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\MyJS.js" />
+    <Content Include="Scripts\MyKoHandlers.js" />
     <Content Include="Scripts\MyMainVM.js" />
     <Content Include="Scripts\MyOrgUnitVm.js" />
     <Content Include="Scripts\MyPropertyUsageVM.js" />

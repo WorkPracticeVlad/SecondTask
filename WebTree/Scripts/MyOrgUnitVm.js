@@ -1,4 +1,4 @@
-﻿let OrgUnit = function (identity, description, isVirtual, parentIdentity, click, isExpanded,pages,currentPage) {
+﻿let OrgUnit = function (identity, description, isVirtual, parentIdentity, click, isExpanded, pages, currentPage) {
     this.identity = ko.observable(identity);
     this.description = ko.observable(description);
     this.isVirtual = ko.observable(isVirtual);
@@ -25,15 +25,22 @@ let recursiveIdentityFind = function (nestedArr, identity, dataArr) {
         recursiveIdentityFind(nestedArr[i].children(), identity, dataArr);
     }
 }
-let buildBranch = function (arrToFill,dataArr) {
+let buildBranch = function (arrToFill, dataArr) {
     for (var i = 0; i < dataArr.length; i++) {
         arrToFill.push(new OrgUnit(dataArr[i].identity,
             dataArr[i].description,
-            dataArr[i].isVirtual, dataArr[i].parentIdentity, toggleOrgUnitIsExpanded, true,[],0));
-            buildBranch(arrToFill[i].children(), dataArr[i].children);
+            dataArr[i].isVirtual, dataArr[i].parentIdentity, toggleOrgUnitIsExpanded, true, [], 0));
+        buildBranch(arrToFill[i].children(), dataArr[i].children);
     }
 }
-OrgUnitVM = function () {
+var delay = (function () {
+    var timer = 0;
+    return function (callback, ms) {
+        clearTimeout(timer);
+        timer =setTimeout(callback, ms);
+    };
+})();//?
+var OrgUnitVM = function () {
     var self = this;
     self.filter = ko.observable('');
     self.buildPages = function (data) {
@@ -43,7 +50,7 @@ OrgUnitVM = function () {
         }
         return tempoArr;
     };
-    self.loadNodePage = function (parent,data, event) {
+    self.loadNodePage = function (parent, data, event) {
         let identittyToUrl = parent.identity().replace(/\./g, '-');
         parent.currentPage(data);
         $.get('/api/units/rowinnode/' + identittyToUrl + '/' + data, function (dataGet) {
@@ -73,17 +80,19 @@ OrgUnitVM = function () {
             let orgUnitBranches = [];
             buildBranch(orgUnitBranches, dataGet[0].children);
             self.units()[0].children(orgUnitBranches);
-        });     
+        });
     }
     self.filter.subscribe(function (newFilter) {
-        if (newFilter == '') {
-            self.units([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage, true, [1], 1)]);
-        }
-        else {
-            self.units()[0].pages([]);
-            self.units()[0].currentPage(0);
-            self.loadFilteredBranches();
-        }
+        delay(function () {
+            if (newFilter.length < 3) {
+                self.units([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage, true, [1], 1)]);
+            }
+            else {
+                self.units()[0].pages([]);
+                self.units()[0].currentPage(0);
+                self.loadFilteredBranches();
+            }
+        },750)        
     });
-    self.units = ko.observableArray([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage, true,[1],1)]);
+    self.units = ko.observableArray([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage, true, [1], 1)]);
 }

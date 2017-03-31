@@ -1,17 +1,4 @@
-﻿ko.bindingHandlers.bootstrapPopover = {
-    init: function (element, valueAccessor, allBindingsAccessor, PropertyUsageVM) {
-        var options = valueAccessor();
-        $(element).popover({
-            placement: 'right',
-            content: options.content,
-            delay:400,
-            html: true,
-            trigger: 'hover'
-        });
-    }
-};
-
-var PropertyUsageVM = function (property) {
+﻿var PropertyUsageVM = function (property) {
     var self = this;
     self.propertyName = ko.observable(property.name);
     self.filter = ko.observable('');

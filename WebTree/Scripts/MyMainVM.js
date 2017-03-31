@@ -25,16 +25,20 @@
                 break;
             default:
                 return 'units';
-
         }
     }
     self.panels = [
         "units",
         "properties",
     ];
+    let propertyVM;
     var panelViewModels = {
         "units": new OrgUnitVM(),
-        "properties": new PropertyVM(),
+        "properties": function setPropertyVM() {
+            if (!propertyVM)
+                propertyVM = new PropertyVM();
+            return propertyVM;
+        },
         "propertiesUsage": function setPropertyUsageVM(name) {
             return new PropertyUsageVM(name);
         },
@@ -42,16 +46,17 @@
             return new ValuesByOrgUnitVM(orgUnit);
         }
     };
-    self.currentPanelData = ko.observable({      
+    self.currentPanelData = ko.observable({
         panel: self.panelFromUrl() + '-template',
-        data: panelViewModels[''+self.panelFromUrl()]
+        data: panelViewModels['' + self.panelFromUrl()]
     });
     self.goToTeplate = function (name) {
-        window.history.pushState(name, "HomePages", "/Home/HomePages#"+name);
-        self.currentPanelData().panel = name + "-template";
-        self.currentPanelData().data = panelViewModels[name];
+        window.history.pushState(name, "HomePages", "/Home/HomePages#" + name);
+        self.currentPanelData().panel = name + '-template';
+        self.currentPanelData().data = panelViewModels['' +name];
         self.currentPanelData.valueHasMutated();
     }
+
 }
 
 mainViewModel = new MainVM();
