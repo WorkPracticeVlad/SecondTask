@@ -29,8 +29,8 @@ let buildBranch = function (arrToFill,dataArr) {
     for (var i = 0; i < dataArr.length; i++) {
         arrToFill.push(new OrgUnit(dataArr[i].identity,
             dataArr[i].description,
-            dataArr[i].isVirtual, dataArr[i].parentIdentity, toggleOrgUnitIsExpanded, true));
-            BuildBranch(arrToFill[i].children(), dataArr[i].children);
+            dataArr[i].isVirtual, dataArr[i].parentIdentity, toggleOrgUnitIsExpanded, true,[],0));
+            buildBranch(arrToFill[i].children(), dataArr[i].children);
     }
 }
 OrgUnitVM = function () {
@@ -68,21 +68,22 @@ OrgUnitVM = function () {
         });
     };
     self.loadFilteredBranches = function () {
-        let identittyToUrl = self.filter().replace(/\./g, '-');
-        $.get('/api/units/branchesfiltered/' + identittyToUrl, function (dataGet) {
+        let filter = self.filter().replace(/\./g, '-');
+        $.get('/api/units/branchesfiltered/' + filter, function (dataGet) {
             let orgUnitBranches = [];
             buildBranch(orgUnitBranches, dataGet[0].children);
             self.units()[0].children(orgUnitBranches);
         });     
     }
     self.filter.subscribe(function (newFilter) {
-        if (newFilter=='') {
-            self.units()[0].children(null);
-            self.units()[0].click(self.loadChildren);
+        if (newFilter == '') {
+            self.units([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage, true, [1], 1)]);
         }
         else {
+            self.units()[0].pages([]);
+            self.units()[0].currentPage(0);
             self.loadFilteredBranches();
         }
     });
-    self.units = ko.observableArray([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage/*self.loadChildren*/, true,[1],1)]);
+    self.units = ko.observableArray([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage, true,[1],1)]);
 }

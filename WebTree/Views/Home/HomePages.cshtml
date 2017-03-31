@@ -24,7 +24,7 @@
         <input data-bind="textInput: filter" />
         <ul data-bind="template: { name: 'treeNode', foreach: $data.units }"></ul>
         <script id="treeNode" type="text/html">
-            <li >            
+            <li >   <span data-bind="click:click(), visible: currentPage()===0">#</span>         
                     <span data-bind="text : identity, click : $root.goToValuesByOrgUnit"></span>
                     <span data-bind="foreach : pages ">
                         <button data-bind="text : $data, click : $parent.click().bind($data,$parent), css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
