@@ -63,22 +63,45 @@ ko.bindingHandlers.pagesBuilder = {
         var pages = ko.unwrap(valueAccessor());
         let currentPage = allBindings.get('currentPage');
         let onPageClick = allBindings.get('onPageClick');
-        if (!pages||currentPage===0) {
+        let node = allBindings.get('node');
+        if (!pages || currentPage === 0) {
             return;
         }
         while (element.firstChild) {
             element.removeChild(element.firstChild);
         }
-        for (var i = 1; i < pages.length+1; i++) {
+        let pagesOnScreen = [1, currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2, pages.length];
+        pagesOnScreen = pagesOnScreen.filter(function (number, index, self) {
+            return number > 0 && number < pages.length + 1 && self.indexOf(number) == index;
+        });
+        for (var i = 0; i < pagesOnScreen.length; i++) {
+            let page = pagesOnScreen[i];
             let button = document.createElement('button');
-            button.innerText = i;
+            button.innerText = page;
             button.addEventListener("click", function () {
-                onPageClick(this.innerText);
-            },false);
-            if (i===currentPage) {
+                if (!node) {
+                    onPageClick(page);
+                } else {
+                    onPageClick(node, page);
+                }
+            }, false);
+            if (page === currentPage) {
                 button.className = "btn-primary";
             }
             element.appendChild(button);
         }
+        //for (var page in pages) {
+        //    let y =page;
+        //    let tempo = Number(page) + 1;
+        //    let button = document.createElement('button');
+        //    button.innerText = tempo;
+        //    button.addEventListener("click", function () {
+        //        onPageClick(tempo);
+        //    }, false);
+        //    if (tempo === currentPage) {
+        //        button.className = "btn-primary";
+        //    }
+        //    element.appendChild(button);
+        //};
     }
 };

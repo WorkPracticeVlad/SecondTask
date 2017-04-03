@@ -28,7 +28,7 @@ var delay = (function () {
 var OrgUnitVM = function () {
     var self = this;
     self.filter = ko.observable('');
-    self.buildPages = function (data) {
+        self.buildPages = function (data) {
         let tempoArr = [];
         for (let i = 1; i <= data ; i++) {
             tempoArr.push(i);
@@ -39,11 +39,14 @@ var OrgUnitVM = function () {
         for (var i = 0; i < dataArr.length; i++) {
             arrToFill.push(new OrgUnit(dataArr[i].identity,
                 dataArr[i].description,
-                dataArr[i].isVirtual, dataArr[i].parentIdentity, null, self.toggleIsExpanded, true, [], 0));
+                dataArr[i].isVirtual, dataArr[i].parentIdentity, null, self.toggleIsExpanded, false, [], 0));
             self.buildBranch(arrToFill[i].children(), dataArr[i].children);
         }
     }
-    self.toggleIsExpanded=function (orgUnit) {
+    self.toggleIsExpanded = function (orgUnit) {
+        if (orgUnit.children().length==0) {
+            self.loadNodePage(orgUnit, 1, null);
+        }
         let tempo = orgUnit.isExpanded();
         orgUnit.isExpanded(!tempo);
     }
@@ -56,7 +59,7 @@ var OrgUnitVM = function () {
                 let unit = dataGet[i].orgUnit;
                 let pagesArr = self.buildPages(dataGet[i].pagesCount);
                 orgUnitChildrenArr.push(new OrgUnit(unit.identity, unit.description, unit.isVirtual,
-                     unit.parentIdentity, self.loadNodePage, self.toggleIsExpanded, true, pagesArr, 1));
+                     unit.parentIdentity, self.loadNodePage, self.toggleIsExpanded, false, pagesArr, 1));
             }
             recursiveIdentityFind(self.units(), parent.identity(), orgUnitChildrenArr);
         });
@@ -72,7 +75,7 @@ var OrgUnitVM = function () {
     self.filter.subscribe(function (newFilter) {
         delay(function () {
             if (newFilter.length < 3) {
-                self.units([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage,self.toggleIsExpanded ,true, [1], 1)]);
+                self.units([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage,self.toggleIsExpanded ,false, [1], 1)]);
             }
             else {
                 self.units()[0].pages([]);
@@ -81,7 +84,7 @@ var OrgUnitVM = function () {
             }
         },750)        
     });
-    self.units = ko.observableArray([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage, self.toggleIsExpanded, true, [1], 1)]);
+    self.units = ko.observableArray([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage, self.toggleIsExpanded, false, [1], 1)]);
     self.loadChildren = function (data, event) {
         let identittyToUrl = data.identity().replace(/\./g, '-');
         $.get('/api/units/childrenbyparent/' + identittyToUrl, function (dataGet) {

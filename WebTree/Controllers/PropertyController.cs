@@ -14,7 +14,7 @@ namespace WebTree.Controllers
     public class PropertyController : ApiController
     {
         private Manager _manager;
-        int _itemsPerPage = 5;
+        int _itemsPerPage = 3;
         public PropertyController()
         {
              _manager=new Manager();
