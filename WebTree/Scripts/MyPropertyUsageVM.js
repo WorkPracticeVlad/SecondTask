@@ -9,7 +9,7 @@
         return '<textarea style="width:250px;height:132px;background-color: #e5eeff;" readonly><property type="' + property.type + '" name="' + property.name + '">' + value + '</property></textarea>';
     };
     self.load = function (page) {
-        self.currentPage(page);
+        self.currentPage(Number(page));
         $.getJSON('/api/values/byproperty/' + property.name + '/' + self.currentPage() + '/' + self.filter(), function (data) {
             self.values(data);
         });

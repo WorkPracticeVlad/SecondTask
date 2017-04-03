@@ -21,14 +21,14 @@
 </div>
 
 <script type="text/html" id="units-template">
-    <div>
+    <div >
         <input data-bind="textInput: filter" />
         <ul data-bind="template: { name: 'treeNode', foreach: $data.units }"></ul>
         <script id="treeNode" type="text/html">
             <li>
-                <span data-bind="click:click(), visible: currentPage()===0">#</span>
-                <span data-bind="text : identity, click : $root.goToValuesByOrgUnit"></span>
-                <span data-bind="foreach : pages ">
+                <span data-bind="click:toggleIsExpanded(), text: isExpanded() === true ? '<=' : '=>'"></span>
+                <span data-bind="text : identity, click : $root.goToValuesByOrgUnit " class="btn-link"></span>
+                <span data-bind="foreach : pages , visible : isExpanded">
                     <button data-bind="text : $data, click : $parent.click().bind($data,$parent), css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
                 </span>
                 <ul data-bind="template: { name: 'treeNode', foreach: children }, visible : isExpanded"></ul>
@@ -53,7 +53,7 @@
             <tr>
                 <td class="col-md-4" data-bind="text: $data.name"></td>
                 <td class="col-md-4" data-bind="text: $data.type"></td>
-                <td class="col-md-4" data-bind="text: $data.countOfUsage, click : $root.goToPropertiesUsage"></td>
+                <td class="col-md-4" ><a class="btn-link" data-bind="text: $data.countOfUsage, click : $root.goToPropertiesUsage"></a></td>
             </tr>
         </tbody>
     </table>

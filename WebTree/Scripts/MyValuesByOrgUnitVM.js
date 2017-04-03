@@ -11,7 +11,7 @@ var ValuesByOrgUnitVM = function (orgUnit) {
     self.currentPage = ko.observable();
     self.dataForTable = ko.observable();
     self.load = function (page) {
-        self.currentPage(page);
+        self.currentPage(Number(page));
         let identity = orgUnit.identity();
         $.getJSON('/api/values/byorgunit/' + identity.replace(/\./g, '-') + '/' + self.currentPage() + '/' + self.filter(), function (dataGet) {
             let tempoArrHeader = [];
