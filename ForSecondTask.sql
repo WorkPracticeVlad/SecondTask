@@ -474,7 +474,7 @@ as
 SET NOCOUNT ON;
 begin
 declare @Count as int
-declare @Table as table (OrganizationUnitIdentity  nvarchar(225),PropertyName nvarchar(225), Value nvarchar(225))
+declare @Table as table (OrganizationUnitIdentity  nvarchar(225),PropertyName nvarchar(225), Value nvarchar(max))
 insert @Table exec [dbo].[SelectAllValuesForOrganizationUnitByIdentiy]@Identity
 select @Count=count(distinct PropertyName) from @Table
 where PropertyName like '%'+@Filter+'%'
@@ -492,7 +492,7 @@ create proc RowsPerPageValuesForOrganizationUnitByIdentiyFiltered
 as
 SET NOCOUNT ON;
 begin
-declare @TableVal as table (OrganizationUnitIdentity  nvarchar(225),PropertyName nvarchar(225), Value nvarchar(225))
+declare @TableVal as table (OrganizationUnitIdentity  nvarchar(225),PropertyName nvarchar(225), Value nvarchar(max))
 insert @TableVal exec [dbo].[SelectAllValuesForOrganizationUnitByIdentiy]@Identity 
 select * from @TableVal where PropertyName in(
 select PropertyName from @TableVal 

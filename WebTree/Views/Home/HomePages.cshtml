@@ -23,21 +23,21 @@
 <script type="text/html" id="units-template">
     <div >
         <input data-bind="textInput: filter" />
-        <ul data-bind="template: { name: 'treeNode', foreach: $data.units }"></ul>
+        <ul data-bind="template: { name: 'treeNode', foreach: $data.units }" style="list-style-type:none"></ul>
         <script id="treeNode" type="text/html">
             <li>             
-                <span data-bind="click:toggleIsExpanded(), css: {'glyphicon glyphicon-arrow-up': isExpanded,'glyphicon glyphicon-arrow-right': !isExpanded()}"></span>
+                <span data-bind="click:toggleIsExpanded(), css: {'glyphicon': true, 'glyphicon-arrow-up': isExpanded,'glyphicon-arrow-right': !isExpanded()}"></span>
                 <span data-bind="text : identity, click : $root.goToValuesByOrgUnit " class="btn-link"></span>
-                <ul data-bind="template: { name: 'treeNode', foreach: children }, visible : isExpanded" style="list-style-type:none"></ul>
-                <span data-bind="pagesBuilder : pages(), currentPage: currentPage(), onPageClick: click(), node: $data,  visible : isExpanded"></span>
-                <div class="progress"  data-bind="visible : !isLoaded()">
-                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100" style="width: 99%">
-                        LOADING
-                    </div>
-                </div>
+                <ul data-bind="template: { name: 'treeNode', foreach: children }, visible : isExpanded" style="list-style-type:none"></ul>            
+                <div class="glyphicon glyphicon-cloud-download"  data-bind="visible : !isLoaded()">                  
+                        Loading...
+                </div>                         
+            </li>
+            <li>
+                <span data-bind="pagesBuilder :{pagesCount : pagesCount(), currentPage: currentPage(), onPageClick: click(), node: $data },  visible : isExpanded"></span>
                 @*<span data-bind="foreach : pages , visible : isExpanded">
-                    <button data-bind="text : $data, click : $parent.click().bind($data,$parent), css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
-                </span>*@              
+                <button data-bind="text : $data, click : $parent.click().bind($data,$parent), css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
+            </span>*@
             </li>
         </script>
     </div>
@@ -47,6 +47,7 @@
     <span>Filter:</span>
     <input data-bind="textInput: filter, event: { input : initialize }" />
     <br />
+    <p>Properties:</p>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -63,10 +64,7 @@
             </tr>
         </tbody>
     </table>
-    <div data-bind="pagesBuilder : pages(), currentPage: currentPage(), onPageClick: load"></div>
-    @*<div data-bind="foreach : pages">
-        <button data-bind="text : $data , click : $parent.load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
-    </div>*@
+    <div data-bind="pagesBuilder : {pagesCount:pagesCount(), currentPage: currentPage(), onPageClick: load}"></div>
 </script>
 
 <script type="text/html" id="propertiesUsage-template">
@@ -85,20 +83,18 @@
             <hr />
         </div>
     </div>
-    <div data-bind="pagesBuilder : pages(), currentPage: currentPage(), onPageClick: load"></div>
-    @*<div data-bind="foreach : pages">
-        <button data-bind="text : $data , click : $parent.load, css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
-    </div>*@
+    <div data-bind="pagesBuilder : {pagesCount: pagesCount(), currentPage: currentPage(), onPageClick: load}"></div>
 </script>
 
 <script type="text/html" id="valuesByOrgUnit-template">
+    <h4 >OrganizationUnit: "<text data-bind="text: orgUnitIdentity"></text>"</h4>
     <br />
     <span>Filter:</span>
     <input data-bind="textInput: filter, event: { input : initialize }" />
     <br />
     <div>
         <div data-bind="tableValuesByOrgUnit: dataForTable"></div>
-        <div data-bind="pagesBuilder : pages(), currentPage: currentPage(), onPageClick: load"></div>
+        <div data-bind="pagesBuilder : {pagesCount:pagesCount(), currentPage: currentPage(), onPageClick: load}"></div>
         @*<table class="table table-bordered">
             <thead>
                 <tr data-bind="foreach : unitsName">

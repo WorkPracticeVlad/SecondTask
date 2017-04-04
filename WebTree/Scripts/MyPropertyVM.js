@@ -2,7 +2,7 @@
     var self = this;
     self.filter = ko.observable('');
     self.properties = ko.observableArray();
-    self.pages=ko.observableArray();
+    self.pagesCount=ko.observable();
     self.currentPage = ko.observable(1);
     self.load = function (page) {
         self.currentPage(Number(page));
@@ -12,11 +12,7 @@
     };
     self.buildPages = function () {
         $.get('/api/property/pagesbyfilter/'+self.filter(), function (data) {
-            let tempoArr = [];
-            for (let i = 1; i <= data ; i++) {
-                tempoArr.push(i);
-            }
-            self.pages(tempoArr);
+            self.pagesCount(data);
         })
     };
     self.initialize = function () {

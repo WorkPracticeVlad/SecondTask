@@ -59,25 +59,26 @@ ko.bindingHandlers.tableValuesByOrgUnit = {
 };
 
 ko.bindingHandlers.pagesBuilder = {
-    update: function (element, valueAccessor, allBindings) {
-        var pages = ko.unwrap(valueAccessor());
-        let currentPage = allBindings.get('currentPage');
-        let onPageClick = allBindings.get('onPageClick');
-        let node = allBindings.get('node');
-        if (!pages || currentPage === 0) {
+    update: function (element, valueAccessor, allBindings) {      
+        var dataGet = ko.unwrap(valueAccessor());
+        let pagesCount = dataGet.pagesCount;
+        let currentPage = dataGet.currentPage;
+        let onPageClick = dataGet.onPageClick;
+        let node = dataGet.node;
+        if (!pagesCount || currentPage === 0||pagesCount===1) {
             return;
         }
         while (element.firstChild) {
             element.removeChild(element.firstChild);
         }
-        let pagesOnScreen = [1, currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2, pages.length];
+        let pagesOnScreen = [ currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
         pagesOnScreen = pagesOnScreen.filter(function (number, index, self) {
-            return number > 0 && number < pages.length + 1 && self.indexOf(number) == index;
+            return number > 0 && number < pagesCount + 1 && self.indexOf(number) == index;
         });
-        for (var i = 0; i < pagesOnScreen.length; i++) {
-            let page = pagesOnScreen[i];
+        let appendButtonPage = function (data,text,parent) {
+            let page = data;
             let button = document.createElement('button');
-            button.innerText = page;
+            button.innerText = text;
             button.addEventListener("click", function () {
                 if (!node) {
                     onPageClick(page);
@@ -88,20 +89,18 @@ ko.bindingHandlers.pagesBuilder = {
             if (page === currentPage) {
                 button.className = "btn btn-primary btn-xs";
             }
-            element.appendChild(button);
+            parent.appendChild(button);
         }
-        //for (var page in pages) {
-        //    let y =page;
-        //    let tempo = Number(page) + 1;
-        //    let button = document.createElement('button');
-        //    button.innerText = tempo;
-        //    button.addEventListener("click", function () {
-        //        onPageClick(tempo);
-        //    }, false);
-        //    if (tempo === currentPage) {
-        //        button.className = "btn-primary";
-        //    }
-        //    element.appendChild(button);
-        //};
+        appendButtonPage(1, 'First', element);
+        if (currentPage - 1>=1) {
+            appendButtonPage(currentPage - 1, 'Previous', element);
+        }        
+        for (var i = 0; i < pagesOnScreen.length; i++) {
+            appendButtonPage(pagesOnScreen[i], pagesOnScreen[i], element);   
+        }
+        if (currentPage + 1<=pagesCount) {
+            appendButtonPage(currentPage + 1, 'Next', element);
+        } 
+        appendButtonPage(pagesCount, 'Last', element);              
     }
 };
