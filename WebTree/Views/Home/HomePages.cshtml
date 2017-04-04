@@ -25,11 +25,16 @@
         <input data-bind="textInput: filter" />
         <ul data-bind="template: { name: 'treeNode', foreach: $data.units }"></ul>
         <script id="treeNode" type="text/html">
-            <li>
-                <span data-bind="click:toggleIsExpanded(), text: isExpanded() === true ? '(-)' : '(+)'"></span>
+            <li>             
+                <span data-bind="click:toggleIsExpanded(), css: {'glyphicon glyphicon-arrow-up': isExpanded,'glyphicon glyphicon-arrow-right': !isExpanded()}"></span>
                 <span data-bind="text : identity, click : $root.goToValuesByOrgUnit " class="btn-link"></span>
                 <ul data-bind="template: { name: 'treeNode', foreach: children }, visible : isExpanded" style="list-style-type:none"></ul>
                 <span data-bind="pagesBuilder : pages(), currentPage: currentPage(), onPageClick: click(), node: $data,  visible : isExpanded"></span>
+                <div class="progress"  data-bind="visible : !isLoaded()">
+                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100" style="width: 99%">
+                        LOADING
+                    </div>
+                </div>
                 @*<span data-bind="foreach : pages , visible : isExpanded">
                     <button data-bind="text : $data, click : $parent.click().bind($data,$parent), css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
                 </span>*@              

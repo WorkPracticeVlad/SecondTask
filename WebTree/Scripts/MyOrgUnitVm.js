@@ -9,6 +9,7 @@
     this.isExpanded = ko.observable(isExpanded);
     this.pages = ko.observableArray(pages);
     this.currentPage = ko.observable(currentPage);
+    this.isLoaded = ko.observable(true);
 }
 let recursiveIdentityFind = function (nestedArr, identity, dataArr) {
     for (let i = 0; i < nestedArr.length; i++) {
@@ -22,13 +23,13 @@ var delay = (function () {
     var timer = 0;
     return function (callback, ms) {
         clearTimeout(timer);
-        timer =setTimeout(callback, ms);
+        timer = setTimeout(callback, ms);
     };
 })();//?
 var OrgUnitVM = function () {
     var self = this;
     self.filter = ko.observable('');
-        self.buildPages = function (data) {
+    self.buildPages = function (data) {
         let tempoArr = [];
         for (let i = 1; i <= data ; i++) {
             tempoArr.push(i);
@@ -37,20 +38,20 @@ var OrgUnitVM = function () {
     };
     self.buildBranch = function (arrToFill, dataArr) {
         for (var i = 0; i < dataArr.length; i++) {
-            arrToFill.push(new OrgUnit(dataArr[i].identity,
-                dataArr[i].description,
-                dataArr[i].isVirtual, dataArr[i].parentIdentity, null, self.toggleIsExpanded, false, [], 0));
+            arrToFill.push(new OrgUnit(dataArr[i].identity, dataArr[i].description, dataArr[i].isVirtual,
+                dataArr[i].parentIdentity, null, self.toggleIsExpanded, false, [], 0));
             self.buildBranch(arrToFill[i].children(), dataArr[i].children);
         }
     }
     self.toggleIsExpanded = function (orgUnit) {
-        if (orgUnit.children().length==0) {
+        if (orgUnit.children().length == 0) {
             self.loadNodePage(orgUnit, 1, null);
         }
         let tempo = orgUnit.isExpanded();
         orgUnit.isExpanded(!tempo);
     }
     self.loadNodePage = function (parent, data, event) {
+        parent.isLoaded(false);
         let identittyToUrl = parent.identity().replace(/\./g, '-');
         parent.currentPage(data);
         $.get('/api/units/rowinnode/' + identittyToUrl + '/' + data, function (dataGet) {
@@ -62,7 +63,8 @@ var OrgUnitVM = function () {
                      unit.parentIdentity, self.loadNodePage, self.toggleIsExpanded, false, pagesArr, 1));
             }
             recursiveIdentityFind(self.units(), parent.identity(), orgUnitChildrenArr);
-        });
+        })
+        .done(parent.isLoaded(true));
     };
     self.loadFilteredBranches = function () {
         let filter = self.filter().replace(/\./g, '-');
@@ -75,14 +77,14 @@ var OrgUnitVM = function () {
     self.filter.subscribe(function (newFilter) {
         delay(function () {
             if (newFilter.length < 3) {
-                self.units([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage,self.toggleIsExpanded ,false, [1], 1)]);
+                self.units([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage, self.toggleIsExpanded, false, [1], 1)]);
             }
             else {
                 self.units()[0].pages([]);
                 self.units()[0].currentPage(0);
                 self.loadFilteredBranches();
             }
-        },750)        
+        }, 750)
     });
     self.units = ko.observableArray([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage, self.toggleIsExpanded, false, [1], 1)]);
     self.loadChildren = function (data, event) {

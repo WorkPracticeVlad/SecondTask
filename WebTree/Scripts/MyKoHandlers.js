@@ -86,7 +86,7 @@ ko.bindingHandlers.pagesBuilder = {
                 }
             }, false);
             if (page === currentPage) {
-                button.className = "btn-primary";
+                button.className = "btn btn-primary btn-xs";
             }
             element.appendChild(button);
         }
