@@ -19,15 +19,9 @@ let recursiveIdentityFind = function (nestedArr, identity, dataArr) {
         recursiveIdentityFind(nestedArr[i].children(), identity, dataArr);
     }
 }
-var delay = (function () {
-    var timer = 0;
-    return function (callback, ms) {
-        clearTimeout(timer);
-        timer = setTimeout(callback, ms);
-    };
-})();
 var OrgUnitVM = function () {
     var self = this;
+    self.fistElementsIsLoaded = ko.observable(false);
     self.filter = ko.observable('');
     self.buildBranch = function (arrToFill, dataArr) {
         for (var i = 0; i < dataArr.length; i++) {
@@ -67,10 +61,13 @@ var OrgUnitVM = function () {
             let orgUnitBranches = [];
             self.buildBranch(orgUnitBranches, dataGet[0].children);
             self.units(orgUnitBranches);
+        }).done(function () {
+            self.fistElementsIsLoaded(true);
         });
     }
     self.filter.subscribe(function (newFilter) {
-        delay(function () {
+        self.fistElementsIsLoaded(false);
+        delay(function () {   
             if (newFilter.length < 3) {
                 self.units(self.loadEnviromentChildren());
             }
@@ -80,17 +77,20 @@ var OrgUnitVM = function () {
                 self.units()[0].currentPage(0);
                 self.loadFilteredBranches();
             }
-        }, 750)
+        }, 300)
     });
     self.units = ko.observableArray();
     self.loadEnviromentChildren = function () {
-        let identittyToUrl = 'Enviroment';
+        let identittyToUrl = 'Enviroment';       
         $.get('/api/units/childrenbyparent/' + identittyToUrl, function (dataGet) {
             let orgUnitChildrenArr = [];
             for (var i = 0; i < dataGet.length; i++) {
                 orgUnitChildrenArr.push(new OrgUnit(dataGet[i].identity, dataGet[i].description, dataGet[i].isVirtual, dataGet[i].parentIdentity, self.loadNodePage, self.toggleIsExpanded, false, 1, 1));
             }
             self.units(orgUnitChildrenArr);
+        })
+        .done(function () {
+            self.fistElementsIsLoaded(true);
         });
     };
     self.loadEnviromentChildren();

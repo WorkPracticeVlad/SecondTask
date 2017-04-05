@@ -32,8 +32,13 @@
         "properties",
     ];
     let propertyVM;
+    let orgUnitVM;
     var panelViewModels = {
-        "units": new OrgUnitVM(),
+        "units": function setOrgUnitVM() {
+            if (!orgUnitVM)
+                orgUnitVM = new OrgUnitVM();
+            return orgUnitVM;
+        },
         "properties": function setPropertyVM() {
             if (!propertyVM)
                 propertyVM = new PropertyVM();

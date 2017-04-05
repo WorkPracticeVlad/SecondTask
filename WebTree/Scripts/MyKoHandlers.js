@@ -1,4 +1,12 @@
-﻿ko.bindingHandlers.bootstrapPopover = {
+﻿var delay = (function () {
+    var timer = 0;
+    return function (callback, ms) {
+        clearTimeout(timer);
+        timer = setTimeout(callback, ms);
+    };
+})();
+
+ko.bindingHandlers.bootstrapPopover = {
     init: function (element, valueAccessor, allBindingsAccessor, PropertyUsageVM) {
         var options = valueAccessor();
         $(element).popover({
@@ -13,22 +21,37 @@
 
 ko.bindingHandlers.tableValuesByOrgUnit = {
     update: function (element, valueAccessor, allBindings) {
-        var dataGet = ko.unwrap(valueAccessor());
+        while (element.firstChild) {
+            element.removeChild(element.firstChild);
+        }
+        let inputData = ko.unwrap(valueAccessor());
+        let isOnlyResult = inputData.isOnlyResult;
+        var dataGet = inputData.dataGet;
         if (!dataGet) {
             return;
-        }
+        }  
         let tempoArrHeader = [];
         let tempoArrData = [];
         for (var i = 0; i < dataGet.header.length; i++) {
             tempoArrHeader.push(dataGet.header[i]);
         }
         for (var i = 0; i < dataGet.data.length; i++) {
-            tempoArrData.push(dataGet.data[i]);
+            let tempo = { property: dataGet.data[i].property, unitsToValues: [] };
+            for (var j = 0; j < dataGet.data[i].unitsToValues.length; j++) {
+                let innerTempo = { orgUnitIdentity: dataGet.data[i].unitsToValues[j].orgUnitIdentity, value: dataGet.data[i].unitsToValues[j].value };
+                tempo.unitsToValues.push(innerTempo);
+            }
+            tempoArrData.push(tempo);
         }
-        tempoArrHeader.unshift({ identity: null, tail: 'Name' });
-        while (element.firstChild) {
-            element.removeChild(element.firstChild);
+        if (isOnlyResult) {
+            let resHead = tempoArrHeader.pop();
+            tempoArrHeader = [resHead];
+            tempoArrData.forEach(function (data) {
+                let resData = data.unitsToValues.pop();
+                data.unitsToValues = [resData];
+            });
         }
+        tempoArrHeader.unshift({ identity: null, tail: 'Name' });       
         var table = document.createElement('table');
         let tableHead = document.createElement('thead');
         let headRow = document.createElement('tr');
@@ -104,3 +127,4 @@ ko.bindingHandlers.pagesBuilder = {
         appendButtonPage(pagesCount, 'Last', element);              
     }
 };
+

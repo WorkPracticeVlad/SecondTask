@@ -11,8 +11,11 @@ var ValuesByOrgUnitVM = function (orgUnit) {
     self.pagesCount = ko.observable();
     self.currentPage = ko.observable();
     self.dataForTable = ko.observable();
+    self.isLoaded = ko.observable(false);
+    self.isOnlyResult = ko.observable(false);
     self.load = function (page) {
         self.currentPage(Number(page));
+        self.isLoaded(false);
         let identity = orgUnit.identity();
         self.orgUnitIdentity(identity);
         $.getJSON('/api/values/byorgunit/' + identity.replace(/\./g, '-') + '/' + self.currentPage() + '/' + self.filter(), function (dataGet) {
@@ -28,6 +31,8 @@ var ValuesByOrgUnitVM = function (orgUnit) {
             self.valuesByProperties(tempoArrData);
             self.unitsName(tempoArrHeader);
             self.dataForTable(dataGet);
+        }).done(function () {
+            self.isLoaded(true);
         });
     };   
     self.buildPages = function () {
@@ -40,5 +45,10 @@ var ValuesByOrgUnitVM = function (orgUnit) {
         self.load(1);
         self.buildPages();  
     }
+    self.filter.subscribe(function (newFilter) {
+        delay(function () {
+            self.initialize();
+        }, 300)
+    });
     self.initialize();
 }
