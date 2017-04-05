@@ -21,6 +21,8 @@ namespace Tree.DB
         protected string _procPagesCountFiltered;
         protected string _procRowPerPageFilterAndColumnValue;
         protected string _procCountPagesInFilteredByColumnValue;
+        protected string _columnToOrder;
+        protected string _columnToFilter;
 
         public Repository(string tableName)
         {
@@ -46,7 +48,7 @@ namespace Tree.DB
                 return (int)pageCountSqlPar.Value;
             }
         }
-        public int CountPagesFiltered(int itemsPerPage, string columnToFilter, string filter)
+        protected int CountPagesFiltered(int itemsPerPage, string columnToFilter ,string filter)
         {
             using (SqlConnection connection = new SqlConnection(_connString))
             {
@@ -68,7 +70,7 @@ namespace Tree.DB
                 return pageCount;
             }
         }
-        public int CountPagesFiltered(int itemsPerPage, string columnToFilter, string filter, string columnForValue, string value)
+        protected int CountPagesFiltered(int itemsPerPage, string columnToFilter, string filter, string columnForValue, string value)
         {
             using (SqlConnection connection = new SqlConnection(_connString))
             {
@@ -92,14 +94,14 @@ namespace Tree.DB
                 return pageCount;
             }
         }
-        public List<T> ReadPageFromDb(int page, string column, int itemsPerPage)
+        public List<T> ReadPageFromDb(int page, int itemsPerPage)
         {
             var items = new List<T>();
             using (SqlConnection connection = new SqlConnection(_connString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(_procRowsPerPage, connection);
-                AddSqlParemeters(page, itemsPerPage, _tableName, column, command);
+                AddSqlParemeters(page, itemsPerPage, _tableName, _columnToOrder, command);
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
                     if (reader.HasRows)
@@ -110,7 +112,7 @@ namespace Tree.DB
             }
             return items;
         }
-        public List<T> ReadFilteredPageFromDb(int page, string columnToOrder, int itemsPerPage, string columnToFilter, string filter)
+        protected List<T> ReadFilteredPageFromDb(int page,  int itemsPerPage,  string filter)
         {
             var items = new List<T>();
             using (SqlConnection connection = new SqlConnection(_connString))
@@ -121,8 +123,8 @@ namespace Tree.DB
                 command.Parameters.Add(AddSqlParameter("@TableName", _tableName));
                 command.Parameters.Add(AddSqlParameter("@Page", page));
                 command.Parameters.Add(AddSqlParameter("@ItemsPerPage", itemsPerPage));               
-                command.Parameters.Add(AddSqlParameter("@ColumnToOrderBy", columnToOrder));
-                command.Parameters.Add(AddSqlParameter("@ColumnToFilter", columnToFilter));
+                command.Parameters.Add(AddSqlParameter("@ColumnToOrderBy", _columnToOrder));
+                command.Parameters.Add(AddSqlParameter("@ColumnToFilter", _columnToFilter));
                 command.Parameters.Add(AddSqlParameter("@Filter", filter));
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
@@ -134,8 +136,7 @@ namespace Tree.DB
             }
             return items;
         }
-        public List<T> ReadFilteredPageFromDb(int page, string columnToOrder, int itemsPerPage, string columnToFilter, 
-            string filter,string columnForValue, string value)
+        protected List<T> ReadFilteredPageFromDb(int page, int itemsPerPage,string columnToOrder, string columnToFilter, string filter, string value)
         {
             var items = new List<T>();
             using (SqlConnection connection = new SqlConnection(_connString))
@@ -149,7 +150,7 @@ namespace Tree.DB
                 command.Parameters.Add(AddSqlParameter("@ColumnToOrderBy", columnToOrder));
                 command.Parameters.Add(AddSqlParameter("@ColumnToFilter", columnToFilter));
                 command.Parameters.Add(AddSqlParameter("@Filter", filter));
-                command.Parameters.Add(AddSqlParameter("@ColumnForValue", columnForValue));
+                command.Parameters.Add(AddSqlParameter("@ColumnForValue", columnToOrder));
                 command.Parameters.Add(AddSqlParameter("@Value", value));
                 using (SqlDataReader reader = command.ExecuteReader())
                 {

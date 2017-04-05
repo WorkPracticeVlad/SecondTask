@@ -31,12 +31,12 @@ namespace WebTree.Controllers
         }      
         public List<Property> Get(int id)
         {
-            return _manager.PropertiesRepository.ReadPropertyWithUsagePageFromDb(id, "[Name]", _itemsPerPage,"");
+            return _manager.PropertiesRepository.ReadPropertyWithUsagePageFromDb(id, _itemsPerPage,"");
         }
         [Route("api/property/get/{id}/{filter}")]
         public List<Property> Get(int id, string filter)
         {
-            return _manager.PropertiesRepository.ReadPropertyWithUsagePageFromDb(id, "[Name]", _itemsPerPage,filter);
+            return _manager.PropertiesRepository.ReadPropertyWithUsagePageFromDb(id, _itemsPerPage,filter);
         }
     }
 }

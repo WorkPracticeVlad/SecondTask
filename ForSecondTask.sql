@@ -5,6 +5,7 @@ CREATE DATABASE [SecondTask]
 GO
 USE [SecondTask]
 GO
+
 CREATE TABLE OrganizationUnits
 (
 [Identity] nvarchar(225) NOT NULL PRIMARY KEY,
@@ -13,12 +14,14 @@ CREATE TABLE OrganizationUnits
 [ParentIdentity] nvarchar(225)  /*FOREIGN KEY REFERENCES OrganizationUnits([Identity])*/
 )
 GO
+
 CREATE TABLE Properties
 (
 [Name] nvarchar(225) NOT NULL PRIMARY KEY,
 [Type] nvarchar(max)
 )
 GO
+
 CREATE TABLE OrganizationUnitToProperties
 (
 [OrganizationUnitIdentity] nvarchar(225) NOT NULL FOREIGN KEY REFERENCES OrganizationUnits([Identity]),
@@ -27,6 +30,7 @@ CREATE TABLE OrganizationUnitToProperties
 CONSTRAINT PK_OrganizationUnitToProperty PRIMARY KEY NONCLUSTERED ([OrganizationUnitIdentity], [PropertyName]) 
 )
 GO
+
 create function fnGetOrganiztionUnitParent
 (
 @Identity as nvarchar(225)
@@ -40,6 +44,7 @@ where [Identity]=@Identity
 return @ParentIdentity
 end
 GO
+
 CREATE FUNCTION fnGetIdentityByIdentiyTail
 (
 @IdentityTail as nvarchar(225)
@@ -53,6 +58,7 @@ where [Identity] like '%'+@IdentityTail
 return @Identity
 end
 GO
+
 CREATE PROC SelectAllValuesForOrganizationUnitByIdentiy(@Identity as nvarchar(255))
 AS
 SET NOCOUNT ON;
@@ -70,24 +76,7 @@ END;
 END;
 SET NOCOUNT OFF;
 GO
-CREATE PROC SelectAllValuesForOrganizationUnitByIdentiyTail(@Identity as nvarchar(255))
-AS
-SET NOCOUNT ON;
-BEGIN
-set @Identity=[dbo].[fnGetIdentityByIdentiyTail](@Identity)
-WHILE @Identity<>'Enviroment'
-BEGIN
-select [Identity],[PropertyName],[Value] from [dbo].[OrganizationUnits] 
-left join [dbo].[OrganizationUnitToProperties] on
-[dbo].[OrganizationUnits].[Identity]=[dbo].[OrganizationUnitToProperties].
-[OrganizationUnitIdentity]
-and [OrganizationUnitIdentity]=@Identity
-where [Identity]=@Identity
-set @Identity=[dbo].[fnGetOrganiztionUnitParent](@Identity);
-END;
-END;
-SET NOCOUNT OFF;
-GO
+
 CREATE PROC SelectOrganizationUnitToAncestors(@Identity as nvarchar(255))
 AS
 SET NOCOUNT ON;
@@ -99,6 +88,7 @@ set @Identity=[dbo].[fnGetOrganiztionUnitParent](@Identity);
 END;
 SET NOCOUNT OFF;
 GO
+
 CREATE PROC RowsPerPage(@Page as int, @ItemsPerPage as int, @TableName as nvarchar(128), @ColumnToOrderBy as nvarchar(128))
 AS
 SET NOCOUNT ON;
@@ -114,6 +104,7 @@ EXEC sp_executesql @SqlCommand
 END;
 SET NOCOUNT OFF;
 GO
+
 create function [dbo].[fnCountPages]
 (
 @Count as int,
@@ -131,6 +122,7 @@ set @PageCount=@PageCount+1
 return @PageCount
 end
 GO
+
 create function fnCountPerTable
 (
 @TableName as nvarchar(128)
@@ -146,6 +138,7 @@ AND (index_id=0 or index_id=1);
 return @Count
 end
 GO
+
 create function fnCountPagesInTable
 (
 @ItemsPerPage as int,
@@ -159,44 +152,8 @@ select @Count= [dbo].[fnCountPerTable](@TableName)
 return [dbo].[fnCountPages](@Count,@ItemsPerPage)
 end
 GO
-CREATE PROC SelectAllFromTables
-AS
-SET NOCOUNT ON;
-BEGIN
-DECLARE @SqlCommand NVARCHAR(MAX);
-SET @SqlCommand= N'EXEC sp_MSForEachTable "SELECT * FROM ?"'
-EXEC sp_executesql @SqlCommand
-END;
-SET NOCOUNT OFF;
-GO
-CREATE PROC DeleteAllFromTables
-AS
-SET NOCOUNT ON;
-BEGIN
-DECLARE @SqlCommand NVARCHAR(MAX);
-SET @SqlCommand= N'EXEC sp_MSForEachTable "DISABLE TRIGGER ALL ON ?"
 
-EXEC sp_MSForEachTable "ALTER TABLE ? NOCHECK CONSTRAINT ALL"
 
-EXEC sp_MSForEachTable "DELETE FROM ?"
-
-EXEC sp_MSForEachTable "ALTER TABLE ? CHECK CONSTRAINT ALL"
-
-EXEC sp_MSForEachTable "ENABLE TRIGGER ALL ON ?"'
-EXEC sp_executesql @SqlCommand
-END;
-SET NOCOUNT OFF;
-GO
-CREATE PROC SelectAllFromTable( @TableName as nvarchar(128))
-AS
-SET NOCOUNT ON;
-BEGIN
-DECLARE @SqlCommand NVARCHAR(MAX);
-SET @SqlCommand= N'SELECT * FROM '+ @TableName
-EXEC sp_executesql @SqlCommand
-END;
-SET NOCOUNT OFF;
-GO
 CREATE PROC DeleteAllFromTable( @TableName as nvarchar(128))
 AS
 SET NOCOUNT ON;
@@ -207,6 +164,7 @@ EXEC sp_executesql @SqlCommand
 END;
 SET NOCOUNT OFF;
 GO
+
 CREATE TYPE [dbo].[OrganizationUnitsType] AS TABLE(
  [Identity] nvarchar(225) ,
 [Description] nvarchar(max),
@@ -214,6 +172,7 @@ CREATE TYPE [dbo].[OrganizationUnitsType] AS TABLE(
 [ParentIdentity] nvarchar(225) 
 )
 GO
+
 create procedure [dbo].[InsertOrganizationUnits]
 (  
     @OrgUnits OrganizationUnitsType READONLY
@@ -226,11 +185,13 @@ BEGIN
  SET NOCOUNT OFF;
 END
 GO
+
 CREATE TYPE [dbo].[PropertiesType] AS TABLE(
 [Name] nvarchar(225),
 [Type] nvarchar(max) 
 )
 GO
+
 create procedure [dbo].[InsertProperties]
 (  
     @Properties PropertiesType READONLY
@@ -243,12 +204,14 @@ BEGIN
  SET NOCOUNT OFF;
 END
 GO
+
 CREATE TYPE [dbo].[OrganizationUnitToPropertiesType] AS TABLE(
 [OrganizationUnitIdentity] nvarchar(225),
 [PropertyName] nvarchar(225),
 [Value] nvarchar(max)
 )
 GO
+
 create procedure [dbo].[InsertOrganizationUnitToProperties]
 (  
     @OrganizationUnitToProperties OrganizationUnitToPropertiesType READONLY
@@ -261,6 +224,7 @@ BEGIN
  SET NOCOUNT OFF;
 END
 GO
+
 create function fnCountPropertyUsage
 (
 @Property as nvarchar(225)
@@ -274,6 +238,7 @@ select @Count=Count([PropertyName]) from [dbo].[OrganizationUnitToProperties] wh
 return @Count
 end
 GO
+
 CREATE PROC PropertiesPerPage(@Page as int, @ItemsPerPage as int,  @ColumnToOrderBy as nvarchar(128))
 AS
 SET NOCOUNT ON;
@@ -288,6 +253,7 @@ EXEC sp_executesql @SqlCommand
 END;
 SET NOCOUNT OFF;
 GO
+
 CREATE PROC PropertiesPerPageFilter(@Page as int, @ItemsPerPage as int, @ColumnToOrderBy as nvarchar(128),@Filter as nvarchar(225))
 AS
 SET NOCOUNT ON;
@@ -304,6 +270,7 @@ EXEC sp_executesql @SqlCommand
 END;
 SET NOCOUNT OFF;
 GO
+
 create function fnCountFilteredByNamePropertyTable
 (
 @Filter as nvarchar(225)
@@ -318,6 +285,7 @@ WHERE [Name] like '%'+@Filter+'%'
 return @Count
 end
 GO
+
 create function fnCountPagesInFilteredByNamePropertyTable
 (
 @ItemsPerPage as int,
@@ -331,6 +299,7 @@ select @Count= [dbo].[fnCountFilteredByNamePropertyTable](@Filter)
 return [dbo].[fnCountPages](@Count,@ItemsPerPage)
 end
 GO
+
 CREATE PROC RowsPerPageFilter(
 @TableName as nvarchar(128),
 @Page as int, 
@@ -354,6 +323,7 @@ EXEC sp_executesql @SqlCommand
 END;
 SET NOCOUNT OFF;
 GO
+
 CREATE PROC CountRowsFilter(
 @TableName as nvarchar(128),
 @ColumnToFilter as nvarchar(225),
@@ -371,6 +341,7 @@ EXEC sp_executesql @SqlCommand
 END;
 SET NOCOUNT OFF;
 GO
+
 create proc CountPagesInFiltered
 (
 @ItemsPerPage as int,
@@ -390,6 +361,7 @@ select [dbo].[fnCountPages](@Count,@ItemsPerPage)
 end
 SET NOCOUNT OFF;
 GO
+
 CREATE PROC RowPerPageFilterAndColumnValue(
 @TableName as nvarchar(128),
 @Page as int, 
@@ -415,6 +387,7 @@ EXEC sp_executesql @SqlCommand
 END;
 SET NOCOUNT OFF;
 GO 
+
 CREATE PROC CountRowsFilterByColumnValue(
 @TableName as nvarchar(128),
 @ColumnToFilter as nvarchar(225),
@@ -434,6 +407,7 @@ EXEC sp_executesql @SqlCommand
 END;
 SET NOCOUNT OFF;
 GO
+
 create proc CountPagesInFilteredByColumnValue
 (
 @ItemsPerPage as int,
@@ -455,6 +429,7 @@ select [dbo].[fnCountPages](@Count,@ItemsPerPage)
 end
 SET NOCOUNT OFF;
 GO
+
 CREATE PROC SelectOrgUnitsByParent(@Identity as nvarchar(255))
 AS
 SET NOCOUNT ON;
@@ -464,6 +439,7 @@ where [ParentIdentity]=@Identity
 END;
 SET NOCOUNT OFF;
 GO
+
 create proc CountPagesValuesForOrganizationUnitByIdentiyFiltered
 (
 @ItemsPerPage as int,
@@ -482,6 +458,7 @@ select [dbo].[fnCountPages](@Count,@ItemsPerPage)
 end
 SET NOCOUNT OFF;
 GO
+
 create proc RowsPerPageValuesForOrganizationUnitByIdentiyFiltered
 (
 @Identity as nvarchar(225),
@@ -504,6 +481,7 @@ FETCH NEXT @ItemsPerPage ROWS ONLY) order by PropertyName
 end
 SET NOCOUNT OFF;
 GO
+
 create proc SelectOrgUnitsToAncestorsFiltered
 (
 @Filter as nvarchar(225)
@@ -533,6 +511,7 @@ select distinct * from @Table
 end
 SET NOCOUNT OFF;
 GO
+
 create proc SelectOrgUnitsToAncestorsIdentity
 (
 @Identity as nvarchar(225)
@@ -551,6 +530,7 @@ select [Identity] from @Table
 end
 SET NOCOUNT OFF;
 GO
+
 create proc CountPagesUnitNode
 (
 @ItemsPerPage as int,
@@ -568,6 +548,7 @@ select [dbo].[fnCountPages](@Count,@ItemsPerPage)
 end
 SET NOCOUNT OFF;
 GO
+
 create proc RowsPerUnitNode
 (
 @Identity as nvarchar(225),

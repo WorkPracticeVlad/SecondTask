@@ -37,8 +37,8 @@ var ValuesByOrgUnitVM = function (orgUnit) {
         })
     };
     self.initialize = function () {
-        self.buildPages();
         self.load(1);
+        self.buildPages();  
     }
     self.initialize();
 }

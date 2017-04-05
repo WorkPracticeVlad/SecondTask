@@ -59,7 +59,10 @@ ko.bindingHandlers.tableValuesByOrgUnit = {
 };
 
 ko.bindingHandlers.pagesBuilder = {
-    update: function (element, valueAccessor, allBindings) {      
+    update: function (element, valueAccessor, allBindings) {
+        while (element.firstChild) {
+            element.removeChild(element.firstChild);
+        }
         var dataGet = ko.unwrap(valueAccessor());
         let pagesCount = dataGet.pagesCount;
         let currentPage = dataGet.currentPage;
@@ -67,10 +70,7 @@ ko.bindingHandlers.pagesBuilder = {
         let node = dataGet.node;
         if (!pagesCount || currentPage === 0||pagesCount===1) {
             return;
-        }
-        while (element.firstChild) {
-            element.removeChild(element.firstChild);
-        }
+        } 
         let pagesOnScreen = [ currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
         pagesOnScreen = pagesOnScreen.filter(function (number, index, self) {
             return number > 0 && number < pagesCount + 1 && self.indexOf(number) == index;

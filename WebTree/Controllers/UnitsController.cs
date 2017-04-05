@@ -28,7 +28,7 @@ namespace WebTree.Controllers
         }
         public List<OrganizationUnit> Get(int id)
         {
-            return _manager.OrgUnitsRepository.ReadPageFromDb(id, "[Identity]",_itemsPerPage);  
+            return _manager.OrgUnitsRepository.ReadPageFromDb(id, _itemsPerPage);  
         }
         [HttpGet]
         [Route("api/units/childrenbyparent/{id}")]

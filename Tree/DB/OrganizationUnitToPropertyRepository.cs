@@ -16,6 +16,8 @@ namespace Tree.DB
         private string _insertOrganizationUnitToProperties;
         private string _selcetAllValuesForOrgUnit;
         const string TABLE_NAME = "[dbo].[OrganizationUnitToProperties]";
+        const string COLUMN_UNIT = "[OrganizationUnitIdentity]";
+        const string COLUMN_PROPERTY = "[PropertyName]";
         private string _procRowsPerPageValuesForOrganizationUnitByIdentiyFiltered;
         private string _procCountPagesValuesForOrganizationUnitByIdentiyFiltered;
         private string _procSelectOrgUnitsToAncestorsIdentity;
@@ -44,7 +46,6 @@ namespace Tree.DB
             }
             return ExecuteInsertDataTable(dataTable, _insertOrganizationUnitToProperties, "@OrganizationUnitToProperties");
         }
-
         protected override void AddItem(List<OrganizationUnitToProperty> items, SqlDataReader reader)
         {
             if (reader.IsDBNull(1))
@@ -143,6 +144,18 @@ namespace Tree.DB
                 reader.Close();
             }
             return new ForOrgUnitProperties(items, orgUnitsId);
+        }
+        public List<OrganizationUnitToProperty> ReadFilteredPropertyPageFromDb(int page, int itemsPerPage, string filter, string value)
+        {
+            return ReadFilteredPageFromDb(page, itemsPerPage, COLUMN_PROPERTY,COLUMN_UNIT, filter, value);
+        }
+        public List<OrganizationUnitToProperty> ReadFilteredUnitPageFromDb(int page, int itemsPerPage, string filter, string value)
+        {
+            return ReadFilteredPageFromDb(page, itemsPerPage, COLUMN_UNIT, COLUMN_UNIT, filter, value);
+        }
+        public int CountPagesPropertyFiltered(int itemsPerPage, string filter, string value)
+        {       
+            return CountPagesFiltered(itemsPerPage, COLUMN_UNIT, filter ,COLUMN_PROPERTY, value);
         }
     }
 }

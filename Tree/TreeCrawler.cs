@@ -100,8 +100,10 @@ namespace Tree
         }
         Dictionary<Property, string> AddPopertiesFromNode(XmlNode node)
         {
+            if (node.Name == "instance")
+                node = node.SelectSingleNode("properties");
             var propertiesInOrgUnitWithValue = new Dictionary<Property, string>();
-            foreach (XmlNode propertyNode in node.SelectNodes(".//property"))
+            foreach (XmlNode propertyNode in node.SelectNodes("property"))
             {
                 var property = new Property
                 {

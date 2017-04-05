@@ -14,6 +14,7 @@ namespace Tree.DB
     {
         private string _insertOrganizationUnits;
         const string TABLE_NAME = "[dbo].[OrganizationUnits]";
+        const string COLUMN_TO_ORDER = "[Identity]";
         private string _procSelectOrgUnitsByParent;
         private string _procSelectOrgUnitsToAncestorsFiltered;
         private string _procCountPagesUnitNode;
@@ -27,6 +28,7 @@ namespace Tree.DB
             _procSelectOrgUnitsToAncestorsFiltered = "[dbo].[SelectOrgUnitsToAncestorsFiltered]";
             _procCountPagesUnitNode = "[dbo].[CountPagesUnitNode]";
             _procRowsPerUnitNode = "[dbo].[RowsPerUnitNode]";
+            _columnToOrder = COLUMN_TO_ORDER;
         }
         int CountUnitNodePages(int itemsPerPage, string parent)
         {

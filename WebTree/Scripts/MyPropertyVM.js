@@ -16,8 +16,9 @@
         })
     };
     self.initialize = function () {
-        self.buildPages();
+        self.currentPage(1);
         self.load(self.currentPage());
+        self.buildPages();
     }
     self.initialize();
 }

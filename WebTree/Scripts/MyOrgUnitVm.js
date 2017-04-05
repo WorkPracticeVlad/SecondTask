@@ -66,13 +66,13 @@ var OrgUnitVM = function () {
         $.get('/api/units/branchesfiltered/' + filter, function (dataGet) {
             let orgUnitBranches = [];
             self.buildBranch(orgUnitBranches, dataGet[0].children);
-            self.units()[0].children(orgUnitBranches);
+            self.units(orgUnitBranches);
         });
     }
     self.filter.subscribe(function (newFilter) {
         delay(function () {
             if (newFilter.length < 3) {
-                self.units([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage, self.toggleIsExpanded, false, 0, 1)]);
+                self.units(self.loadEnviromentChildren());
             }
             else {
                 self.units()[0].isExpanded(true);
@@ -82,15 +82,16 @@ var OrgUnitVM = function () {
             }
         }, 750)
     });
-    self.units = ko.observableArray([new OrgUnit('Enviroment', 'Enviroment', 'true', '', self.loadNodePage, self.toggleIsExpanded, false, 1, 1)]);
-    self.loadChildren = function (data, event) {
-        let identittyToUrl = data.identity().replace(/\./g, '-');
+    self.units = ko.observableArray();
+    self.loadEnviromentChildren = function () {
+        let identittyToUrl = 'Enviroment';
         $.get('/api/units/childrenbyparent/' + identittyToUrl, function (dataGet) {
             let orgUnitChildrenArr = [];
             for (var i = 0; i < dataGet.length; i++) {
-                orgUnitChildrenArr.push(new OrgUnit(dataGet[i].identity, dataGet[i].description, dataGet[i].isVirtual, dataGet[i].parentIdentity, self.loadChildren, true));
+                orgUnitChildrenArr.push(new OrgUnit(dataGet[i].identity, dataGet[i].description, dataGet[i].isVirtual, dataGet[i].parentIdentity, self.loadNodePage, self.toggleIsExpanded, false, 1, 1));
             }
-            recursiveIdentityFind(self.units(), data.identity(), orgUnitChildrenArr);
+            self.units(orgUnitChildrenArr);
         });
     };
+    self.loadEnviromentChildren();
 }

@@ -13,6 +13,7 @@ namespace Tree.DB
     {
         private string _insertProperties;
         const string TABLE_NAME = "[dbo].[Properties]";
+        const string COLUMN_TO_ORDER = "[Name]";
         string _procPropertiesPerPageWithFilter = "[dbo].[PropertiesPerPageFilter]";
         string _fnCountPagesInFilteredByNamePropertyTable = "[dbo].[fnCountPagesInFilteredByNamePropertyTable]";
         public PropertyRepository() : base(TABLE_NAME)
@@ -34,7 +35,7 @@ namespace Tree.DB
                 return (int)returnValue.Value;
             }
         }
-        public List<Property> ReadPropertyWithUsagePageFromDb(int page, string column, int itemsPerPage, string filter)
+        public List<Property> ReadPropertyWithUsagePageFromDb(int page, int itemsPerPage, string filter)
         {
             var items = new List<Property>();
             using (SqlConnection connection = new SqlConnection(_connString))
@@ -44,7 +45,7 @@ namespace Tree.DB
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add(AddSqlParameter("@Page", page));
                 command.Parameters.Add(AddSqlParameter("@ItemsPerPage", itemsPerPage));
-                command.Parameters.Add(AddSqlParameter("@ColumnToOrderBy", column));
+                command.Parameters.Add(AddSqlParameter("@ColumnToOrderBy", COLUMN_TO_ORDER));
                 command.Parameters.Add(AddSqlParameter("@Filter", filter));
                 using (SqlDataReader reader = command.ExecuteReader())
                 {

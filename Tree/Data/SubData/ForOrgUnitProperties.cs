@@ -36,8 +36,21 @@ namespace Tree.Data.SubData
                     UnitsToValues = listUnitsToValues
                 });
             }
+            foreach (var item in forOrgUnitProperties.Data)
+            {               
+                for (int i = item.UnitsToValues.Count - 1; i >= 0; --i)
+                {
+                    if (!String.IsNullOrEmpty(item.UnitsToValues[i].Value))
+                    {
+                        item.UnitsToValues.Add(new OrgUnitValuePair { OrgUnitIdentity = "Result", Value = item.UnitsToValues[i].Value });
+                        break;
+                    }
+                }
+            }
+            forOrgUnitProperties.Header.Add(new OrgUnitIdentityTailPair { Identity = "ResultIdentity", Tail = "Result" });
         }
         public List<OrgUnitIdentityTailPair> Header { get; set; }
         public List<PropertyToUnitsValuePairs> Data { get; set; }
+
     }
 }
