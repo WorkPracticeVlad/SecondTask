@@ -101,13 +101,14 @@
     <h4>OrganizationUnit: "<text data-bind="text: orgUnitIdentity"></text>"</h4>
     <br />
     <span>Filter: <input data-bind="textInput: filter" /></span>
-    <span> Show just result <input type="checkbox" data-bind="checked: isOnlyResult" /></span>
+    <span>This organization unit :<input type="checkbox" data-bind="checked: isNativeOrgUnitCheckFlag" /> </span>
+    <span>Result :<input type="checkbox" data-bind="checked: isResultCheckFlag" /> </span>    
     <br />
     <div class="glyphicon glyphicon-cloud-download" data-bind="visible : !isLoaded()">
         Loading...
     </div>
     <div data-bind="visible : isLoaded()">
-        <div data-bind="tableValuesByOrgUnit:{dataGet: dataForTable(), isOnlyResult: isOnlyResult()} "></div>
+        <div data-bind="tableValuesByOrgUnit:{dataGet: dataForTable(), isOnlyResult: isResultCheckFlag(), isNativeOrgUnitCheckFlag : isNativeOrgUnitCheckFlag ()} "></div>
         <div data-bind="pagesBuilder : {pagesCount:pagesCount(), currentPage: currentPage(), onPageClick: load}"></div>
     </div>
 </script>

@@ -1,5 +1,6 @@
 ﻿let TreeViewModel = function() {
     var self = this;
+    self.isRefreshed= ko.observable(false);
     self.panels = [
            "units",
            "properties",
@@ -10,7 +11,10 @@
     self.refresh = function () {
         $.ajax({
             url: "/api/tree/delete",
-            type: 'DELETE'          
+            type: 'DELETE',
+            success: function (result) {
+                self.isRefreshed(result);
+            }
         })
     }; 
 }

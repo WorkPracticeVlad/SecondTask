@@ -45,20 +45,6 @@ return @ParentIdentity
 end
 GO
 
-CREATE FUNCTION fnGetIdentityByIdentiyTail
-(
-@IdentityTail as nvarchar(225)
-)
-returns nvarchar(225)
-as
-begin
-declare @Identity nvarchar(225)
-select @Identity=[Identity] from [dbo].[OrganizationUnits]
-where [Identity] like '%'+@IdentityTail
-return @Identity
-end
-GO
-
 CREATE PROC SelectAllValuesForOrganizationUnitByIdentiy(@Identity as nvarchar(255))
 AS
 SET NOCOUNT ON;

@@ -67,13 +67,15 @@ var OrgUnitVM = function () {
     }
     self.filter.subscribe(function (newFilter) {
         self.fistElementsIsLoaded(false);
-        delay(function () {   
-            if (newFilter.length == 0) {
+        delay(function () {
+            if (newFilter.length < 3) {
+                if (self.units().some(function (u) {
+                    return u.children().length == 0
+                })) {
+                    self.fistElementsIsLoaded(true);
+                    return;
+                }
                 self.units(self.loadEnviromentChildren());
-            }
-            else if (newFilter.length < 3) {
-                self.fistElementsIsLoaded(true);
-                return;
             }
             else {
                 self.units()[0].isExpanded(true);
@@ -85,7 +87,7 @@ var OrgUnitVM = function () {
     });
     self.units = ko.observableArray();
     self.loadEnviromentChildren = function () {
-        let identittyToUrl = 'Enviroment';       
+        let identittyToUrl = 'Enviroment';
         $.get('/api/units/childrenbyparent/' + identittyToUrl, function (dataGet) {
             let orgUnitChildrenArr = [];
             for (var i = 0; i < dataGet.length; i++) {
@@ -99,3 +101,4 @@ var OrgUnitVM = function () {
     };
     self.loadEnviromentChildren();
 }
+

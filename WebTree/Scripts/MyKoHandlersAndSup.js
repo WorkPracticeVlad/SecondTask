@@ -25,7 +25,8 @@ ko.bindingHandlers.tableValuesByOrgUnit = {
             element.removeChild(element.firstChild);
         }
         let inputData = ko.unwrap(valueAccessor());
-        let isOnlyResult = inputData.isOnlyResult;
+        let isResultCheckFlag = inputData.isOnlyResult;
+        let isNativeOrgUnitCheckFlag = inputData.isNativeOrgUnitCheckFlag;
         var dataGet = inputData.dataGet;
         if (!dataGet) {
             return;
@@ -33,23 +34,31 @@ ko.bindingHandlers.tableValuesByOrgUnit = {
         let tempoArrHeader = [];
         let tempoArrData = [];
         for (var i = 0; i < dataGet.header.length; i++) {
+            if (isResultCheckFlag && isNativeOrgUnitCheckFlag && i < dataGet.header.length - 2) {
+                i=dataGet.header.length - 2;
+            } else if (isResultCheckFlag && isNativeOrgUnitCheckFlag) {
+                //maybe 
+            } else{
+                if ((isResultCheckFlag && i != dataGet.header.length - 1) || (isNativeOrgUnitCheckFlag && i != dataGet.header.length - 2))
+                    continue;
+            }
             tempoArrHeader.push(dataGet.header[i]);
         }
         for (var i = 0; i < dataGet.data.length; i++) {
             let tempo = { property: dataGet.data[i].property, unitsToValues: [] };
             for (var j = 0; j < dataGet.data[i].unitsToValues.length; j++) {
+                if (isResultCheckFlag && isNativeOrgUnitCheckFlag && j < dataGet.data[i].unitsToValues.length - 2) {
+                    j = dataGet.data[i].unitsToValues.length - 2;
+                } else if (isResultCheckFlag && isNativeOrgUnitCheckFlag) {
+                    //maybe 
+                } else {
+                    if ((isResultCheckFlag && j != dataGet.data[i].unitsToValues.length - 1) || (isNativeOrgUnitCheckFlag && j != dataGet.data[i].unitsToValues.length - 2))
+                        continue;
+                }
                 let innerTempo = { orgUnitIdentity: dataGet.data[i].unitsToValues[j].orgUnitIdentity, value: dataGet.data[i].unitsToValues[j].value };
                 tempo.unitsToValues.push(innerTempo);
             }
             tempoArrData.push(tempo);
-        }
-        if (isOnlyResult) {
-            let resHead = tempoArrHeader.pop();
-            tempoArrHeader = [resHead];
-            tempoArrData.forEach(function (data) {
-                let resData = data.unitsToValues.pop();
-                data.unitsToValues = [resData];
-            });
         }
         tempoArrHeader.unshift({ identity: null, tail: 'Name' });       
         var table = document.createElement('table');

@@ -16,7 +16,7 @@ namespace Tree.Data.SubData
             forOrgUnitProperties.Data = new List<PropertyToUnitsValuePairs>();
             foreach (var item in orgUnitsId)
             {
-                forOrgUnitProperties.Header.Add(new OrgUnitIdentityTailPair { Identity = item, Tail = item.Substring(item.LastIndexOf('.')) });
+                forOrgUnitProperties.Header.Add(new OrgUnitIdentityTailPair { Identity = item, Tail = item.Substring(item.LastIndexOf('.')+1) });
             }
             foreach (var item in items.Select(p => p.PropertyName).Distinct().ToList())
             {

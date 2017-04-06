@@ -18,9 +18,10 @@ namespace WebTree.Controllers
         {
            _manager = new Manager();
         }        
-        public void Delete()
+        public bool Delete()
         {
             _manager.RefreshTree();
+            return true;
         }      
     }
 }
