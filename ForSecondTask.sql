@@ -89,22 +89,6 @@ END;
 SET NOCOUNT OFF;
 GO
 
-CREATE PROC RowsPerPage(@Page as int, @ItemsPerPage as int, @TableName as nvarchar(128), @ColumnToOrderBy as nvarchar(128))
-AS
-SET NOCOUNT ON;
-BEGIN
-DECLARE @SqlCommand NVARCHAR(MAX);
-SET @SqlCommand= N'
-SELECT  *
-FROM '+ @TableName+N' 
-ORDER BY '+@ColumnToOrderBy+N' 
-OFFSET '+CAST(@Page*@ItemsPerPage-@ItemsPerPage AS NVARCHAR(10))+N' ROWS
-FETCH NEXT '+CAST(@ItemsPerPage AS NVARCHAR(10))+N' ROWS ONLY;'
-EXEC sp_executesql @SqlCommand
-END;
-SET NOCOUNT OFF;
-GO
-
 create function [dbo].[fnCountPages]
 (
 @Count as int,
@@ -152,7 +136,6 @@ select @Count= [dbo].[fnCountPerTable](@TableName)
 return [dbo].[fnCountPages](@Count,@ItemsPerPage)
 end
 GO
-
 
 CREATE PROC DeleteAllFromTable( @TableName as nvarchar(128))
 AS
@@ -298,68 +281,6 @@ declare @Count as int
 select @Count= [dbo].[fnCountFilteredByNamePropertyTable](@Filter)
 return [dbo].[fnCountPages](@Count,@ItemsPerPage)
 end
-GO
-
-CREATE PROC RowsPerPageFilter(
-@TableName as nvarchar(128),
-@Page as int, 
-@ItemsPerPage as int, 
-@ColumnToOrderBy as nvarchar(225),
-@ColumnToFilter as nvarchar(225),
-@Filter as nvarchar(225)
-)
-AS
-SET NOCOUNT ON;
-BEGIN
-DECLARE @SqlCommand NVARCHAR(MAX);
-SET @SqlCommand= N'
-SELECT  *
-FROM  '+ @TableName + N'
-WHERE '+@ColumnToFilter+N' like '''+N'%'+@Filter+N'%'''+N' 
-ORDER BY '+@ColumnToOrderBy+N' 
-OFFSET '+CAST(@Page*@ItemsPerPage-@ItemsPerPage AS NVARCHAR(10))+N' ROWS
-FETCH NEXT '+CAST(@ItemsPerPage AS NVARCHAR(10))+N' ROWS ONLY;'
-EXEC sp_executesql @SqlCommand
-END;
-SET NOCOUNT OFF;
-GO
-
-CREATE PROC CountRowsFilter(
-@TableName as nvarchar(128),
-@ColumnToFilter as nvarchar(225),
-@Filter as nvarchar(225)
-)
-AS
-SET NOCOUNT ON;
-BEGIN
-DECLARE @SqlCommand NVARCHAR(MAX);
-SET @SqlCommand= N'
-SELECT  count(*)
-FROM  '+ @TableName + N'
-WHERE '+@ColumnToFilter+N' like '''+N'%'+@Filter+N'%'''
-EXEC sp_executesql @SqlCommand
-END;
-SET NOCOUNT OFF;
-GO
-
-create proc CountPagesInFiltered
-(
-@ItemsPerPage as int,
-@TableName  as nvarchar(128),
-@ColumnToFilter as nvarchar(225),
-@Filter as nvarchar(225)
-)
-as
-SET NOCOUNT ON;
-begin
-declare @Count as int
-declare @Remnant as int
-Declare @TempoTable Table (CountFiltered int)
-Insert @TempoTable exec [dbo].[CountRowsFilter] @TableName,@ColumnToFilter,@Filter
-select @Count= [CountFiltered] from @TempoTable
-select [dbo].[fnCountPages](@Count,@ItemsPerPage)
-end
-SET NOCOUNT OFF;
 GO
 
 CREATE PROC RowPerPageFilterAndColumnValue(

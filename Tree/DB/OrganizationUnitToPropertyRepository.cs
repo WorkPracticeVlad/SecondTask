@@ -14,7 +14,6 @@ namespace Tree.DB
     public class OrganizationUnitToPropertyRepository : Repository<OrganizationUnitToProperty>
     {
         private string _insertOrganizationUnitToProperties;
-        private string _selcetAllValuesForOrgUnit;
         const string TABLE_NAME = "[dbo].[OrganizationUnitToProperties]";
         const string COLUMN_UNIT = "[OrganizationUnitIdentity]";
         const string COLUMN_PROPERTY = "[PropertyName]";
@@ -26,7 +25,6 @@ namespace Tree.DB
             : base(TABLE_NAME)
         {
             _insertOrganizationUnitToProperties = "[dbo].[InsertOrganizationUnitToProperties]";
-            _selcetAllValuesForOrgUnit = "[dbo].[SelectAllValuesForOrganizationUnitByIdentiy]";
             _procRowsPerPageValuesForOrganizationUnitByIdentiyFiltered = "[dbo].[RowsPerPageValuesForOrganizationUnitByIdentiyFiltered]";
             _procCountPagesValuesForOrganizationUnitByIdentiyFiltered = "[dbo].[CountPagesValuesForOrganizationUnitByIdentiyFiltered]";
             _procSelectOrgUnitsToAncestorsIdentity = "[dbo].[SelectOrgUnitsToAncestorsIdentity]";
@@ -86,28 +84,6 @@ namespace Tree.DB
                 return pageCount;
             }
         }
-        public List<OrganizationUnitToProperty> ReadOrganizationUnitValuesFromDb(string unitIdentity)
-        {
-            List<OrganizationUnitToProperty> items = new List<OrganizationUnitToProperty>();
-            using (SqlConnection connection = new SqlConnection(_connString))
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand(_selcetAllValuesForOrgUnit, connection);
-                command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.Add(AddSqlParameter("@Identity", unitIdentity));
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                        AddItem(items, reader);
-                    while (reader.NextResult())
-                        while (reader.Read())
-                            AddItem(items, reader);
-                }
-                reader.Close();
-            }
-            return items;
-        }
         public ForOrgUnitProperties ReadPageOrganizationUnitValuesFilteredFromDb(string unitIdentity, int page, int itemsPerPage, string filter)
         {
             List<OrganizationUnitToProperty> items = new List<OrganizationUnitToProperty>();
@@ -148,11 +124,7 @@ namespace Tree.DB
         public List<OrganizationUnitToProperty> ReadFilteredPropertyPageFromDb(int page, int itemsPerPage, string filter, string value)
         {
             return ReadFilteredPageFromDb(page, itemsPerPage, COLUMN_PROPERTY,COLUMN_UNIT, filter, value);
-        }
-        public List<OrganizationUnitToProperty> ReadFilteredUnitPageFromDb(int page, int itemsPerPage, string filter, string value)
-        {
-            return ReadFilteredPageFromDb(page, itemsPerPage, COLUMN_UNIT, COLUMN_UNIT, filter, value);
-        }
+        }     
         public int CountPagesPropertyFiltered(int itemsPerPage, string filter, string value)
         {       
             return CountPagesFiltered(itemsPerPage, COLUMN_UNIT, filter ,COLUMN_PROPERTY, value);

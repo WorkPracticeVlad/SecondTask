@@ -3,7 +3,7 @@
     ViewBag.Title = "HomePages";
 }
 @section scripts {
-    <script src="~/Scripts/MyKoHandlers.js"></script>
+    <script src="~/Scripts/MyKoHandlersAndSup.js"></script>
     <script src="~/Scripts/MyValuesByOrgUnitVM.js"></script>
     <script src="~/Scripts/MyPropertyUsageVM.js"></script>
     <script src="~/Scripts/MyPropertyVM.js"></script>
@@ -72,7 +72,7 @@
             </tbody>
         </table>
         <div data-bind="pagesBuilder : {pagesCount:pagesCount(), currentPage: currentPage(), onPageClick: load}"></div>
-    </div>   
+    </div>
 </script>
 
 <script type="text/html" id="propertiesUsage-template">
@@ -94,7 +94,7 @@
             <hr />
         </div>
         <div data-bind="pagesBuilder : {pagesCount: pagesCount(), currentPage: currentPage(), onPageClick: load}"></div>
-    </div>  
+    </div>
 </script>
 
 <script type="text/html" id="valuesByOrgUnit-template">

@@ -14,15 +14,11 @@ namespace WebTree.Controllers
     public class ValuesController : ApiController
     {
         private Manager _manager;
-        int _itemsPerPage = 2;
+        int _itemsPerPage = 3;
         public ValuesController()
         {
             _manager = new Manager();
-        }
-        public int Get()
-        {
-            return _manager.ValuesRepository.CountPages(_itemsPerPage);
-        }
+        }    
         [HttpGet]
         [Route("api/values/pagesbyproperty/{id}")]
         public int PagesByProperty(string id = "")

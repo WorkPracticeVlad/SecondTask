@@ -68,8 +68,12 @@ var OrgUnitVM = function () {
     self.filter.subscribe(function (newFilter) {
         self.fistElementsIsLoaded(false);
         delay(function () {   
-            if (newFilter.length < 3) {
+            if (newFilter.length == 0) {
                 self.units(self.loadEnviromentChildren());
+            }
+            else if (newFilter.length < 3) {
+                self.fistElementsIsLoaded(true);
+                return;
             }
             else {
                 self.units()[0].isExpanded(true);

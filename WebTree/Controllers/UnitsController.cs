@@ -16,19 +16,10 @@ namespace WebTree.Controllers
     public class UnitsController : ApiController
     {
         private Manager _manager;
-        int _itemsPerPage = 5;
         int _itemsPerNode = 1;
         public UnitsController()
         {
             _manager = new Manager();
-        }
-        public int Get()
-        {
-            return _manager.OrgUnitsRepository.CountPages(_itemsPerPage);
-        }
-        public List<OrganizationUnit> Get(int id)
-        {
-            return _manager.OrgUnitsRepository.ReadPageFromDb(id, _itemsPerPage);  
         }
         [HttpGet]
         [Route("api/units/childrenbyparent/{id}")]

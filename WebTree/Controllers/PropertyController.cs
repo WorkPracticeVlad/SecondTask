@@ -19,7 +19,6 @@ namespace WebTree.Controllers
         {
              _manager=new Manager();
         }
-        // GET: api/Property
         public int Get()
         {
             return _manager.PropertiesRepository.CountPages(_itemsPerPage);
