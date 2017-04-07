@@ -16,7 +16,7 @@ namespace WebTree.Controllers
     public class UnitsController : ApiController
     {
         private Manager _manager;
-        int _itemsPerNode = 1;
+        int _itemsPerNode = 2;
         public UnitsController()
         {
             _manager = new Manager();

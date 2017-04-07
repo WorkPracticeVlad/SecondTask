@@ -78,10 +78,12 @@ var OrgUnitVM = function () {
                 self.units(self.loadEnviromentChildren());
             }
             else {
-                self.units()[0].isExpanded(true);
-                self.units()[0].pagesCount(0);
-                self.units()[0].currentPage(0);
                 self.loadFilteredBranches();
+                if (self.units()[0]) {
+                    self.units()[0].isExpanded(true);
+                    self.units()[0].pagesCount(0);
+                    self.units()[0].currentPage(0);
+                }  
             }
         }, 300)
     });

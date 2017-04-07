@@ -70,12 +70,13 @@
         <div class="panel-body">
             <label class="checkbox-inline"><input type="checkbox" data-bind="checked: isNativeOrgUnitCheckFlag" />This organization unit</label>
             <label class="checkbox-inline"><input type="checkbox" data-bind="checked: isResultCheckFlag" />Result</label>
+            <label class="checkbox-inline"><input type="checkbox" data-bind="checked: isOrgUnitsGiveValues" />Values from organization units</label>
             <br />
             <div class="glyphicon glyphicon-cloud-download" data-bind="visible : !isLoaded()">
                 Loading...
             </div>
             <div data-bind="visible : isLoaded()">
-                <div data-bind="tableValuesByOrgUnit:{dataGet: dataForTable(), isOnlyResult: isResultCheckFlag(), isNativeOrgUnitCheckFlag : isNativeOrgUnitCheckFlag ()} "></div>
+                <div data-bind="tableValuesByOrgUnit:{dataGet: dataForTable(),  isResultCheckFlag: isResultCheckFlag(), isNativeOrgUnitCheckFlag : isNativeOrgUnitCheckFlag (), isOrgUnitsGiveValues: isOrgUnitsGiveValues()} "></div>
                 <div data-bind="pagesBuilder : {pagesCount:pagesCount(), currentPage: currentPage(), onPageClick: load}"></div>
             </div>
         </div>

@@ -12,6 +12,7 @@ var ValuesByOrgUnitVM = function (orgUnit) {
     self.currentPage = ko.observable();
     self.dataForTable = ko.observable();
     self.isLoaded = ko.observable(false);
+    self.isOrgUnitsGiveValues= ko.observable(false);
     self.isNativeOrgUnitCheckFlag = ko.observable(false);
     self.isResultCheckFlag = ko.observable(false);
     self.load = function (page) {

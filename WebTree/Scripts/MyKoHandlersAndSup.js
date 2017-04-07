@@ -25,42 +25,49 @@ ko.bindingHandlers.tableValuesByOrgUnit = {
             element.removeChild(element.firstChild);
         }
         let inputData = ko.unwrap(valueAccessor());
-        let isResultCheckFlag = inputData.isOnlyResult;
+        let isResultCheckFlag = inputData.isResultCheckFlag;
         let isNativeOrgUnitCheckFlag = inputData.isNativeOrgUnitCheckFlag;
+        let isOrgUnitsGiveValues = inputData.isOrgUnitsGiveValues;
         var dataGet = inputData.dataGet;
         if (!dataGet) {
             return;
-        }  
+        }
         let tempoArrHeader = [];
         let tempoArrData = [];
+        for (var i = 0; i < dataGet.data.length; i++) {
+            let tempo = { property: dataGet.data[i].property, unitsToValues: [] };
+            for (var j = 0; j < dataGet.data[i].unitsToValues.length; j++) {
+                if (isOrgUnitsGiveValues && dataGet.data[i].unitsToValues[j].value !== dataGet.data[i].unitsToValues[dataGet.data[i].unitsToValues.length - 1].value) {
+                    tempo.unitsToValues.push({ orgUnitIdentity: '', value: '' });
+                    continue;
+                }               
+                tempo.unitsToValues.push({ orgUnitIdentity: dataGet.data[i].unitsToValues[j].orgUnitIdentity, value: dataGet.data[i].unitsToValues[j].value });
+            }
+            tempoArrData.push(tempo);
+        }
+        if (isResultCheckFlag || isNativeOrgUnitCheckFlag) {
+            for (var i = 0; i < tempoArrData.length; i++) {
+                    if (isResultCheckFlag && isNativeOrgUnitCheckFlag) {
+                        tempoArrData[i].unitsToValues= tempoArrData[i].unitsToValues.splice( - 2,2);
+                    } else if (!isResultCheckFlag && isNativeOrgUnitCheckFlag) {
+                        tempoArrData[i].unitsToValues= tempoArrData[i].unitsToValues.splice( - 2,1);
+                    } else {
+                        tempoArrData[i].unitsToValues= tempoArrData[i].unitsToValues.splice( - 1,1);
+                    }
+            }
+        }
         for (var i = 0; i < dataGet.header.length; i++) {
             if (isResultCheckFlag && isNativeOrgUnitCheckFlag && i < dataGet.header.length - 2) {
-                i=dataGet.header.length - 2;
+                i = dataGet.header.length - 2;
             } else if (isResultCheckFlag && isNativeOrgUnitCheckFlag) {
                 //maybe 
-            } else{
+            } else {
                 if ((isResultCheckFlag && i != dataGet.header.length - 1) || (isNativeOrgUnitCheckFlag && i != dataGet.header.length - 2))
                     continue;
             }
             tempoArrHeader.push(dataGet.header[i]);
         }
-        for (var i = 0; i < dataGet.data.length; i++) {
-            let tempo = { property: dataGet.data[i].property, unitsToValues: [] };
-            for (var j = 0; j < dataGet.data[i].unitsToValues.length; j++) {
-                if (isResultCheckFlag && isNativeOrgUnitCheckFlag && j < dataGet.data[i].unitsToValues.length - 2) {
-                    j = dataGet.data[i].unitsToValues.length - 2;
-                } else if (isResultCheckFlag && isNativeOrgUnitCheckFlag) {
-                    //maybe 
-                } else {
-                    if ((isResultCheckFlag && j != dataGet.data[i].unitsToValues.length - 1) || (isNativeOrgUnitCheckFlag && j != dataGet.data[i].unitsToValues.length - 2))
-                        continue;
-                }
-                let innerTempo = { orgUnitIdentity: dataGet.data[i].unitsToValues[j].orgUnitIdentity, value: dataGet.data[i].unitsToValues[j].value };
-                tempo.unitsToValues.push(innerTempo);
-            }
-            tempoArrData.push(tempo);
-        }
-        tempoArrHeader.unshift({ identity: null, tail: 'Name' });       
+        tempoArrHeader.unshift({ identity: null, tail: 'Name' });
         var table = document.createElement('table');
         let tableHead = document.createElement('thead');
         let headRow = document.createElement('tr');
@@ -100,14 +107,14 @@ ko.bindingHandlers.pagesBuilder = {
         let currentPage = dataGet.currentPage;
         let onPageClick = dataGet.onPageClick;
         let node = dataGet.node;
-        if (!pagesCount || currentPage === 0||pagesCount===1) {
+        if (!pagesCount || currentPage === 0 || pagesCount === 1) {
             return;
-        } 
-        let pagesOnScreen = [ currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
+        }
+        let pagesOnScreen = [currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
         pagesOnScreen = pagesOnScreen.filter(function (number, index, self) {
             return number > 0 && number < pagesCount + 1 && self.indexOf(number) == index;
         });
-        let appendButtonPage = function (data,text,parent) {
+        let appendButtonPage = function (data, text, parent) {
             let page = data;
             let button = document.createElement('button');
             button.innerText = text;
@@ -127,16 +134,16 @@ ko.bindingHandlers.pagesBuilder = {
             parent.appendChild(button);
         }
         appendButtonPage(1, 'First', element);
-        if (currentPage - 1>=1) {
+        if (currentPage - 1 >= 1) {
             appendButtonPage(currentPage - 1, 'Previous', element);
-        }        
-        for (var i = 0; i < pagesOnScreen.length; i++) {
-            appendButtonPage(pagesOnScreen[i], pagesOnScreen[i], element);   
         }
-        if (currentPage + 1<=pagesCount) {
+        for (var i = 0; i < pagesOnScreen.length; i++) {
+            appendButtonPage(pagesOnScreen[i], pagesOnScreen[i], element);
+        }
+        if (currentPage + 1 <= pagesCount) {
             appendButtonPage(currentPage + 1, 'Next', element);
-        } 
-        appendButtonPage(pagesCount, 'Last', element);              
+        }
+        appendButtonPage(pagesCount, 'Last', element);
     }
 };
 
