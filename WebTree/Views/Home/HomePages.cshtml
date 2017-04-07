@@ -22,94 +22,131 @@
 
 <script type="text/html" id="units-template">
     <div>
-        <input data-bind="textInput: filter" />
-        <ul data-bind="template: { name: 'treeNode', foreach: $data.units }" style="list-style-type:none"></ul>
-        <div class="glyphicon glyphicon-cloud-download" data-bind="visible : !fistElementsIsLoaded()">
-            Loading...
-        </div>
-        <script id="treeNode" type="text/html">
-            <li>
-                <span data-bind="click:toggleIsExpanded(), css: {'glyphicon': true, 'glyphicon-arrow-up': isExpanded,'glyphicon-arrow-right': !isExpanded()}"></span>
-                <span data-bind="text : identity, click : $root.goToValuesByOrgUnit " class="btn-link"></span>
-                <ul data-bind="template: { name: 'treeNode', foreach: children }, visible : isExpanded" style="list-style-type:none"></ul>
-                <div class="glyphicon glyphicon-cloud-download" data-bind="visible : !isLoaded()">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Filter" data-bind="textInput: filter">
+                </div>
+            </div>
+            <div class="panel-body">
+                <ul data-bind="template: { name: 'treeNode', foreach: $data.units }" style="list-style-type:none"></ul>
+                <div class="glyphicon glyphicon-cloud-download" data-bind="visible : !fistElementsIsLoaded()">
                     Loading...
                 </div>
-            </li>
-            <li>
-                <span data-bind="pagesBuilder :{pagesCount : pagesCount(), currentPage: currentPage(), onPageClick: click(), node: $data },  visible : isExpanded"></span>
-                @*<span data-bind="foreach : pages , visible : isExpanded">
-                        <button data-bind="text : $data, click : $parent.click().bind($data,$parent), css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
-                    </span>*@
-            </li>
-        </script>
-    </div>
-</script>
-
-<script type="text/html" id="properties-template">
-    <span>Filter:</span>
-    <input data-bind="textInput: filter" />
-    <br />
-    <p>Properties:</p>
-    <div class="glyphicon glyphicon-cloud-download" data-bind="visible : !isLoaded()">
-        Loading...
-    </div>
-    <div data-bind="visible : isLoaded()">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th class="col-md-4">Name</th>
-                    <th class="col-md-4">Type</th>
-                    <th class="col-md-4">Usage</th>
-                </tr>
-            </thead>
-            <tbody data-bind="foreach : properties">
-                <tr>
-                    <td class="col-md-4" data-bind="text: $data.name"></td>
-                    <td class="col-md-4" data-bind="text: $data.type"></td>
-                    <td class="col-md-4"><a class="btn-link" data-bind="text: $data.countOfUsage, click : $root.goToPropertiesUsage"></a></td>
-                </tr>
-            </tbody>
-        </table>
-        <div data-bind="pagesBuilder : {pagesCount:pagesCount(), currentPage: currentPage(), onPageClick: load}"></div>
-    </div>
-</script>
-
-<script type="text/html" id="propertiesUsage-template">
-    <h4>Property name : <text data-bind="text : propertyName()"></text></h4>
-    <span>Filter:</span>
-    <input data-bind="textInput: filter" />
-    <br />
-    <div class="glyphicon glyphicon-cloud-download" data-bind="visible : !isLoaded()">
-        Loading...
-    </div>
-    <div class="col-md-12" data-bind="visible : isLoaded()">
-        <div>
-            <div class="col-md-6"><strong>Unit </strong></div>
-            <div class="col-md-6"><strong>Value </strong></div>
+                <script id="treeNode" type="text/html">
+                    <li>
+                        <span data-bind="click:toggleIsExpanded(), css: {'glyphicon': true, 'glyphicon-arrow-up': isExpanded,'glyphicon-arrow-right': !isExpanded()}"></span>
+                        <span data-bind="text : identity, click : $root.goToValuesByOrgUnit " class="btn-link"></span>
+                        <ul data-bind="template: { name: 'treeNode', foreach: children }, visible : isExpanded" style="list-style-type:none"></ul>
+                        <div class="glyphicon glyphicon-cloud-download" data-bind="visible : !isLoaded()">
+                            Loading...
+                        </div>
+                    </li>
+                    <li>
+                        <span data-bind="pagesBuilder :{pagesCount : pagesCount(), currentPage: currentPage(), onPageClick: click(), node: $data },  visible : isExpanded"></span>
+                        @*<span data-bind="foreach : pages , visible : isExpanded">
+                                <button data-bind="text : $data, click : $parent.click().bind($data,$parent), css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
+                            </span>*@
+                    </li>
+                </script>
+            </div>
         </div>
-        <div data-bind="foreach : values">
-            <div class="col-md-6"><span data-bind="text: $data.organizationUnitIdentity, bootstrapPopover : {content : $parent.returnPropertyTag($data.value)}"></span></div>
-            <div class="col-md-6"><span data-bind="text: $data.value"></span></div>
-            <hr />
-        </div>
-        <div data-bind="pagesBuilder : {pagesCount: pagesCount(), currentPage: currentPage(), onPageClick: load}"></div>
+
     </div>
 </script>
 
 <script type="text/html" id="valuesByOrgUnit-template">
-    <h4>OrganizationUnit: "<text data-bind="text: orgUnitIdentity"></text>"</h4>
-    <br />
-    <span>Filter: <input data-bind="textInput: filter" /></span>
-    <span>This organization unit :<input type="checkbox" data-bind="checked: isNativeOrgUnitCheckFlag" /> </span>
-    <span>Result :<input type="checkbox" data-bind="checked: isResultCheckFlag" /> </span>    
-    <br />
-    <div class="glyphicon glyphicon-cloud-download" data-bind="visible : !isLoaded()">
-        Loading...
-    </div>
-    <div data-bind="visible : isLoaded()">
-        <div data-bind="tableValuesByOrgUnit:{dataGet: dataForTable(), isOnlyResult: isResultCheckFlag(), isNativeOrgUnitCheckFlag : isNativeOrgUnitCheckFlag ()} "></div>
-        <div data-bind="pagesBuilder : {pagesCount:pagesCount(), currentPage: currentPage(), onPageClick: load}"></div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>OrganizationUnit: "<text data-bind="text: orgUnitIdentity"></text>"</h4>
+            <br />
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                <input type="text" class="form-control" placeholder="Filter" data-bind="textInput: filter">
+            </div>
+        </div>
+        <div class="panel-body">
+            <label class="checkbox-inline"><input type="checkbox" data-bind="checked: isNativeOrgUnitCheckFlag" />This organization unit</label>
+            <label class="checkbox-inline"><input type="checkbox" data-bind="checked: isResultCheckFlag" />Result</label>
+            <br />
+            <div class="glyphicon glyphicon-cloud-download" data-bind="visible : !isLoaded()">
+                Loading...
+            </div>
+            <div data-bind="visible : isLoaded()">
+                <div data-bind="tableValuesByOrgUnit:{dataGet: dataForTable(), isOnlyResult: isResultCheckFlag(), isNativeOrgUnitCheckFlag : isNativeOrgUnitCheckFlag ()} "></div>
+                <div data-bind="pagesBuilder : {pagesCount:pagesCount(), currentPage: currentPage(), onPageClick: load}"></div>
+            </div>
+        </div>
     </div>
 </script>
+
+<script type="text/html" id="properties-template">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                <input type="text" class="form-control" placeholder="Filter" data-bind="textInput: filter">
+            </div>
+        </div>
+        <div class="panel-body">
+            <h4>Properties:</h4>
+            <div class="glyphicon glyphicon-cloud-download" data-bind="visible : !isLoaded()">
+                Loading...
+            </div>
+            <div data-bind="visible : isLoaded()">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="col-md-4">Name</th>
+                            <th class="col-md-4">Type</th>
+                            <th class="col-md-4">Usage</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach : properties">
+                        <tr>
+                            <td class="col-md-4" data-bind="text: $data.name"></td>
+                            <td class="col-md-4" data-bind="text: $data.type"></td>
+                            <td class="col-md-4"><a class="btn-link" data-bind="text: $data.countOfUsage, click : $root.goToPropertiesUsage"></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div data-bind="pagesBuilder : {pagesCount:pagesCount(), currentPage: currentPage(), onPageClick: load}"></div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="propertiesUsage-template">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>Property name : <text data-bind="text : propertyName()"></text></h4>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                <input type="text" class="form-control" placeholder="Filter" data-bind="textInput: filter">
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="glyphicon glyphicon-cloud-download" data-bind="visible : !isLoaded()">
+                Loading...
+            </div>
+            <div class="col-md-12" data-bind="visible : isLoaded()">
+                <div class="panel-heading">
+                    <div class="col-md-6"><strong>Unit </strong></div>
+                    <div class="col-md-6"><strong>Value </strong></div>
+                </div>
+                <div data-bind="foreach : values">
+                    <div class="panel-body">
+                        <div class="col-md-6"><span class="badge" data-bind="text: $data.organizationUnitIdentity, bootstrapPopover : {content : $parent.returnPropertyTag($data.value)}"></span></div>
+                        <div class="col-md-6"><span  data-bind="text: $data.value"></span></div>
+                    </div>
+                </div>
+            </div>            
+        </div>     
+        <div class="panel-footer" data-bind="pagesBuilder : {pagesCount: pagesCount(), currentPage: currentPage(), onPageClick: load}"></div> 
+    </div>
+</script>
+
+
 

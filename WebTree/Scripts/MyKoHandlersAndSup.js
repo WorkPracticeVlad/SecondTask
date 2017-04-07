@@ -118,9 +118,12 @@ ko.bindingHandlers.pagesBuilder = {
                     onPageClick(node, page);
                 }
             }, false);
-            if (page === currentPage) {
-                button.className = "btn btn-primary btn-xs";
+            if (page !== currentPage) {
+                button.className = "btn btn-info btn-xs";
+            } else {
+                button.className = "btn btn-warning btn-xs";
             }
+
             parent.appendChild(button);
         }
         appendButtonPage(1, 'First', element);
