@@ -45,10 +45,10 @@ namespace Tree
                     ConsiderXmlNode(ReadXmlByPath(path + "\\organization_units.xml").SelectSingleNode("/organization-units"), orgUnitId);
                 if (File.Exists(path + "\\config.xml"))
                     AddValues(orgUnitId, AddProperties(path + "\\config.xml"));
-                    parentId = AddOrgUnit(path, orgUnitId, parentId);
-            }         
+                parentId = AddOrgUnit(path, orgUnitId, parentId);
+            }
             foreach (var folderPath in Directory.GetDirectories(path))
-            {                
+            {
                 ConsiderFolder(folderPath, parentId);
             }
         }
@@ -87,11 +87,11 @@ namespace Tree
         }
         private string GetOrgUnitId(string path, string parentId)
         {
-            if (path.EndsWith(backSlash + "config"))
-                return parentId+borderChar+"RootConfig";
+            if (path.EndsWith(backSlash + "config") || path.EndsWith(backSlash + "config" + backSlash))
+                return parentId + borderChar + "RootConfig";
             if (parentId.EndsWith("RootConfig"))
-                return borderChar+ path.Substring(path.LastIndexOf(backSlash) + 1);
-            string orgUnitId = parentId +borderChar +path.Substring(path.LastIndexOf(backSlash) + 1);
+                return borderChar + path.Substring(path.LastIndexOf(backSlash) + 1);
+            string orgUnitId = parentId + borderChar + path.Substring(path.LastIndexOf(backSlash) + 1);
             return orgUnitId;
         }
         Dictionary<Property, string> AddProperties(string path)
@@ -113,8 +113,8 @@ namespace Tree
                 if (!Properties.ContainsKey(property.Name))
                     Properties.Add(property.Name, property);
                 else
-                    if (Properties[property.Name].Type==null)
-                        Properties[property.Name].Type = property.Type;
+                    if (Properties[property.Name].Type == null)
+                    Properties[property.Name].Type = property.Type;
                 propertiesInOrgUnitWithValue.Add(property, propertyNode.InnerXml);
             }
             return propertiesInOrgUnitWithValue;

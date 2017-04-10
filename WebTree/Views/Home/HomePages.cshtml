@@ -38,8 +38,9 @@
                 </div>
                 <script id="treeNode" type="text/html">
                     <li>
-                        <span data-bind="click:toggleIsExpanded(), css: {'glyphicon': true, 'glyphicon-arrow-up': isExpanded,'glyphicon-arrow-right': !isExpanded()}"></span>
+                        <span data-bind="click:toggleIsExpanded(), css: {'glyphicon': true, 'glyphicon-arrow-up': isExpanded,'glyphicon-arrow-right': !isExpanded()}, visible : pagesCount()!==0"></span>
                         <span data-bind="text : identity, click : $root.goToValuesByOrgUnit " class="btn-link"></span>
+                        <span data-bind="visible : isVirtual">*Is virtual</span>
                         <ul data-bind="template: { name: 'treeNode', foreach: children }, visible : isExpanded" style="list-style-type:none"></ul>
                         <div class="glyphicon glyphicon-cloud-download" data-bind="visible : !isLoaded()">
                             Loading...
@@ -49,7 +50,7 @@
                         <span data-bind="pagesBuilder :{pagesCount : pagesCount(), currentPage: currentPage(), onPageClick: click(), node: $data },  visible : isExpanded"></span>
                         @*<span data-bind="foreach : pages , visible : isExpanded">
                                 <button data-bind="text : $data, click : $parent.click().bind($data,$parent), css : { 'btn-primary' : $parent.currentPage() === $data}"></button>
-                            </span>*@
+                        </span>*@
                     </li>
                 </script>
             </div>

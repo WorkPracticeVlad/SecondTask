@@ -11,10 +11,11 @@ ko.bindingHandlers.bootstrapPopover = {
         var options = valueAccessor();
         $(element).popover({
             placement: 'right',
+            title: 'Xml tag', 
             content: options.content,
-            delay: 400,
+            delay: 100,
             html: true,
-            trigger: 'hover'
+            trigger: 'click'
         });
     }
 };

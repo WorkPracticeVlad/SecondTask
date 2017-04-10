@@ -23,10 +23,13 @@ var OrgUnitVM = function () {
     var self = this;
     self.fistElementsIsLoaded = ko.observable(false);
     self.filter = ko.observable('');
-    self.buildBranch = function (arrToFill, dataArr) {
+    self.buildBranch = function (arrToFill, dataArr) {              
         for (var i = 0; i < dataArr.length; i++) {
+            let pagesCount = null;
+            if (dataArr[i].children.length == 0)
+                pagesCount = 0;
             arrToFill.push(new OrgUnit(dataArr[i].identity, dataArr[i].description, dataArr[i].isVirtual,
-                dataArr[i].parentIdentity, null, self.toggleIsExpanded, false, 0, 0));
+                dataArr[i].parentIdentity, null, self.toggleIsExpanded, false, pagesCount, null));
             self.buildBranch(arrToFill[i].children(), dataArr[i].children);
         }
     }
