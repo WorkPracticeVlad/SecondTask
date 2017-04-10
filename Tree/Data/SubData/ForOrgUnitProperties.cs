@@ -8,7 +8,7 @@ namespace Tree.Data.SubData
 {
     public class ForOrgUnitProperties
     {
-        public ForOrgUnitProperties(List<OrganizationUnitToProperty> items, List<string> orgUnitsId)
+        public ForOrgUnitProperties(List<OrganizationUnitToProperty> items, List<string> orgUnitsId , bool withResult)
         {
             orgUnitsId.Reverse();
             var forOrgUnitProperties = this;
@@ -36,18 +36,22 @@ namespace Tree.Data.SubData
                     UnitsToValues = listUnitsToValues
                 });
             }
-            foreach (var item in forOrgUnitProperties.Data)
-            {               
-                for (int i = item.UnitsToValues.Count - 1; i >= 0; --i)
+            if (withResult)
+            {
+                foreach (var item in forOrgUnitProperties.Data)
                 {
-                    if (!String.IsNullOrEmpty(item.UnitsToValues[i].Value))
+                    for (int i = item.UnitsToValues.Count - 1; i >= 0; --i)
                     {
-                        item.UnitsToValues.Add(new OrgUnitValuePair { OrgUnitIdentity = "Result", Value = item.UnitsToValues[i].Value });
-                        break;
+                        if (!String.IsNullOrEmpty(item.UnitsToValues[i].Value))
+                        {
+                            item.UnitsToValues.Add(new OrgUnitValuePair { OrgUnitIdentity = "Result", Value = item.UnitsToValues[i].Value });
+                            break;
+                        }
                     }
                 }
-            }
-            forOrgUnitProperties.Header.Add(new OrgUnitIdentityTailPair { Identity = "ResultIdentity", Tail = "Result" });
+                forOrgUnitProperties.Header.Add(new OrgUnitIdentityTailPair { Identity = "ResultIdentity", Tail = "Result" });
+            }        
+           
         }
         public List<OrgUnitIdentityTailPair> Header { get; set; }
         public List<PropertyToUnitsValuePairs> Data { get; set; }

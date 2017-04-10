@@ -28,6 +28,7 @@
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
                     <input type="text" class="form-control" placeholder="Filter" data-bind="textInput: filter">
+                    <span data-bind="visible : filter().length!==0 && filter().length<4">*Search starts with 4 characters</span>
                 </div>
             </div>
             <div class="panel-body">
@@ -65,18 +66,18 @@
             <div class="input-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
                 <input type="text" class="form-control" placeholder="Filter" data-bind="textInput: filter">
+                <span data-bind="visible : filter().length!==0 && filter().length<4">*Search starts with 4 characters</span>
             </div>
         </div>
         <div class="panel-body">
-            <label class="checkbox-inline"><input type="checkbox" data-bind="checked: isNativeOrgUnitCheckFlag" />This organization unit</label>
-            <label class="checkbox-inline"><input type="checkbox" data-bind="checked: isResultCheckFlag" />Result</label>
-            <label class="checkbox-inline"><input type="checkbox" data-bind="checked: isOrgUnitsGiveValues" />Values from organization units</label>
+            <label data-bind="visible : !isResultCheckFlag()" class="checkbox-inline"><input type="checkbox" data-bind="checked: isCurrentOrgUnitCheckFlag" />This organization unit</label>
+            <label data-bind="visible : !isCurrentOrgUnitCheckFlag()" class="checkbox-inline"><input type="checkbox" data-bind="checked: isResultCheckFlag" />Result</label>
             <br />
             <div class="glyphicon glyphicon-cloud-download" data-bind="visible : !isLoaded()">
                 Loading...
             </div>
             <div data-bind="visible : isLoaded()">
-                <div data-bind="tableValuesByOrgUnit:{dataGet: dataForTable(),  isResultCheckFlag: isResultCheckFlag(), isNativeOrgUnitCheckFlag : isNativeOrgUnitCheckFlag (), isOrgUnitsGiveValues: isOrgUnitsGiveValues()} "></div>
+                <div data-bind="tableValuesByOrgUnit:{dataGet: dataForTable(),  isResultCheckFlag: isResultCheckFlag()} "></div>
                 <div data-bind="pagesBuilder : {pagesCount:pagesCount(), currentPage: currentPage(), onPageClick: load}"></div>
             </div>
         </div>
@@ -89,6 +90,7 @@
             <div class="input-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
                 <input type="text" class="form-control" placeholder="Filter" data-bind="textInput: filter">
+                <span data-bind="visible : filter().length!==0 && filter().length<4">*Search starts with 4 characters</span>
             </div>
         </div>
         <div class="panel-body">
@@ -126,6 +128,7 @@
             <div class="input-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
                 <input type="text" class="form-control" placeholder="Filter" data-bind="textInput: filter">
+                <span data-bind="visible : filter().length!==0 && filter().length<4">*Search starts with 4 characters</span>
             </div>
         </div>
         <div class="panel-body">

@@ -29,7 +29,9 @@
     }
     self.filter.subscribe(function (newFilter) {
         delay(function () {
-            self.initialize();
+            if (newFilter.length==0||newFilter.length>3) {
+                self.initialize();
+            }      
         }, 300)
     });
     self.initialize();

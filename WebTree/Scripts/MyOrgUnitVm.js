@@ -26,7 +26,7 @@ var OrgUnitVM = function () {
     self.buildBranch = function (arrToFill, dataArr) {
         for (var i = 0; i < dataArr.length; i++) {
             arrToFill.push(new OrgUnit(dataArr[i].identity, dataArr[i].description, dataArr[i].isVirtual,
-                dataArr[i].parentIdentity, null, self.toggleIsExpanded, true, 0, 0));
+                dataArr[i].parentIdentity, null, self.toggleIsExpanded, false, 0, 0));
             self.buildBranch(arrToFill[i].children(), dataArr[i].children);
         }
     }
@@ -68,7 +68,7 @@ var OrgUnitVM = function () {
     self.filter.subscribe(function (newFilter) {
         self.fistElementsIsLoaded(false);
         delay(function () {
-            if (newFilter.length < 3) {
+            if (newFilter.length < 4) {
                 if (self.units().some(function (u) {
                     return u.children().length == 0
                 })) {

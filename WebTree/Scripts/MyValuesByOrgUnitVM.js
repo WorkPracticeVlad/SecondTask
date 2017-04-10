@@ -1,8 +1,4 @@
-﻿let ValuesByProperty = function (property, unitsToValues) {
-    this.property = property;
-    this.unitsToValues = unitsToValues;
-}
-var ValuesByOrgUnitVM = function (orgUnit) {
+﻿var ValuesByOrgUnitVM = function (orgUnit) {
     var self = this;
     self.filter = ko.observable('');
     self.valuesByProperties = ko.observableArray();
@@ -12,10 +8,9 @@ var ValuesByOrgUnitVM = function (orgUnit) {
     self.currentPage = ko.observable();
     self.dataForTable = ko.observable();
     self.isLoaded = ko.observable(false);
-    self.isOrgUnitsGiveValues= ko.observable(false);
-    self.isNativeOrgUnitCheckFlag = ko.observable(false);
+    self.isCurrentOrgUnitCheckFlag = ko.observable(false);
     self.isResultCheckFlag = ko.observable(false);
-    self.load = function (page) {
+    self.loadToAncestors = function (page) {
         self.currentPage(Number(page));
         self.isLoaded(false);
         let identity = orgUnit.identity();
@@ -36,21 +31,64 @@ var ValuesByOrgUnitVM = function (orgUnit) {
         }).done(function () {
             self.isLoaded(true);
         });
-    };   
-    self.buildPages = function () {
+    };
+    self.loadCurrent = function (page) {
+        self.currentPage(Number(page));
+        self.isLoaded(false);
+        let identity = orgUnit.identity();
+        self.orgUnitIdentity(identity);
+        $.getJSON('/api/values/bycurrentorgunit/' + identity.replace(/\./g, '-') + '/' + self.currentPage() + '/' + self.filter(), function (dataGet) {
+            let tempoArrHeader = [];
+            let tempoArrData = [];
+            for (var i = 0; i < dataGet.header.length; i++) {
+                tempoArrHeader.push(dataGet.header[i]);
+            }
+            for (var i = 0; i < dataGet.data.length; i++) {
+                tempoArrData.push(dataGet.data[i]);
+            }
+            tempoArrHeader.unshift({ identity: null, tail: 'Name' });
+            self.valuesByProperties(tempoArrData);
+            self.unitsName(tempoArrHeader);
+            self.dataForTable(dataGet);
+        }).done(function () {
+            self.isLoaded(true);
+        });
+    };
+    self.buildToAncestorsPages = function () {
         let identity = orgUnit.identity();
         $.get('/api/values/pagesbyorgunit/' + identity.replace(/\./g, '-') + '/' + self.filter(), function (data) {
             self.pagesCount(data);
         })
     };
+    self.buildCurrentPages= function () {
+        let identity = orgUnit.identity();
+        $.get('/api/values/pagesbycurrentorgunit/' + identity.replace(/\./g, '-') + '/' + self.filter(), function (data) {
+            self.pagesCount(data);
+        })
+    };
+    self.load =  self.loadToAncestors;
+    self.buildPages =self.buildToAncestorsPages;
     self.initialize = function () {
         self.load(1);
-        self.buildPages();  
-    }
+        self.buildPages();
+    };
     self.filter.subscribe(function (newFilter) {
         delay(function () {
-            self.initialize();
+            if (newFilter.length == 0 || newFilter.length > 3) {
+                self.initialize();
+            }
         }, 300)
     });
+    self.isCurrentOrgUnitCheckFlag.subscribe(function (newFlag) {
+        if (newFlag) {
+            self.load = self.loadCurrent;
+            self.buildPages = self.buildCurrentPages;
+            self.initialize();
+        } else {
+            self.load = self.loadToAncestors;
+            self.buildPages = self.buildToAncestorsPages;
+            self.initialize();
+        }
+    })
     self.initialize();
 }

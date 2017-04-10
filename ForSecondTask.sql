@@ -475,3 +475,45 @@ FETCH NEXT @ItemsPerPage ROWS ONLY
 end
 SET NOCOUNT OFF;
 GO
+
+create proc RowsPerPageCurrentValuesForOrganizationUnitByIdentiyFiltered
+(
+@Identity as nvarchar(225),
+@Page as int,
+@ItemsPerPage as int,
+@Filter as nvarchar(225)
+)
+as
+SET NOCOUNT ON;
+begin
+declare @TableVal as table (OrganizationUnitIdentity  nvarchar(225),PropertyName nvarchar(225), Value nvarchar(max))
+insert @TableVal select * from [dbo].[OrganizationUnitToProperties] where [OrganizationUnitIdentity]=@Identity
+select * from @TableVal where PropertyName in(
+select PropertyName from @TableVal 
+where PropertyName is not null and PropertyName like '%'+@Filter+'%'
+group by PropertyName 
+ORDER BY PropertyName 
+OFFSET  @Page*@ItemsPerPage-@ItemsPerPage ROWS
+FETCH NEXT @ItemsPerPage ROWS ONLY) order by PropertyName
+end
+SET NOCOUNT OFF;
+GO
+
+create proc CountPagesCurrentValuesForOrganizationUnitByIdentiyFiltered
+(
+@ItemsPerPage as int,
+@Identity as nvarchar(225),
+@Filter as nvarchar(225)
+)
+as
+SET NOCOUNT ON;
+begin
+declare @Count as int
+declare @Table as table (OrganizationUnitIdentity  nvarchar(225),PropertyName nvarchar(225), Value nvarchar(max))
+insert @Table select * from [dbo].[OrganizationUnitToProperties] where [OrganizationUnitIdentity]=@Identity
+select @Count=count(distinct PropertyName) from @Table
+where PropertyName like '%'+@Filter+'%'
+select [dbo].[fnCountPages](@Count,@ItemsPerPage)
+end
+SET NOCOUNT OFF;
+GO

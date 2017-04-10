@@ -26,8 +26,6 @@ ko.bindingHandlers.tableValuesByOrgUnit = {
         }
         let inputData = ko.unwrap(valueAccessor());
         let isResultCheckFlag = inputData.isResultCheckFlag;
-        let isNativeOrgUnitCheckFlag = inputData.isNativeOrgUnitCheckFlag;
-        let isOrgUnitsGiveValues = inputData.isOrgUnitsGiveValues;
         var dataGet = inputData.dataGet;
         if (!dataGet) {
             return;
@@ -37,34 +35,18 @@ ko.bindingHandlers.tableValuesByOrgUnit = {
         for (var i = 0; i < dataGet.data.length; i++) {
             let tempo = { property: dataGet.data[i].property, unitsToValues: [] };
             for (var j = 0; j < dataGet.data[i].unitsToValues.length; j++) {
-                if (isOrgUnitsGiveValues && dataGet.data[i].unitsToValues[j].value !== dataGet.data[i].unitsToValues[dataGet.data[i].unitsToValues.length - 1].value) {
-                    tempo.unitsToValues.push({ orgUnitIdentity: '', value: '' });
-                    continue;
-                }               
                 tempo.unitsToValues.push({ orgUnitIdentity: dataGet.data[i].unitsToValues[j].orgUnitIdentity, value: dataGet.data[i].unitsToValues[j].value });
             }
             tempoArrData.push(tempo);
         }
-        if (isResultCheckFlag || isNativeOrgUnitCheckFlag) {
-            for (var i = 0; i < tempoArrData.length; i++) {
-                    if (isResultCheckFlag && isNativeOrgUnitCheckFlag) {
-                        tempoArrData[i].unitsToValues= tempoArrData[i].unitsToValues.splice( - 2,2);
-                    } else if (!isResultCheckFlag && isNativeOrgUnitCheckFlag) {
-                        tempoArrData[i].unitsToValues= tempoArrData[i].unitsToValues.splice( - 2,1);
-                    } else {
-                        tempoArrData[i].unitsToValues= tempoArrData[i].unitsToValues.splice( - 1,1);
-                    }
+        for (var i = 0; i < tempoArrData.length; i++) {
+            if (isResultCheckFlag) {
+                tempoArrData[i].unitsToValues = tempoArrData[i].unitsToValues.splice(-1, 1);
             }
         }
         for (var i = 0; i < dataGet.header.length; i++) {
-            if (isResultCheckFlag && isNativeOrgUnitCheckFlag && i < dataGet.header.length - 2) {
-                i = dataGet.header.length - 2;
-            } else if (isResultCheckFlag && isNativeOrgUnitCheckFlag) {
-                //maybe 
-            } else {
-                if ((isResultCheckFlag && i != dataGet.header.length - 1) || (isNativeOrgUnitCheckFlag && i != dataGet.header.length - 2))
-                    continue;
-            }
+            if ((isResultCheckFlag && i != dataGet.header.length - 1))
+                continue;
             tempoArrHeader.push(dataGet.header[i]);
         }
         tempoArrHeader.unshift({ identity: null, tail: 'Name' });
@@ -146,4 +128,3 @@ ko.bindingHandlers.pagesBuilder = {
         appendButtonPage(pagesCount, 'Last', element);
     }
 };
-
